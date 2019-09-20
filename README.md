@@ -1,8 +1,16 @@
 # ADO
 ADO project repository
 
-# Docker folder
+# 00-docker-scripts
 A docker-compose file to launch influx, grafana, mosquitto and a mqtt forwarder to influxdb.
+
+Run:
+```
+cd 00-docker-scripts
+./0-setenv.sh
+sudo ./1-grant-permission.sh
+docker-compose up
+```
 
 # mosquitto config files
 the folder contains the mqtt broker configuration
