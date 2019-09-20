@@ -9,8 +9,8 @@ services:
     volumes:
       - ../01-mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf
       - ../01-mosquitto/users:/mosquitto/config/users
-      - ${DATA_DIR}/mosquitto/data:/mosquitto/data
-      - ${DATA_DIR}/mosquitto/log:/mosquitto/log
+      - ../../ado-tmp-data/mosquitto/data:/mosquitto/data
+      - ../../ado-tmp-data/mosquitto/log:/mosquitto/log
     restart: always
 
   influxdb:
@@ -19,7 +19,7 @@ services:
     ports:
       - 8086:8086
     volumes:
-      - ${DATA_DIR}/influxdb:/var/lib/influxdb
+      - ../../ado-tmp-data/influxdb:/var/lib/influxdb
     restart: always
 
   grafana:
@@ -30,7 +30,7 @@ services:
     ports:
       - 3000:3000
     volumes:
-      - ${DATA_DIR}/grafana:/var/lib/grafana
+      - ../../ado-tmp-data/grafana:/var/lib/grafana
     restart: always
 
 
