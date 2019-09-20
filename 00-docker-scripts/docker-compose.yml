@@ -33,4 +33,11 @@ services:
       - ../../ado-tmp-data/grafana:/var/lib/grafana
     restart: always
 
-
+  mqttbridge:
+    build: ../02-bridge
+    image: ado/mqttbridge
+    container_name: mqttbridge
+    depends_on:
+      - mosquitto
+      - influxdb
+    restart: always
