@@ -12,6 +12,11 @@ sudo ./1-grant-permission.sh
 docker-compose up
 ```
 
+if you want to connect to the influxdb client use:
+```
+docker exec -it influxdb influx
+```
+
 ## 01-mosquitto
 the folder contains the mqtt broker configuration
 
