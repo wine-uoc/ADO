@@ -23,6 +23,9 @@ the folder contains the mqtt broker configuration
 ## 02-bridge
 this is the mqtt forwarder to influxdb in python.
 
+## 03-data-generator
+random data generator in json format to be handled by the 02-bridge and inserted in the influxdb. For testing purposes.
+
 # Other Interesting tools
 
 check grafana cli python library that enables the management of organization. this may be useful when starting new device so we can create a new organization for it. This will enable multitenancy. 
