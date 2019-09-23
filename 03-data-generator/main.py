@@ -1,6 +1,7 @@
 import paho.mqtt.client as mqttClient
 import time
 import random as r
+import json
  
 def on_connect(client, userdata, flags, rc):
  
@@ -15,6 +16,8 @@ def on_connect(client, userdata, flags, rc):
  
         print("Connection failed")
  
+data = {} #json dictionary
+
 Connected = False   #global variable for the state of the connection
  
 broker_address= "localhost"
@@ -35,13 +38,19 @@ while Connected != True:    #Wait for connection
  
 try:
     while True:
- 
-        value = r.uniform(15, 22) 
-        print(value)
-        client.publish("ado/uoc/temperature",value)
-        time.sleep(10)
+        for node_id in range(3):
+            data['nodeid'] = node_id
+            data['temperature'] = r.uniform(15, 22)
+            data['ph'] = r.uniform(1, 14)
+            data['do'] = r.uniform(100, 200)
+            data['conductivity'] = r.uniform(10, 20)
+            data['lux'] = r.uniform(100, 400)
+            data['flow'] = r.uniform(1, 40) #l/min
+            print(data)
+            client.publish("ado/uoc/sensors",json.dumps(data))
+            time.sleep(2)
  
 except KeyboardInterrupt:
- 
+    print("bye bye")
     client.disconnect()
     client.loop_stop()

@@ -13,6 +13,7 @@ import paho.mqtt.client as mqtt
 from influxdb import InfluxDBClient
 
 import time
+import json
 
 INFLUXDB_ADDRESS = 'influxdb'
 INFLUXDB_USER = 'root'
@@ -35,6 +36,7 @@ class SensorData(NamedTuple):
     value: float
 
 
+
 def on_connect(client, userdata, flags, rc):
     """ The callback for when the client receives a CONNACK response from the server."""
     print('Connected with result code ' + str(rc))
@@ -52,11 +54,13 @@ def on_message(client, userdata, msg):
 def _parse_mqtt_message(topic, payload):
     match = re.match(MQTT_REGEX, topic)
     if match:
-        location = match.group(1)
+        institution = match.group(1)
         measurement = match.group(2)
-        if measurement == 'status':
-            return None
-        return SensorData(location, measurement, float(payload))
+        data = {}
+        data['institution'] = institution
+        data['measurement'] = measurement
+        data['payload'] = payload
+        return data
     else:
         return None
 
@@ -64,13 +68,11 @@ def _parse_mqtt_message(topic, payload):
 def _send_sensor_data_to_influxdb(sensor_data):
     json_body = [
         {
-            'measurement': sensor_data.measurement,
+            'measurement': sensor_data['measurement'],
             'tags': {
-                'location': sensor_data.location
+                'institution': sensor_data['institution'],
             },
-            'fields': {
-                'value': sensor_data.value
-            }
+            'fields': sensor_data['payload']
         }
     ]
     influxdb_client.write_points(json_body)
