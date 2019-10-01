@@ -21,12 +21,19 @@ services:
     volumes:
       - ../../ado-tmp-data/influxdb:/var/lib/influxdb
     restart: always
+    environment:
+      - INFLUXDB_DB=ado_db
+      - INFLUXDB_ADMIN_USER=${INFLUXDB_USERNAME}
+      - INFLUXDB_ADMIN_PASSWORD=${INFLUXDB_PASSWORD}
 
   grafana:
     image: grafana/grafana:6.3.5
     container_name: grafana
     depends_on:
       - influxdb
+    environment:
+      - GF_SECURITY_ADMIN_USER=${GRAFANA_USERNAME}
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
     ports:
       - 3000:3000
     volumes:
