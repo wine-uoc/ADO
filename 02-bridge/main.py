@@ -18,7 +18,7 @@ import json
 INFLUXDB_ADDRESS = 'influxdb'
 INFLUXDB_USER = 'root'
 INFLUXDB_PASSWORD = 'root'
-INFLUXDB_DATABASE = 'ado_db'
+#INFLUXDB_DATABASE = 'ado_db'
 
 MQTT_ADDRESS = 'mosquitto'
 MQTT_USER = 'mqttuser'
@@ -47,18 +47,23 @@ def on_message(client, userdata, msg):
     """The callback for when a PUBLISH message is received from the server."""
     #print(msg.topic + ' ' + str(msg.payload))
     sensor_data = _parse_mqtt_message(msg.topic, msg.payload.decode('utf-8'))
+    organization_db = str(sensor_data['organization'])+"_db"  #extract organization info so as to select the corresponding database
+    print (organization_db)
     if sensor_data is not None:
         print(sensor_data)
+        _look_for_database(organization_db)
         _send_sensor_data_to_influxdb(sensor_data)
 
 
+
 def _parse_mqtt_message(topic, payload):
+    print("parsing message")
     match = re.match(MQTT_REGEX, topic)
     if match:
-        institution = match.group(1)
+        organization = match.group(1) #replacing institution as a tag, with organization as a db
         measurement = match.group(2)
         data = {}
-        data['institution'] = institution
+        data['organization'] = organization
         data['measurement'] = measurement
         data['payload'] = payload
         return data
@@ -70,28 +75,26 @@ def _send_sensor_data_to_influxdb(sensor_data):
     json_body = [
         {
             'measurement': sensor_data['measurement'],
-            'tags': {
-                'institution': sensor_data['institution'],
-            },
+            #'tags': {
+             #   'institution': sensor_data['institution'],
+            #},
             'fields': json.loads(sensor_data['payload'])
         }
     ]
     influxdb_client.write_points(json_body)
 
 
-def _init_influxdb_database():
+def _look_for_database(organization_database):
     databases = influxdb_client.get_list_database()
-    if len(list(filter(lambda x: x['name'] == INFLUXDB_DATABASE, databases))) == 0:
-        print('Creating database ' + INFLUXDB_DATABASE)
-        influxdb_client.create_database(INFLUXDB_DATABASE)
-    influxdb_client.switch_database(INFLUXDB_DATABASE)
+    if len(list(filter(lambda x: x['name'] == organization_database, databases))) == 0:
+        print('Creating organization database ' + organization_database)
+        influxdb_client.create_database(organization_database)
+    influxdb_client.switch_database(organization_database)
+
 
 
 def main():
     time.sleep(10)
-
-    print('Connecting to the database ' + INFLUXDB_DATABASE)
-    _init_influxdb_database()
 
     mqtt_client = mqtt.Client(MQTT_CLIENT_ID)
     mqtt_client.username_pw_set(MQTT_USER, MQTT_PASSWORD)
