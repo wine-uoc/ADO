@@ -16,8 +16,8 @@ import time
 import json
 
 INFLUXDB_ADDRESS = 'influxdb'
-INFLUXDB_USER = 'root'
-INFLUXDB_PASSWORD = 'root'
+INFLUXDB_USER = 'admin'
+INFLUXDB_PASSWORD = 'admin'
 #INFLUXDB_DATABASE = 'ado_db'
 
 MQTT_ADDRESS = 'mosquitto'

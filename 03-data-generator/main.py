@@ -26,7 +26,7 @@ port = 1883
 user = "mqttuser"
 password = "mqttpassword"
 clientID = "datagenerator" 
-organizations = ["UOC", "UPC"] #organizations will have their data stored in different databases
+organizations = ["HP", "UPC"] #organizations will have their data stored in different databases
 nb_org_nodes = [3, 5] #number of nodes each organization has
  
 client = mqttClient.Client(clientID)               #create new instance
