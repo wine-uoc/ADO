@@ -1,130 +1,72 @@
-from grafana_api.grafana_face import GrafanaFace
 import json
+import grafana_interactions as gr
 
-import requests
+UOC_user_list = {}
+UOC_user_list[0] = {}
+UOC_user_list[0]["name"] = "uoc1"
+UOC_user_list[0]["email"] = "uoc1@test.com"
+UOC_user_list[0]["login"] = "uoc1"
+UOC_user_list[0]["password"] = "uoc1"
 
-#login to the grafana api through the library
-grafana_api = GrafanaFace(auth=('admin','admin'), port=3000)
+UOC_user_list[1] = {}
+UOC_user_list[1]["name"] = "uoc2"
+UOC_user_list[1]["email"] = "uoc2@test.com"
+UOC_user_list[1]["login"] = "uoc2"
+UOC_user_list[1]["password"] = "uoc2"
 
+UPC_user_list = {}
+UPC_user_list[0] = {}
+UPC_user_list[0]["name"] = "upc1"
+UPC_user_list[0]["email"] = "upc1@test.com"
+UPC_user_list[0]["login"] = "upc1"
+UPC_user_list[0]["password"] = "upc1"
 
-def _organization_check(organization):
-	orgs = grafana_api.organizations.list_organization()
-	for i in range(len(orgs)):
-		if str(organization) in orgs[i]['name']:
-			print ("organization already created")
-			return 1
-	return 0
-
-def _create_organization(organization):
-	url='http://admin:admin@localhost:3000/api/orgs'
-	data={
-		"name":organization,
-	}
-	headers={"Content-Type": 'application/json'}
-	response = requests.post(url, json=data,headers=headers)
-	print (response.text)
-
-
-def _get_current_organization():
-	url='http://admin:admin@localhost:3000/api/org/'
-	response = requests.get(url)
-	organization_details = response.json()
-	print(organization_details["name"])
-	return str(organization_details["name"])
-
-def _get_organization_id(organization_name):
-	orgs = grafana_api.organizations.list_organization()
-	print (orgs)
-	for i in range(len(orgs)):
-		if str(organization_name) in orgs[i]['name']:
-			return orgs[i]['id']
-	return 0 #there is no organization ID zero in grafana
-
-
-def _change_current_organization_to(new_organization):
-	org_id = _get_organization_id(new_organization)
-	print ('organization id ', org_id)
-	url='http://admin:admin@localhost:3000/api/user/using/' + str(org_id)
-	headers={"Content-Type": 'application/json'}
-	response = requests.post(url, headers=headers)
-	print (response.text)
-	print("current organization is now ", new_organization)
-
-def _get_all_users(): #returns all users of the selected organization
-	url='http://admin:admin@localhost:3000/api/org/users'
-	response = requests.get(url)
-	user_list = response.json()
-	for i in range(len(user_list)):
-		print(user_list[i]['login'])
-	return user_list
-
-def _user_check(user_org, user):
-	#switch to user_org
-	_change_current_organization_to(user_org)
-	user_list = _get_all_users()
-	for i in range(len(user_list)):
-		if user_list[i]['login'] == user:
-			return user_list[i]['userId']
-	return 0 #user not found
-
-
-def _create_user(user): #creates it and does not assign it to anything
-	print("****************************************")
-	url='http://admin:admin@localhost:3000/api/admin/users'
-	data={
-		"name": user["name"],
-		"email": user["email"],
-		"login":  user["login"],
-		"password": user["password"],
-	}
-	headers={"Content-Type": 'application/json'}
-	response = requests.post(url, json=data,headers=headers)
-	print (response.text)
-
-def _assign_user_to_organization(organization, user, role):
-	org_id=_get_organization_id(organization)
-	url='http://admin:admin@localhost:3000/api/orgs/'+ str(org_id)+ '/users'
-	data={
-		"loginOrEmail": user["login"],
-		"role": str(role),
-		
-	}
-	headers={"Content-Type": 'application/json'}
-	response = requests.post(url, json=data,headers=headers)
-	print (response.text)
-
+UPC_user_list[1] = {}
+UPC_user_list[1] ["name"] = "upc2"
+UPC_user_list[1] ["email"] = "upc2@test.com"
+UPC_user_list[1] ["login"] = "upc2"
+UPC_user_list[1] ["password"] = "upc2"
 
 
 def main():
-	organization_list = ['UOC', 'UPC', 'testing']
-
+	organization_list = ['UOC','UPC']
+	#create organizations and create their datasources and default databases
 	for org in organization_list:
-		if _organization_check(org) == 0: #organization not found in grafana
-			print ("organization not found in grafana, creating it ...")
-			_create_organization(org)
 
-	current_organization = 'UOC'
+		print("******checking if organization exists")
+		if gr._organization_check(org) == 0: #organization not found in grafana
+			print (org, "..organization not found in grafana, creating it ...")
+			gr._create_organization(org)
+		else:
+			print (org, "..already exists")
+
+		print("******switch to created organization and create datasource")
+		gr._change_current_organization_to(org)
+		org_database_name = str(org)+ '_db'
+		gr._create_datasource(org_database_name, org_database_name, "admin", "admin")
+
+		print("******creating default organization dashboard")
+		org_dashboard_name = str(org)+'_default_dashboard'
+		gr._create_dashboard(org_dashboard_name)
+		org_dashboard_uid=gr._get_dashboard_uid(org_dashboard_name)
+		gr._update_dashboard(org_dashboard_name, org_dashboard_uid, org_database_name, "raw", "temperature", "node_1", "flow", "raw", "ph")
+
 	
-	if (_get_current_organization() != current_organization):
-		print ("need to switch organization to ", current_organization)
-		_change_current_organization_to(current_organization)
-	else:
-		print ("current organization is already selected")
-
-
-	#current_user = 'test2' #this should be complete info with email, name, login and password
-	user = {}
-	user["name"] = "PythonUser"
-	user["email"] = "python@test.com"
-	user["login"] = "python_login"
-	user["password"] = "password"
-	if (_user_check(current_organization, user["login"]) == 0):#check if user exists, if not create it
-		print ("user not found in this organization, it needs to be created and assigned")
-		_create_user(user)
-		_assign_user_to_organization(current_organization, user, "Viewer")
-	else:
-		print ("username ", user["login"], " already exists in this organization")
-
+		print("******Adding users as editors")		
+		current_user_list = eval(org+"_user_list")
+		for i in range(len(current_user_list)):
+			if (gr._user_check(org, current_user_list[i]["login"]) == 0):#check if user exists, if not create it
+				print ("user not found in this organization, it needs to be created and assigned")
+				gr._create_user(current_user_list[i])
+				gr._assign_user_to_organization(org, current_user_list[i], "Editor")
+			else:
+				print ("username ", current_user_list[i]["login"], " already exists in this organization")
+	#remove the created users from the default grafana organization, to ensure default screen has the default dashboards
+	gr._change_current_organization_to("Main Org.")
+	for org in organization_list:
+		current_user_list = eval(org+"_user_list")
+		for i in range(len(current_user_list)):
+			gr._remove_user_from_org(current_user_list[i]["login"])
 
 
 if __name__ == '__main__':
