@@ -1,6 +1,0 @@
-curl -XPOST -H "Content-Type: application/json" -d '{
-  "name":"Xavi",
-  "email":"xvilajosana@uoc.edum",
-  "login":"xvilajosana",
-  "password":"wine4ever"
-}' http://admin:wine4ever@localhost:3000/api/admin/users
