@@ -17,9 +17,11 @@ after having received an answer from A0.
 
 RPi_client.py: handles mqtt connection to Mainflux
 
-tokens.txt: contains user credentials for things
+tokens.txt: contains user credentials for things (Obtained after running mainflux_provisioning.py in bootstrap)
 
 RPi_commands.py: creates commands for A0
 
 RPi_publish_data.py: checks data validity (data received from A0) and pushes it to mainflux, as a SenML message.
 
+#### bootstrap
+Running mainflux_provisioning.py with hardcoded user name and password, creates a mainflux user, an identical grafana user and a default dashboard for the user organization where data will be published immediately as it becomes available from the sensors. The needed tokens for publishing data by RPi are saved in tokens.txt. 
