@@ -77,6 +77,7 @@ void SplitCommand(String command, String fullArray)
     myArray[i] = obtainArray(fullArray, ',', 0);
     remainingstring = fullArray.substring(myArray[i].length() + 2, fullArray.length());
     fullArray = remainingstring;
+    // TODO: Do something with remainingstring (rest of parameters)
     //Serial.println(myArray[i]);
   }
   //sensortype = stype;

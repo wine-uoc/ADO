@@ -1,25 +1,24 @@
 #this is sending data over ubuntu serial to arduino main serial (not gpio to gpio)
+import logging
+import os
+import threading
+import time
+
+import serial
+
 import RPi_client
 import RPi_commands
 import RPi_publish_data
-import time
-from datetime import datetime
-import serial
-import json
-import os
-import json
-import logging
-import threading
 
 CmdType = RPi_commands.CmdType
-SensorType= RPi_commands.SensorType
+SensorType = RPi_commands.SensorType
 
 def create_threads():
-	delay, serialcmd, periodicity = RPi_commands.get_config()
-	size = len(delay) #number of configs we have
+	serialcmd, periodicity = RPi_commands.get_config()
+	size = len(serialcmd)		# number of configs we have
 	for i in range(1, size+1):
-		#timer is given by expressing a delay
-		t = threading.Timer(1, TransmitThread, (ser, serialcmd[i], periodicity[i])) #all sensors send data at startup
+		# timer is given by expressing a delay
+		t = threading.Timer(1, TransmitThread, (ser, serialcmd[i], periodicity[i]))		# all sensors send data at startup
 		t.setName(str(i))
 		t.start()
 		t.join()
@@ -29,7 +28,7 @@ def TransmitThread(ser, serialcmd, periodicity):
 	global tx_lock
 	#debug messages; get thread name and get the lock
 	logging.debug('executing thread %s', threading.currentThread().getName())
-	threadname =  threading.currentThread().getName()
+	threadname = threading.currentThread().getName()
 	logging.debug('Waiting for lock')
 	tx_lock.acquire()	
 	logging.debug('Acquired lock')
@@ -68,7 +67,7 @@ def ReceiveThread(ser, serialcmd):
 				response = response.decode('utf-8')
 				logging.debug ("%s", str(response))
 				if RPi_publish_data.valid_data(response, pinType, pinNb):
-					no_answer_pending =True
+					no_answer_pending = True
 					#if (item["pinType"]) == str(SensorType["onewire"].value):
 					if pinType == int(SensorType["onewire"].value):
 						RPi_publish_data.pack_data_onewire(response, client, topic)
@@ -81,7 +80,6 @@ def ReceiveThread(ser, serialcmd):
 		if no_answer_pending == False: #still no answer received, release lock
 			tx_lock.release()
 		print (time.time(), " End RX processing")
-
 
 
 if __name__ == "__main__":
@@ -101,6 +99,17 @@ if __name__ == "__main__":
 	create_threads()
 
 	logging.debug("####################### Running periodic threads #######################")
+
+	# TODO:
+	#  	que pasa si el usuario anade otro sensor mas adelante, se cancelan todos los threads (this)
+	#   que pasa si usuario modifica config en grafana
+	#   check db periodically (now is checked only when thread happens)
+	#   error handling to grafana reading error if x3 reset or error message
+	#   reset A0 from rpi
+	#   firm udpdate rpi and A0
+	#   status message to grafana (https://grafana.com/grafana/plugins/flant-statusmap-panel, auto install in docker
+	#   ask Ioana)
+	#   rpi reboot
 
 	#print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
 
