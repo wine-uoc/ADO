@@ -3,13 +3,7 @@ from flask import current_app as app
 from flask_login import current_user
 
 from .models import db, User, NodeConfig, Wifi, Tokens
-from .utils import create_node_name
-
-
-def delete_entries(entries):
-    """Delete each object of the list separately (Query.all() returns list, Session.delete() expects model instance)."""
-    for ent in entries:
-        db.session.delete(ent)
+from .utils import create_node_name, delete_entries
 
 
 def delete_tables_entries():
@@ -43,6 +37,16 @@ def update_wifi_data(ssid=None, password=None, activate=None):
     db.session.commit()
 
 
+def update_tokens_values(account_token, thing_id, thing_key, channel_id):
+    """Add values to table.'"""
+    tokens = get_tokens_obj()
+    tokens.account_token = account_token
+    tokens.thing_id = thing_id
+    tokens.thing_key = thing_key
+    tokens.channel_id = channel_id
+    db.session.commit()
+
+
 def get_config_obj():
     """Query to db to get current node config. object."""
     return NodeConfig.query.filter_by(id=current_user.email).first()
@@ -53,6 +57,11 @@ def get_wifi_obj():
     return Wifi.query.filter_by(id=current_user.email).first()
 
 
+def get_tokens_obj():
+    """Query to db to get current tokens table obj."""
+    return Tokens.query.filter_by(id=current_user.email).first()
+
+
 def get_node_id():
     """Query to db to get the unique node id."""
     return Tokens.query.filter_by(id=current_user.email).first().node_id
@@ -61,7 +70,7 @@ def get_node_id():
 def validate_user(email, password):
     """Validate user pass against db."""
     user = User.query.filter_by(email=email).first()
-    if user and user.check_password(password=password):
+    if user and user.check_password(password=password, hash_it=app.config['HASH_USER_PASSWORD']):
         return user
     else:
         return None
@@ -70,21 +79,20 @@ def validate_user(email, password):
 def sign_up_database(name, org, email, password):
     """
     Given user input in sign up form, initializes all tables of the database
+    NOTE: WiFi password is currently stored in plain text (needed for Raspbian)
 
     :param name: user input in sign form
     :param org:
     :param email:
     :param password:
     :return: error msg, object of class User if new user else None
-
-    TODO: The passwords are currently stored in plain text (needed for another app)
     """
     # Check if user does not exists and the node has not been registered yet to another account
     # existing_user = User.query.filter_by(email=email).first()
     existing_user = User.query.first()
     if existing_user is None:
         user = User(name=name, org=org, email=email)    # userdata table
-        user.set_password(password, hash_it=False)      # Store-hashed option off
+        user.set_password(password, hash_it=app.config['HASH_USER_PASSWORD'])
 
         node_config = NodeConfig(id=email)              # nodeconfig table associated to email
         node_config.set_values([0] * app.config['MAX_NUM_SENSORS_IN_NODE'])   # All sampling rates to 0 (disabled)

@@ -15,7 +15,7 @@ def create_app():
                 )
 
     # Configure the app from file
-    app.config.from_object('config.Config')
+    app.config.from_object('config.ConfigFlaskApp')
 
     # Initialize plugins
     db.init_app(app)

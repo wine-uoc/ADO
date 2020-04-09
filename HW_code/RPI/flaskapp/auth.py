@@ -1,11 +1,12 @@
 """Routes for user authentication."""
 from flask import current_app as app
 from flask import redirect, render_template, flash, Blueprint, request, url_for
-from flask_login import current_user, login_user
+from flask_login import current_user, login_user, logout_user
 
 from . import login_manager
 from .assets import compile_auth_assets
-from .control import sign_up_database, validate_user
+from .backend.mainflux_provisioning import register_node
+from .control import sign_up_database, validate_user, delete_tables_entries
 from .forms import LoginForm, SignupForm
 from .models import User
 
@@ -33,14 +34,23 @@ def signup():
 
     signup_form = SignupForm()
     if request.method == 'POST' and signup_form.validate_on_submit():
-        # Initialize user and all tables at db
+        # Check user exists, try to initialize user and all tables in db
         error_msg, user = sign_up_database(signup_form.name.data,
                                            signup_form.org.data,
                                            signup_form.email.data,
                                            signup_form.password.data)
         if user:
-            login_user(user)    # Log in as newly created user
-            return redirect(url_for('main_bp.dashboard'))
+            login_user(user)  # Log in as newly created user
+            # User data provisioning to Mainflux and Grafana
+            if register_node(signup_form.name.data,
+                             signup_form.org.data,
+                             signup_form.email.data,
+                             signup_form.password.data):
+                return redirect(url_for('main_bp.dashboard'))
+            else:
+                delete_tables_entries()     # If error delete data in db
+                logout_user()
+                error_msg = 'An error occurred while trying to create Mainflux or Grafana account. Please try again.'
         flash(error_msg)
         return redirect(url_for('auth_bp.signup'))
 
@@ -71,7 +81,7 @@ def login():
             login_user(user)
             next_page = request.args.get('next')
             return redirect(next_page or url_for('main_bp.dashboard'))
-        flash('Invalid username/password combination.')
+        flash('Invalid email/password combination.')
         return redirect(url_for('auth_bp.login'))
 
     return render_template('login.jinja2',

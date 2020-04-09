@@ -19,24 +19,24 @@ class User(UserMixin, db.Model):
                     nullable=False,
                     unique=False)
     email = db.Column(db.String(40),
-                      unique=True,
-                      nullable=False)
+                      nullable=False,
+                      unique=True)
     password = db.Column(db.String(200),
-                         primary_key=False,
-                         unique=False,
-                         nullable=False)
+                         nullable=False,
+                         unique=False)
 
-    def set_password(self, password, hash_it=False):
+    def set_password(self, password, hash_it):
         """Create hashed (or not) password."""
         if hash_it:
             password = generate_password_hash(password, method='sha256')
         self.password = password
 
-    def check_password(self, password, hash_it=False):
+    def check_password(self, password, hash_it):
         """Check hashed (or not) password."""
         if hash_it:
             return check_password_hash(self.password, password)
-        return safe_str_cmp(self.password, password)
+        else:
+            return safe_str_cmp(self.password, password)
 
     def __repr__(self):
         return '<User {}>'.format(self.name)
@@ -52,16 +52,16 @@ class NodeConfig(UserMixin, db.Model):
     __table_args__ = {'extend_existing': True}
 
     id = db.Column(db.String(40), primary_key=True)     # Associated to email (unique)
-    s01 = db.Column(db.Integer, nullable=False, unique=False, primary_key=False)
-    s02 = db.Column(db.Integer, nullable=False, unique=False, primary_key=False)
-    s03 = db.Column(db.Integer, nullable=False, unique=False, primary_key=False)
-    s04 = db.Column(db.Integer, nullable=False, unique=False, primary_key=False)
-    s05 = db.Column(db.Integer, nullable=False, unique=False, primary_key=False)
-    s06 = db.Column(db.Integer, nullable=False, unique=False, primary_key=False)
-    s07 = db.Column(db.Integer, nullable=False, unique=False, primary_key=False)
-    s08 = db.Column(db.Integer, nullable=False, unique=False, primary_key=False)
-    s09 = db.Column(db.Integer, nullable=False, unique=False, primary_key=False)
-    s10 = db.Column(db.Integer, nullable=False, unique=False, primary_key=False)
+    s01 = db.Column(db.Integer, nullable=False, unique=False)
+    s02 = db.Column(db.Integer, nullable=False, unique=False)
+    s03 = db.Column(db.Integer, nullable=False, unique=False)
+    s04 = db.Column(db.Integer, nullable=False, unique=False)
+    s05 = db.Column(db.Integer, nullable=False, unique=False)
+    s06 = db.Column(db.Integer, nullable=False, unique=False)
+    s07 = db.Column(db.Integer, nullable=False, unique=False)
+    s08 = db.Column(db.Integer, nullable=False, unique=False)
+    s09 = db.Column(db.Integer, nullable=False, unique=False)
+    s10 = db.Column(db.Integer, nullable=False, unique=False)
 
     def set_values(self, a_list):
         """Set values."""
@@ -84,12 +84,11 @@ class Wifi(UserMixin, db.Model):
                      nullable=False,
                      unique=False)          # False bc another user account can use same network
     password = db.Column(db.String(200),
-                         primary_key=False,
-                         unique=False,
-                         nullable=True)     # Handle networks w/o pw
+                         nullable=True,
+                         unique=False)     # Handle networks w/o pw
     active = db.Column(db.Integer,
-                       unique=False,
-                       nullable=False)
+                       nullable=False,
+                       unique=False)
 
     def set_password(self, password, hash_it=False):
         """Create hashed (or not) password."""
