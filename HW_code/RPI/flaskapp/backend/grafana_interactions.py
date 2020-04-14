@@ -7,7 +7,7 @@ from config import ConfigRPI
 # Login to the grafana api through the library
 # TODO: user and password? better via httpS?
 grafana_api = GrafanaFace(auth=('admin', 'admin'), host=ConfigRPI.SHORT_SERVER_URL, port=3001)
-host = 'http://admin:admin@' + ConfigRPI.SHORT_SERVER_URL
+host = 'http://admin:admin@' + ConfigRPI.SHORT_SERVER_URL + ':3001'
 
 
 # ORGANIZATIONS
@@ -70,6 +70,7 @@ def _delete_organization(org_name):
 
 
 # USERS
+
 def _get_all_users():  # returns all users of the selected organization
     url = host + '/api/org/users'
     response = requests.get(url)
@@ -108,7 +109,8 @@ def _assign_user_to_organization(organization, user, role):
     url = host + '/api/orgs/' + str(org_id) + '/users'
     data = {
         "loginOrEmail": user["login"],
-        "role": str(role)
+        "role": str(role),
+
     }
     headers = {"Content-Type": 'application/json'}
     response = requests.post(url, json=data, headers=headers)
@@ -150,18 +152,18 @@ def _remove_user_from_org(user_login):
 
 
 # DATASOURCES
-# TODO: user and password? URL?
 def _create_datasource(name, database, admin_name, admin_pass):
     url = host + '/api/datasources'
     data = {
         "name": name,
         "type": "influxdb",
-        "url": "http://influxdb:8086",
-        "access": "proxy",          # vs direct/proxy
-        "password": "mainflux",     # admin_pass,
-        "user": "mainflux",         # admin_name,
+        "url": "http://localhost:8086",
+        "access": "direct",  # vs proxy
+        "password": admin_pass,
+        "user": admin_name,
         "database": database,
-        "httpMode": "GET"           # very important field!!!
+        "httpMode": "GET"  # very important field!!!
+
     }
     headers = {"Content-Type": 'application/json'}
     response = requests.post(url, json=data, headers=headers)
@@ -169,15 +171,16 @@ def _create_datasource(name, database, admin_name, admin_pass):
 
 
 def _delete_datasource(datasource_name):
-    url = host + "/api/datasources/name/" + str(datasource_name)
+    url = host + '/api/datasources/name/' + str(datasource_name)
     headers = {"Content-Type": 'application/json'}
     response = requests.delete(url, headers=headers)
     print(response.text)
 
 
 # DASHBOARDS
+
 def _create_dashboard(name):
-    url = host + "/api/dashboards/db"
+    url = host + '/api/dashboards/db'
     headers = {"Content-Type": 'application/json'}
     data = {
         "dashboard": {
@@ -196,372 +199,25 @@ def _create_dashboard(name):
     print(response.text)
 
 
-def _update_dashboard(name, id, datasource_name, measurement1, parameter1, measurement2, parameter2, measurement3,
-                      parameter3):
+def _update_dashboard(dash_json, name, uid):
     # future versions: add time intervals too
-    url = host + "/api/dashboards/db"
+    url = host + '/api/dashboards/db'
     headers = {"Content-Type": 'application/json'}
-    data = {
-        "dashboard": {
-            "id": id,
-            "title": name,
-            "panels": [
-                {
-                    "aliasColors": {},
-                    "bars": False,
-                    "dashLength": 10,
-                    "dashes": False,
-                    "datasource": datasource_name,
-                    "fill": 1,
-                    "fillGradient": 0,
-                    "gridPos": {
-                        "h": 8,
-                        "w": 12,
-                        "x": 0,
-                        "y": 0
-                    },
-                    "id": 6,
-                    "legend": {
-                        "avg": False,
-                        "current": False,
-                        "max": False,
-                        "min": False,
-                        "show": True,
-                        "total": False,
-                        "values": False
-                    },
-                    "lines": True,
-                    "linewidth": 1,
-                    "nullPointMode": "null",
-                    "options": {
-                        "dataLinks": []
-                    },
-                    "percentage": False,
-                    "pointradius": 2,
-                    "points": False,
-                    "renderer": "flot",
-                    "seriesOverrides": [],
-                    "spaceLength": 10,
-                    "stack": False,
-                    "steppedLine": False,
-                    "targets": [
-                        {
-                            "groupBy": [],
-                            "measurement": measurement1,
-                            "orderByTime": "ASC",
-                            "policy": "default",
-                            "refId": "A",
-                            "resultFormat": "time_series",
-                            "select": [
-                                [
-                                    {
-                                        "params": [
-                                            "value"
-                                        ],
-                                        "type": "field"
-                                    }
-                                ]
-                            ],
-                            "tags": [
-                                {
-                                    "key": "name",
-                                    "operator": "=",
-                                    "value": parameter1
-                                }
-                            ]
-                        }
-                    ],
-                    "thresholds": [],
-                    "timeFrom": None,
-                    "timeRegions": [],
-                    "timeShift": None,
-                    "title": str(measurement1) + " " + str(parameter1),
-                    "tooltip": {
-                        "shared": True,
-                        "sort": 0,
-                        "value_type": "individual"
-                    },
-                    "type": "graph",
-                    "xaxis": {
-                        "buckets": None,
-                        "mode": "time",
-                        "name": None,
-                        "show": True,
-                        "values": []
-                    },
-                    "yaxes": [
-                        {
-                            "format": "short",
-                            "label": None,
-                            "logBase": 1,
-                            "max": None,
-                            "min": None,
-                            "show": True
-                        },
-                        {
-                            "format": "short",
-                            "label": None,
-                            "logBase": 1,
-                            "max": None,
-                            "min": None,
-                            "show": True
-                        }
-                    ],
-                    "yaxis": {
-                        "align": False,
-                        "alignLevel": None
-                    }
-                },
-                {
-                    "aliasColors": {},
-                    "bars": False,
-                    "dashLength": 10,
-                    "dashes": False,
-                    "datasource": datasource_name,
-                    "fill": 1,
-                    "fillGradient": 0,
-                    "gridPos": {
-                        "h": 8,
-                        "w": 12,
-                        "x": 0,
-                        "y": 8
-                    },
-                    "id": 4,
-                    "legend": {
-                        "avg": False,
-                        "current": False,
-                        "max": False,
-                        "min": False,
-                        "show": True,
-                        "total": False,
-                        "values": False
-                    },
-                    "lines": True,
-                    "linewidth": 1,
-                    "nullPointMode": "null",
-                    "options": {
-                        "dataLinks": []
-                    },
-                    "percentage": False,
-                    "pointradius": 2,
-                    "points": False,
-                    "renderer": "flot",
-                    "seriesOverrides": [],
-                    "spaceLength": 10,
-                    "stack": False,
-                    "steppedLine": False,
-                    "targets": [
-                        {
-                            "groupBy": [],
-                            "measurement": measurement2,
-                            "orderByTime": "ASC",
-                            "policy": "default",
-                            "refId": "A",
-                            "resultFormat": "time_series",
-                            "select": [
-                                [
-                                    {
-                                        "params": [
-                                            "value"
-                                        ],
-                                        "type": "field"
-                                    }
-                                ]
-                            ],
-                            "tags": [
-                                {
-                                    "key": "name",
-                                    "operator": "=",
-                                    "value": parameter2
-                                }
-                            ]
-                        }
-                    ],
-                    "thresholds": [],
-                    "timeFrom": None,
-                    "timeRegions": [],
-                    "timeShift": None,
-                    "title": str(measurement2) + " " + str(parameter2),
-                    "tooltip": {
-                        "shared": True,
-                        "sort": 0,
-                        "value_type": "individual"
-                    },
-                    "type": "graph",
-                    "xaxis": {
-                        "buckets": None,
-                        "mode": "time",
-                        "name": None,
-                        "show": True,
-                        "values": []
-                    },
-                    "yaxes": [
-                        {
-                            "format": "short",
-                            "label": None,
-                            "logBase": 1,
-                            "max": None,
-                            "min": None,
-                            "show": True
-                        },
-                        {
-                            "format": "short",
-                            "label": None,
-                            "logBase": 1,
-                            "max": None,
-                            "min": None,
-                            "show": True
-                        }
-                    ],
-                    "yaxis": {
-                        "align": False,
-                        "alignLevel": None
-                    }
-                },
 
-                {
-                    "aliasColors": {},
-                    "bars": False,
-                    "dashLength": 10,
-                    "dashes": False,
-                    "datasource": datasource_name,
-                    "fill": 1,
-                    "fillGradient": 0,
-                    "gridPos": {
-                        "h": 9,
-                        "w": 12,
-                        "x": 0,
-                        "y": 0
-                    },
-                    "id": 2,
-                    "legend": {
-                        "avg": False,
-                        "current": False,
-                        "max": False,
-                        "min": False,
-                        "show": True,
-                        "total": False,
-                        "values": False
-                    },
-                    "lines": True,
-                    "linewidth": 1,
-                    "nullPointMode": "null",
-                    "options": {
-                        "dataLinks": []
-                    },
-                    "percentage": False,
-                    "pointradius": 2,
-                    "points": False,
-                    "renderer": "flot",
-                    "seriesOverrides": [],
-                    "spaceLength": 10,
-                    "stack": False,
-                    "steppedLine": False,
-                    "targets": [
-                        {
-                            "groupBy": [],
-                            "measurement": measurement3,
-                            "orderByTime": "ASC",
-                            "policy": "default",
-                            "refId": "A",
-                            "resultFormat": "time_series",
-                            "select": [
-                                [
-                                    {
-                                        "params": [
-                                            "value"
-                                        ],
-                                        "type": "field"
-                                    }
-                                ]
-                            ],
-                            "tags": [
-                                {
-                                    "key": "name",
-                                    "operator": "=",
-                                    "value": parameter3
-                                }
-                            ]
-                        }
-                    ],
-                    "thresholds": [],
-                    "timeFrom": None,
-                    "timeRegions": [],
-                    "timeShift": None,
-                    "title": str(measurement3) + ' ' + str(parameter3),
-                    "tooltip": {
-                        "shared": True,
-                        "sort": 0,
-                        "value_type": "individual"
-                    },
-                    "type": "graph",
-                    "xaxis": {
-                        "buckets": None,
-                        "mode": "time",
-                        "name": None,
-                        "show": True,
-                        "values": []
-                    },
-                    "yaxes": [
-                        {
-                            "format": "short",
-                            "label": None,
-                            "logBase": 1,
-                            "max": None,
-                            "min": None,
-                            "show": True
-                        },
-                        {
-                            "format": "short",
-                            "label": None,
-                            "logBase": 1,
-                            "max": None,
-                            "min": None,
-                            "show": True
-                        }
-                    ],
-                    "yaxis": {
-                        "align": False,
-                        "alignLevel": None
-                    }
-                }
-            ],
-            "refresh": False,
-            "schemaVersion": 19,
-            "style": "dark",
-            "tags": [],
-            "templating": {
-                "list": []
-            },
-            "time": {
-                "from": "now-24h",
-                "to": "now"
-            },
-            "timepicker": {
-                "refresh_intervals": [
-                    "5s",
-                    "10s",
-                    "30s",
-                    "1m",
-                    "5m",
-                    "15m",
-                    "30m",
-                    "1h",
-                    "2h",
-                    "1d"
-                ]
-            },
+    dash_json['title'] = name
+    dash_json['uid'] = uid
+    dash_json["refresh"] = "30s"  # default refresh rate
+    data = {}
+    data["dashboard"] = dash_json
+    data["folderId"] = 0
+    data["overwrite"] = True
 
-        },
-        "folderId": 0,
-        "overwrite": True  # dashboard exists
-    }
     response = requests.post(url, json=data, headers=headers)
     print(response.text)
 
 
 def _get_dashboard_uid(dash_title):
-    url = host + "/api/search?folderIds=0&query=&starred=false"
+    url = host + '/api/search?folderIds=0&query=&starred=false'
     headers = {"Content-Type": 'application/json'}
     response = requests.get(url, headers=headers)
     # print (response.text)
@@ -576,7 +232,7 @@ def _get_dashboard_json(dash_title, org):
     _change_current_organization_to(org)
     dash_uid = _get_dashboard_uid(dash_title)
     if dash_uid != 0:
-        url = host + "/api/dashboards/uid/" + str(dash_uid)
+        url = host + '/api/dashboards/uid/' + str(dash_uid)
         headers = {"Content-Type": 'application/json'}
         response = requests.get(url, headers=headers)
 
@@ -591,7 +247,7 @@ def _delete_dashboard(dash_title):
     dash_uid = _get_dashboard_uid(dash_title)
     if dash_uid != 0:
         print("deleting dashboard ...", dash_title)
-        url = host + "/api/dashboards/uid/" + str(dash_uid)
+        url = host + '/api/dashboards/uid/' + str(dash_uid)
         headers = {"Content-Type": 'application/json'}
         response = requests.delete(url, headers=headers)
         print(response.text)

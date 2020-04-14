@@ -1,8 +1,10 @@
 """Grafana bootstrap."""
+import json
+
 import flaskapp.backend.grafana_interactions as gr
 
 
-def grafana_bootstrap(name, organization, email, password, channel_id):
+def bootstrap(name, organization, email, password, channel_id):
     user = {}
     print("Bootstrapping grafana")
     user["name"] = str(name)
@@ -10,7 +12,8 @@ def grafana_bootstrap(name, organization, email, password, channel_id):
     local, at, domain = email.rpartition('@')
     user["login"] = str(local)
     user["password"] = str(password)
-
+    with open('flaskapp/backend/dashboard.json') as f:
+        dash_json = json.load(f)
     org = str(organization)
     org_database_name = str(channel_id)
 
@@ -28,9 +31,9 @@ def grafana_bootstrap(name, organization, email, password, channel_id):
     print("******creating default organization dashboard")
     org_dashboard_name = str(org) + '_default_dashboard'
     gr._create_dashboard(org_dashboard_name)
+    print("******updating default organization dashboard")
     org_dashboard_uid = gr._get_dashboard_uid(org_dashboard_name)
-    gr._update_dashboard(org_dashboard_name, org_dashboard_uid, org_database_name, "messages", "Temperature",
-                         "messages", "PH", "messages", "DO")
+    gr._update_dashboard(dash_json, org_dashboard_name, org_dashboard_uid)
 
     print("******Adding users as editors")
     if (gr._user_check(org, user["login"]) == 0):  # check if user exists, if not create it
@@ -39,8 +42,7 @@ def grafana_bootstrap(name, organization, email, password, channel_id):
         gr._assign_user_to_organization(org, user, "Editor")
     else:
         print("username ", user["login"], " already exists in this organization")
-    # remove the created users from the default grafana organization, to ensure default screen has the default
-    # dashboards
+    # remove the created users from the default grafana organization, to ensure default screen has the default dashboards
     print("removing user from Main Org.")
     gr._change_current_organization_to("Main Org.")
     gr._remove_user_from_org(user["login"])

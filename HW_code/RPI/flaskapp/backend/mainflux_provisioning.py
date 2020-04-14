@@ -177,32 +177,60 @@ def register_node(name, organization, email, password):
     node_id = get_node_id()
     node_name = 'node ' + str(node_id)
 
+    registration_ok = False
+
     # ONLY for TESTING: Load tokens from txt file, so no need to connect to mainflux (user already was created)
-    if False:
-        # Try to create Mainflux account
-        create_account(email, password)
-        account_token = get_account_token(email, password)
+    if True:
+        try:
+            create_account(email, password)
+            account_token = get_account_token(email, password)
 
-        create_thing(account_token, node_name, "device")
-        thing_id = return_thing_id(account_token, node_name)
-        thing_key = return_thing_key(account_token, node_name)
+            create_thing(account_token, "node 1", "device")
+            thing1_id = return_thing_id(account_token, "node 1")
+            thing1_key = return_thing_key(account_token, "node 1")
 
-        create_channel(account_token, "comm_channel")
-        channel_id = return_channel_id(account_token, "comm_channel")
-        connect_to_channel(account_token, channel_id, thing_id)
+            create_thing(account_token, "app", "application")
+            thing2_id = return_thing_id(account_token, "app")
+            thing2_key = return_thing_key(account_token, "app")
+            create_channel(account_token, "comm_channel")
+            channel_id = return_channel_id(account_token, "comm_channel")
 
-        # Try to create Grafana account
-        grafana.bootstrap(name, organization, email, password, channel_id)
-        print("accounts and objects created, exporting variables")
-    dictionary = eval(open("tokens.txt").read())
-    account_token = dictionary['account_token']
-    thing_id = dictionary['thing1_id']
-    thing_key = dictionary['thing1_key']
-    channel_id = dictionary['channel_id']
+            connect_to_channel(account_token, channel_id, thing1_id)
+            connect_to_channel(account_token, channel_id, thing2_id)
 
-    # Add tokens to rpi database
-    update_tokens_values(account_token, thing_id, thing_key, channel_id)
-    # update_tokens_table_database(engine, account_token, thing_id, thing_key, channel_id)
-    return True
+            # Add tokens to rpi database
+            update_tokens_values(account_token, thing1_id, thing1_key, channel_id)
 
+            # Try to create Grafana account
+            grafana.bootstrap(name, organization, email, password, channel_id)
+            print("accounts and objects created, exporting variables")
 
+            registration_ok = True
+
+            import json
+            dictionary = {}
+            dictionary['account_token'] = account_token
+            dictionary['thing1_id'] = thing1_id
+            dictionary['thing1_key'] = thing1_key
+            dictionary['thing2_id'] = thing2_id
+            dictionary['thing2_key'] = thing2_key
+            dictionary['channel_id'] = channel_id
+            f = open('tokens.txt', 'w')
+            f.write(json.dumps(dictionary))
+            f.close()
+
+        except:
+            registration_ok = False
+    else:
+        dictionary = eval(open("tokens.txt").read())
+        account_token = dictionary['account_token']
+        thing_id = dictionary['thing1_id']
+        thing_key = dictionary['thing1_key']
+        channel_id = dictionary['channel_id']
+
+        # Add tokens to rpi database
+        update_tokens_values(account_token, thing_id, thing_key, channel_id)
+
+        registration_ok = True
+
+    return registration_ok

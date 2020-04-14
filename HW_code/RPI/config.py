@@ -1,4 +1,5 @@
-"""Flask config class."""
+"""Config class."""
+import os
 
 
 class ConfigFlaskApp:
@@ -10,11 +11,13 @@ class ConfigFlaskApp:
     # General Config
     TESTING = False
     DEBUG = False
-    SECRET_KEY = '\xfd{H\_5#y2LF4Q8z\n\xec]/\xfd{H'
-    SESSION_COOKIE_NAME = 'my_cookie'
+    # TODO: each node should have a different secret, read from db if exists else random create it and store it in db
+    SECRET_KEY = b'Sl:\x9d\xcc}{\x13\x19\xabuQ\x87\xa7\x91\xa5'     # os.urandom(16)
+    SESSION_COOKIE_NAME = str(os.urandom(6))
+    PERMANENT_SESSION_LIFETIME = 120    # seconds
 
     # ENV Config
-    FLASK_ENV = 'development'
+    FLASK_ENV = 'production'
 
     # DB Config
     SQLALCHEMY_DATABASE_URI = 'sqlite:///database/db.sqlite'
@@ -39,8 +42,10 @@ class ConfigRPI:
     Set RPI configuration vars.
     """
     # Backend server Mainflux
-    SERVER_URL = 'https://54.171.128.181'
-    SHORT_SERVER_URL = SERVER_URL[8:]
+    SERVER_URL = 'http://localhost'     # 'https://54.171.128.181'
+    SHORT_SERVER_URL = 'localhost'
+    print(' Currently configured to connect to localhost MainFlux !!! ')
+    #SHORT_SERVER_URL = SERVER_URL[8:]
 
     # Local database
     DATABASE_URI = 'sqlite:///flaskapp/database/db.sqlite'

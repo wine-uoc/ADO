@@ -18,9 +18,13 @@ compile_main_assets(app)
 @main_bp.route('/', methods=['GET', 'POST'])
 @login_required
 def dashboard():
-    """Node configuration page."""
+    """
+    Node configuration page.
+    GET:
+    Show active sensors from database, allow enable/disable sensors, show menu options.
+    """
     str_current_config = ['checked' if sensor_sr != 0 else '' for sensor_sr in get_config_obj().get_values()]
-    # srt list of 'checked' if sensor sampling rate is not 0 else '' (checked is passed to html checkbox)
+    # str list of 'checked' if sensor sampling rate is not 0 else '' (checked is passed to html checkbox)
 
     return render_template('dashboard.jinja2',
                            title='Configuration - ADO',
@@ -108,7 +112,8 @@ def get_post_js_data_setsensor():
     str_sensor_num = request.form['sensor_num']  # Data from js
     state = request.form['box_state']
 
-    sensor_dx = int(str_sensor_num[-2:]) - 1
+    sensor_idx = int(str_sensor_num[-2:]) - 1
     new_value = app.config['DEFAULT_SR'] if state == 'true' else 0
-    update_config_values(sensor_dx, new_value)
+
+    update_config_values(sensor_idx, new_value)
     return state

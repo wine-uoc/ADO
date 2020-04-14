@@ -7,12 +7,13 @@ import time
 import serial
 
 from arduinoapp import RPi_client, RPi_publish_data, RPi_commands
+from arduinoapp.db_management import check_table_database
 
 CmdType = RPi_commands.CmdType
 SensorType = RPi_commands.SensorType
 
 
-def create_threads():
+def create_threads(ser):
     serialcmd, periodicity = RPi_commands.get_config()
     size = len(serialcmd)  # number of configs we have
     for i in range(1, size + 1):
@@ -95,8 +96,15 @@ def main():
     logging.debug("####################### Creating TX_lock #######################")
     tx_lock = threading.Lock()
 
+    # Wait until table exists in db
+    # ASSUMPTION: the script can be called before user registers in flaskapp
+    engine, exists = None, False
+    while not exists:
+        engine, exists = check_table_database(engine)
+        time.sleep(1)  # seconds
+
     logging.debug('####################### Creating Command Threads #######################')
-    create_threads()
+    create_threads(ser)
 
     logging.debug("####################### Running periodic threads #######################")
 
