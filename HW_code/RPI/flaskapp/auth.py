@@ -5,7 +5,7 @@ from flask_login import current_user, login_user, logout_user
 
 from . import login_manager
 from .assets import compile_auth_assets
-from .backend.mainflux_provisioning import register_node
+from .backend.mainflux_provisioning import register_node_backend
 from .control import sign_up_database, validate_user, delete_tables_entries
 from .forms import LoginForm, SignupForm
 from .models import User
@@ -30,30 +30,34 @@ def signup():
     redirect user to the logged-in node configuration page.
     """
     if current_user.is_authenticated:
-        return redirect(url_for('main_bp.dashboard'))   # Bypass if user is logged in
+        return redirect(url_for('main_bp.dashboard'))  # Bypass if user is logged in
 
     signup_form = SignupForm()
     if request.method == 'POST' and signup_form.validate_on_submit():
-        # Check user exists, try to initialize user and all tables in db
-        error_msg, user = sign_up_database(signup_form.name.data,
-                                           signup_form.org.data,
-                                           signup_form.email.data,
-                                           signup_form.password.data)
-        if user:
-            login_user(user)  # Log in as newly created user
-            # User data provisioning to Mainflux and Grafana
-            if register_node(signup_form.name.data,
-                             signup_form.org.data,
-                             signup_form.email.data,
-                             signup_form.password.data):
+        # Initialize user and all associated tables in db in RPI
+        error_msg, user, node_id = sign_up_database(signup_form.name.data,
+                                                    signup_form.org.data,
+                                                    signup_form.email.data,
+                                                    signup_form.password.data)
+        if not error_msg:
+            login_user(user)  # Log in as newly created user (to allow queries using current_user)
+            # User data provisioning to backend
+            error_msg = register_node_backend(signup_form.name.data,
+                                              signup_form.org.data,
+                                              signup_form.email.data,
+                                              signup_form.password.data,
+                                              node_id)
+            if not error_msg:
+                # Registration OK, app log in and proceed
                 return redirect(url_for('main_bp.dashboard'))
-            else:
-                delete_tables_entries()     # If error delete data in db
-                logout_user()
-                error_msg = 'An error occurred while trying to create Mainflux or Grafana account. Please try again.'
+            # If error in backend provisioning, delete stored data in tables of RPI db
+            logout_user()
+            delete_tables_entries()
+
         flash(error_msg)
         return redirect(url_for('auth_bp.signup'))
 
+    flash("This will link the node to your organization's account. A new account will be created if you don't have one.")
     return render_template('signup.jinja2',
                            title='Create account - ADO',
                            form=signup_form,
@@ -70,7 +74,7 @@ def login():
     POST: If form is valid and new user creation succeeds, redirect user to the logged-in homepage.
     """
     if current_user.is_authenticated:
-        return redirect(url_for('main_bp.dashboard'))   # Bypass if user is logged in
+        return redirect(url_for('main_bp.dashboard'))  # Bypass if user is logged in
 
     login_form = LoginForm()
     if request.method == 'POST' and login_form.validate_on_submit():
@@ -103,4 +107,3 @@ def unauthorized():
     """Redirect unauthorized users to Login page."""
     flash('You must be logged in to view the page.')
     return redirect(url_for('auth_bp.login'))
-

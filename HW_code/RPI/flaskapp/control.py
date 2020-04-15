@@ -108,14 +108,15 @@ def sign_up_database(name, org, email, password):
         db.session.add(wifi)
         db.session.add(tokens)
         db.session.commit()
-        return None, user
+        return False, user, tokens.node_id
     else:
         # already exists an account associated to this node
         if existing_user.email == email:
             # email taken
-            return 'A user already exists with that email address.', None
+            error_msg = 'This node is already registered with that email address. Log in to configure it.'
+            return error_msg, None, None
         else:
             # node registered to other account
-            error_msg = 'This node is linked to: {}. To link it to another account, log in and reset the ' \
+            error_msg = 'This node is linked to: {}! To link it to another account, log in and reset the ' \
                         'node to factory settings.'.format(existing_user.email)
-            return error_msg, None
+            return error_msg, None, None

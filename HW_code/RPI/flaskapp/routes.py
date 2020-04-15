@@ -85,6 +85,7 @@ def logout():
 @login_required
 def delete():
     """Factory reset. Delete entries one by one for each table (or delete database file?)"""
+    # TODO: disconnect thing of channel (backend)
     delete_tables_entries()
     logout_user()
     return redirect(url_for('main_bp.dashboard'))
