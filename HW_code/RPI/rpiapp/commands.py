@@ -1,5 +1,8 @@
 from enum import Enum
 
+from config import ConfigRPI
+from rpiapp.db_management import get_table_database
+
 
 class CmdType(Enum):
 	read = 0
@@ -44,10 +47,8 @@ def get_config():
 	serialcmd: dict
 	periodicity: dict
 	"""
-	from config import get_table_database, ConfigRPI
-
 	node_config = get_table_database(None, 'nodeconfig')
-	sampling_rates = list(node_config[1:])				# Get only sampling rates ([0] is id, rest are sensors)
+	sampling_rates = list(node_config[1:])				# Get only sampling rates ([0] is id, rest are sensors sr)
 
 	# Create commands only if user has enabled one sensor at least
 	if sum(sampling_rates) > 0:

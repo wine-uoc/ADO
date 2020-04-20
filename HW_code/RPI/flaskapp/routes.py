@@ -116,5 +116,6 @@ def get_post_js_data_setsensor():
     sensor_idx = int(str_sensor_num[-2:]) - 1
     new_value = app.config['DEFAULT_SR'] if state == 'true' else 0
 
+    # update rpi db
     update_config_values(sensor_idx, new_value)
     return state

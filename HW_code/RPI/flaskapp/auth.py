@@ -40,7 +40,7 @@ def signup():
                                                     signup_form.email.data,
                                                     signup_form.password.data)
         if not error_msg:
-            login_user(user)  # Log in as newly created user (to allow queries using current_user)
+            login_user(user)  # Log in as newly created user (first, to allow queries using current_user)
             # User data provisioning to backend
             error_msg = register_node_backend(signup_form.name.data,
                                               signup_form.org.data,
