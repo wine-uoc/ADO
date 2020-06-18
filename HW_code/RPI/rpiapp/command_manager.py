@@ -6,15 +6,15 @@ import time
 
 import serial
 
-from rpiapp import publish_data, commands
+from rpiapp import arduino_publish_data, arduino_commands, ini_client
 from rpiapp.db_management import check_table_database
 
-CmdType = commands.CmdType
-SensorType = commands.SensorType
+CmdType = arduino_commands.CmdType
+SensorType = arduino_commands.SensorType
 
 
 def create_threads(ser):
-    serialcmd, periodicity = commands.get_config()
+    serialcmd, periodicity = arduino_commands.get_config()
     size = len(serialcmd)  # number of configs we have
     for i in range(1, size + 1):
         # timer is given by expressing a delay
@@ -55,7 +55,7 @@ def ReceiveThread(ser, serialcmd):
     # debug messages
     logging.debug('executing thread %s', threading.currentThread().getName())
     logging.debug('%s', serialcmd)
-    cmdtype, pinType, pinNb = commands.parse_cmd(serialcmd)
+    cmdtype, pinType, pinNb = arduino_commands.parse_cmd(serialcmd)
     logging.debug('pinType %s', pinType)
     logging.debug('pinNb %s', pinNb)
     # set a timeout for waiting for serial
@@ -67,11 +67,11 @@ def ReceiveThread(ser, serialcmd):
             response = ser.readline()
             response = response.decode('utf-8')
             logging.debug("%s", str(response))
-            if publish_data.valid_data(response, pinType, pinNb):
+            if arduino_publish_data.valid_data(response, pinType, pinNb):
                 no_answer_pending = True
                 # if (item["pinType"]) == str(SensorType["onewire"].value):
                 if pinType == int(SensorType["onewire"].value):
-                    publish_data.pack_data_onewire(response, client, topic)
+                    arduino_publish_data.pack_data_onewire(response, client, topic)
                     tx_lock.release()
                 else:
                     tx_lock.release()
@@ -88,7 +88,7 @@ def main():
     logging.basicConfig(format=format, level=logging.DEBUG, datefmt="%H:%M:%S")
 
     logging.debug("####################### Initializing mqtt broker for client #######################")
-    client, topic = client.initialize_client()
+    client, topic = ini_client.initialize_client()
 
     logging.debug("####################### Setting serial interface #######################")
     ser = serial.Serial(port='/dev/ttyACM0', baudrate=9600)

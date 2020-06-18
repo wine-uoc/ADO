@@ -190,7 +190,6 @@ def register_node_backend(name, organization, email, password, node_id):
 
     error_msg = False
     node_name = str(node_id) + '_device'
-    # node_app_name = str(node_id) + '_app'
     channel_name = 'comm_channel'  # unique for each organization
 
     # Triple check: account exists, email and pw OK
@@ -230,11 +229,6 @@ def register_node_backend(name, organization, email, password, node_id):
         thing_id = return_thing_id(token, node_name)
         thing_key = return_thing_key(token, node_name)
 
-        # # create app
-        # _ = create_thing(token, node_app_name, 'application')
-        # thing2_id = return_thing_id(token, node_app_name)
-        # thing2_key = return_thing_key(token, node_app_name)
-
         # create and connect to new channel
         _ = create_channel(token, channel_name)
         channel_id = return_channel_id(token, channel_name)
@@ -248,6 +242,6 @@ def register_node_backend(name, organization, email, password, node_id):
 
     if not response_c1.ok and not response_c2.ok:
         # Account exists in ADO, but password does not match.
-        error_msg = 'Incorrect password, cannot register the node to that account.'
+        error_msg = 'Incorrect password for that account. Try again.'
 
     return error_msg

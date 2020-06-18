@@ -69,9 +69,20 @@ def _delete_organization(org_name):
         print("organization does not exist")
 
 
-# USERS
+def update_preferences_org(dash_id):
+    url = host + '/api/org/preferences'
+    headers = {"Content-Type": 'application/json'}
+    data = {
+        "theme": "dark",
+        "homeDashboardId": dash_id,
+        "timezone": "browser"
+    }
+    response = requests.put(url, json=data, headers=headers)
+    print(response.text)
 
-def _get_all_users():  # returns all users of the selected organization
+
+# USERS
+def _get_all_users_org():  # returns all users of the selected organization
     url = host + '/api/org/users'
     response = requests.get(url)
     user_list = response.json()
@@ -83,7 +94,7 @@ def _get_all_users():  # returns all users of the selected organization
 def _user_check(user_org, user):
     # switch to user_org
     _change_current_organization_to(user_org)
-    user_list = _get_all_users()
+    user_list = _get_all_users_org()
     for i in range(len(user_list)):
         if user_list[i]['login'] == user:
             return user_list[i]['userId']
@@ -151,6 +162,25 @@ def _remove_user_from_org(user_login):
         print(response.text)
 
 
+def _star_dashboard(dash_id):
+    url = host + '/api/user/stars/dashboard/' + str(dash_id)
+    headers = {"Content-Type": 'application/json'}
+    response = requests.post(url, headers=headers)
+    print(response.text)
+
+
+def update_preferences_user(dash_id):
+    url = host + '/api/user/preferences'
+    headers = {"Content-Type": 'application/json'}
+    data = {
+        "theme": "dark",
+        "homeDashboardId": dash_id,
+        "timezone": "browser"
+    }
+    response = requests.put(url, json=data, headers=headers)
+    print(response.text)
+
+
 # DATASOURCES
 def _create_datasource(name, database, admin_name, admin_pass):
     url = host + '/api/datasources'
@@ -163,11 +193,11 @@ def _create_datasource(name, database, admin_name, admin_pass):
         "user": admin_name,
         "database": database,
         "httpMode": "GET"  # very important field!!!
-
     }
     headers = {"Content-Type": 'application/json'}
     response = requests.post(url, json=data, headers=headers)
     print(response.text)
+    return response.json()["datasource"]["id"]
 
 
 def _delete_datasource(datasource_name):
@@ -177,9 +207,31 @@ def _delete_datasource(datasource_name):
     print(response.text)
 
 
-# DASHBOARDS
+def add_persmission_datasource(data_source_id, user_id):
+    url = host + '/api/datasources/' + str(data_source_id) + '/permissions'
+    data = {
+        "userId": user_id,
+        "permission": 1
+    }
+    headers = {"Content-Type": 'application/json'}
+    response = requests.post(url, json=data, headers=headers)
+    print(response.text)
 
-def _create_dashboard(name):
+
+# DASHBOARDS
+def _create_dashboard(dash_json):
+    url = host + '/api/dashboards/db'
+    headers = {"Content-Type": 'application/json'}
+    data = {}
+    data["dashboard"] = dash_json
+    data["folderId"] = 0
+    data["overwrite"] = True
+    response = requests.post(url, json=data, headers=headers)
+    print(response.text)
+    return response.json()["id"]
+
+
+def _create_dashboard_old(name):
     url = host + '/api/dashboards/db'
     headers = {"Content-Type": 'application/json'}
     data = {
@@ -206,7 +258,7 @@ def _update_dashboard(dash_json, name, uid):
 
     dash_json['title'] = name
     dash_json['uid'] = uid
-    dash_json["refresh"] = "30s"  # default refresh rate
+    dash_json["refresh"] = "5s"  # default refresh rate
     data = {}
     data["dashboard"] = dash_json
     data["folderId"] = 0
@@ -235,7 +287,6 @@ def _get_dashboard_json(dash_title, org):
         url = host + '/api/dashboards/uid/' + str(dash_uid)
         headers = {"Content-Type": 'application/json'}
         response = requests.get(url, headers=headers)
-
         data = response.json()
         print("************************************")
         print(data['dashboard']['panels'])
@@ -253,3 +304,30 @@ def _delete_dashboard(dash_title):
         print(response.text)
     else:
         print("dashboard does not exist")
+
+
+# NOTIFICATIONS
+def _get_notification_channels():
+    """GET /api/alert-notifications
+    HTTP / 1.1
+    Accept: application / json
+    Content - Type: application / json
+    Authorization: Bearer eyJrIjoiT0tTcG1pUlY2RnVKZTFVaDFsNFZXdE9ZWmNrMkZYbk
+    """
+    url = host + '/api/alert-notifications'
+    headers = {"Content-Type": 'application/json'}
+    response = requests.get(url, headers=headers)
+    print(response.text)
+
+
+def _create_notification_channels(data):
+    """GET /api/alert-notifications
+    HTTP / 1.1
+    Accept: application / json
+    Content - Type: application / json
+    Authorization: Bearer eyJrIjoiT0tTcG1pUlY2RnVKZTFVaDFsNFZXdE9ZWmNrMkZYbk
+    """
+    url = host + '/api/alert-notifications'
+    headers = {"Content-Type": 'application/json'}
+    response = requests.post(url, json=data, headers=headers)
+    print(response.text)

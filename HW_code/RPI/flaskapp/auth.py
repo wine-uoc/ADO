@@ -57,7 +57,8 @@ def signup():
         flash(error_msg)
         return redirect(url_for('auth_bp.signup'))
 
-    flash("This will link the node to your organization's account. A new account will be created if you don't have one.")
+    flash("This registration procedure will link the node to the account provided. A new account will be created "
+          "if you don't have one.")
     return render_template('signup.jinja2',
                            title='Create account - ADO',
                            form=signup_form,

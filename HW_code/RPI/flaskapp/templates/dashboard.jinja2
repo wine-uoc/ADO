@@ -11,82 +11,83 @@
 
         <h1 style="margin-top: 80px">Node Configuration</h1>
 
-        <p style="border-bottom: 1px solid lightblue; margin-bottom: 1px">You are logged as: {{ current_user.email }}</p>
+        <p style="border-bottom: 1px solid lightblue; margin-bottom: 1px">This node is linked to: {{ current_user.email }}</p>
 
         <div class="row" style="margin-top: 30px; margin-bottom: 30px">
             <div class="column">
                 <p style="font-size: 1rem">Unique Node ID: {{ node_id }}</p>
+                <p style="font-size: 1rem">Set node name</p>
                 <img src="{{ url_for('static', filename='dist/img/node.png') }}">
             </div>
             <div class="column">
-                <p style="font-size: 1rem">Select available sensors:</p>
+                <p style="font-size: 1rem">Check active sensors:</p>
 
 {#                https://github.com/BaseMax/CustomWebCheckbox#}
                 <label class="checkbox_container" style="text-align: start">
-                    Sensor 1
+                    Temperature
                     <input type="checkbox" name="boxs01" id="s01" onclick="sendEvent('s01')" {{ s01_state }}>
                     <span class="checkbox_mark"></span>
                 </label>
                 <br>
 
                 <label class="checkbox_container">
-                    Sensor 2
+                    Light
                     <input type="checkbox" name="boxs02" id="s02" onclick="sendEvent('s02')" {{ s02_state }}>
                     <span class="checkbox_mark"></span>
                 </label>
                 <br>
 
                 <label class="checkbox_container">
-                    Sensor 3
+                    pH
                     <input type="checkbox" name="boxs03" id="s03" onclick="sendEvent('s03')" {{ s03_state }}>
                     <span class="checkbox_mark"></span>
                 </label>
                 <br>
 
                 <label class="checkbox_container">
-                    Sensor 4
+                    Turbidity
                     <input type="checkbox" name="boxs04" id="s04" onclick="sendEvent('s04')" {{ s04_state }}>
                     <span class="checkbox_mark"></span>
                 </label>
                 <br>
 
                 <label class="checkbox_container">
-                    Sensor 5
+                    Flow
                     <input type="checkbox" name="boxs05" id="s05" onclick="sendEvent('s05')" {{ s05_state }}>
                     <span class="checkbox_mark"></span>
                 </label>
                 <br>
 
                 <label class="checkbox_container">
-                    Sensor 6
+                    Conductivity
                     <input type="checkbox" name="boxs06" id="s06" onclick="sendEvent('s06')" {{ s06_state }}>
                     <span class="checkbox_mark"></span>
                 </label>
                 <br>
 
                 <label class="checkbox_container">
-                    Sensor 7
+                    Atmospheric Temp
                     <input type="checkbox" name="boxs07" id="s07" onclick="sendEvent('s07')" {{ s07_state }}>
                     <span class="checkbox_mark"></span>
                 </label>
                 <br>
 
                 <label class="checkbox_container">
-                    Sensor 8
+                    Oxygen
                     <input type="checkbox" name="boxs08" id="s08" onclick="sendEvent('s08')" {{ s08_state }}>
                     <span class="checkbox_mark"></span>
                 </label>
                 <br>
 
                 <label class="checkbox_container">
-                    Sensor 9
+                    Water Level
                     <input type="checkbox" name="boxs09" id="s09" onclick="sendEvent('s09')" {{ s09_state }}>
                     <span class="checkbox_mark"></span>
                 </label>
                 <br>
 
                 <label class="checkbox_container">
-                    Sensor 10
+                    Air CO2
                     <input type="checkbox" name="boxs10" id="s10" onclick="sendEvent('s10')" {{ s10_state }}>
                     <span class="checkbox_mark"></span>
                 </label>  </div>
@@ -96,11 +97,11 @@
 
         <a href="{{ url_for('main_bp.set_wifi') }}" style="margin-top: auto">Configure WiFi</a>
         {#        <p style="opacity: .6; display: inline-block"> - </p>#}
-        <a href="/" style="margin-top: auto">-</a>
+        <a style="margin-top: auto">-</a>
         <a href="{{ url_for('main_bp.dashboard') }}" style="margin-top: auto">Refresh Page</a>
-        <a href="/" style="margin-top: auto">-</a>
+        <a style="margin-top: auto">-</a>
         <a href="{{ url_for('main_bp.delete') }}" style="margin-top: auto">Factory Reset</a>
-        <a href="/" style="margin-top: auto">-</a>
+        <a style="margin-top: auto">-</a>
         <a href="{{ url_for('main_bp.logout') }}" style="margin-top: auto; margin-bottom: 20px">Log out</a>
 
     {% endif %}
