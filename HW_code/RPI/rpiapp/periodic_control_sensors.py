@@ -44,23 +44,27 @@ def mqtt_connection(tokens, engine):
     client.on_message = on_message
     client.on_subscribe = on_subscribe
 
-    client.connect_async(host=ConfigRPI.SHORT_SERVER_URL, port=ConfigRPI.SERVER_PORT_MQTT)
+    client.connect_async(host=ConfigRPI.SHORT_SERVER_URL, port=ConfigRPI.SERVER_PORT_MQTT, keepalive=60)
     client.loop_start()
+    client.reconnect_delay_set(min_delay=1, max_delay=10)
+
     # Wait for connection
-    try:
-        while not MQTT_CONNECTED:
-            time.sleep(0.1)
-    except KeyboardInterrupt:
-        client.disconnect()
-        client.loop_stop()
+    global MQTT_CONNECTED
+    while not MQTT_CONNECTED:
+        time.sleep(1)
 
     return client, mqtt_topic
 
 
 def on_connect(client, userdata, flags, rc):
     """The callback for when the client receives a CONNACK response from the server."""
-    print("Connected with result code " + str(rc))
+    # The value of rc indicates success or not:
+    # 0: Connection successful 1: Connection refused - incorrect protocol version 2: Connection refused - invalid
+    # client identifier 3: Connection refused - server unavailable 4: Connection refused - bad username or password
+    # 5: Connection refused - not authorised 6-255: Currently unused.
+    print("Trying to connect to broker. Result code: " + str(rc))
     if rc == 0:
+        print("Connected.")
         global MQTT_CONNECTED
         MQTT_CONNECTED = True
         # Subscribing in on_connect() means that if we lose the connection and
@@ -69,7 +73,7 @@ def on_connect(client, userdata, flags, rc):
 
 
 def on_subscribe(client, userdata, mid, granted_qos):
-    print('Subscribed to %s' % userdata['topic'])
+    print('Subscribed to %s.' % userdata['topic'])
     global MQTT_SUBSCRIBED
     MQTT_SUBSCRIBED = True
 
@@ -122,13 +126,13 @@ def send_periodic_control(engine, client, mqtt_topic):
     passed_time = time_stamp - LAST_TIME
 
     # Get current SR values in db
-    node_config = get_table_database(engine, 'nodeconfig')
+    node_config, _ = get_table_database(engine, 'nodeconfig')
 
     # Get only sampling rates as list
     sampling_rates = list(node_config[1:])
 
-    # TODO DEMO
-    # Send fake sensor data
+    # 1- Send data if data is sensed:
+    # TODO DEMO: sends fake sensor data
     for i in range(len(sampling_rates)):
         sr = sampling_rates[i]
         if sr != 0:
@@ -136,6 +140,7 @@ def send_periodic_control(engine, client, mqtt_topic):
             payload = [{"bn": "", "n": magnitudes[i], "u": units[i], "v": value, "t": time_stamp}]
             client.publish(mqtt_topic + '/messages', json.dumps(payload))
 
+    # 2- Update control state:
     # Compare to the last SR values that were send
     sampling_rates.sort()
     LAST_SR_LIST.sort()
@@ -156,19 +161,34 @@ def send_periodic_control(engine, client, mqtt_topic):
 
 
 def main_control_sensors():
+    global MQTT_SUBSCRIBED
+
     # Check for a db
     engine, exists = None, False
     while not exists:
+        print('Waiting for a database.')
         engine, exists = check_table_database(engine)
-        time.sleep(1)
+        time.sleep(2)
 
     # Get backend credentials
-    tokens = None
-    while tokens is None:
-        tokens = get_table_database(engine, 'tokens')
+    tokens_key = None
+    while tokens_key is None:
+        tokens, _ = get_table_database(engine, 'tokens')
+        if tokens:
+            tokens_key = tokens.thing_key
+            print('Waiting for MQTT credentials.')
+        else:
+            print('Waiting for node signup.')
+        time.sleep(2)
+
+    # # Wait and get again credentials, else: reads db faster than mainflux provides thing key and id
+    # del tokens
+    # time.sleep(10)
+    # tokens, _ = get_table_database(engine, 'tokens')
 
     # Connect to backend and subscribe to rx control messages
-    client, mqtt_topic = mqtt_connection(tokens, engine)
+    while not MQTT_SUBSCRIBED:
+        client, mqtt_topic = mqtt_connection(tokens, engine)
 
     # Periodic check on db and control message send
     do_every(ConfigRPI.PERIODIC_CONTROL_SECONDS, send_periodic_control, engine, client, mqtt_topic)

@@ -1,46 +1,4 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_737B165C-29E7-40BE-8F96-3602B67442A0",
-      "label": "737b165c-29e7-40be-8f96-3602b67442a0",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "influxdb",
-      "pluginName": "InfluxDB"
-    }
-  ],
-  "__requires": [
-    {
-      "type": "panel",
-      "id": "alertlist",
-      "name": "Alert list",
-      "version": ""
-    },
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "7.0.3"
-    },
-    {
-      "type": "panel",
-      "id": "graph",
-      "name": "Graph",
-      "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "influxdb",
-      "name": "InfluxDB",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "text",
-      "name": "Text",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -49,7 +7,9 @@
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
+        "limit": 100,
         "name": "Annotations & Alerts",
+        "showIn": 0,
         "type": "dashboard"
       }
     ]
@@ -58,7 +18,6 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1592498031576,
   "links": [
     {
       "asDropdown": true,
@@ -70,7 +29,7 @@
   ],
   "panels": [
     {
-      "content": "----\n## Aqüicultura Digital Oberta\n----\nMostra les possibles alertes de tempertatura del sistema\n\n",
+      "content": "----\n## Aqüicultura Digital Oberta\n----\nEs mostren les alertes de temperatura del dispositiu.\n\n",
       "datasource": null,
       "description": "",
       "fieldConfig": {
@@ -85,7 +44,7 @@
         "x": 0,
         "y": 0
       },
-      "id": 4,
+      "id": 6,
       "mode": "markdown",
       "timeFrom": null,
       "timeShift": null,
@@ -106,21 +65,58 @@
       },
       "folderId": null,
       "gridPos": {
-        "h": 5,
+        "h": 4,
         "w": 24,
         "x": 0,
         "y": 4
       },
-      "id": 2,
+      "id": 4,
       "limit": 10,
       "nameFilter": "",
       "onlyAlertsOnDashboard": true,
       "show": "current",
       "sortOrder": 1,
       "stateFilter": [],
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Historial",
+      "title": "Historical",
       "transparent": true,
       "type": "alertlist"
     },
@@ -131,7 +127,7 @@
           {
             "evaluator": {
               "params": [
-                20
+                11
               ],
               "type": "lt"
             },
@@ -147,16 +143,17 @@
             },
             "reducer": {
               "params": [],
-              "type": "avg"
+              "type": "min"
             },
             "type": "query"
           }
         ],
         "executionErrorState": "alerting",
         "for": "0m",
-        "frequency": "20s",
+        "frequency": "10s",
         "handler": 1,
-        "name": "Temperature alert",
+        "message": "Ull! Quelcom passa amb la temperatura!",
+        "name": "Piscina1's Temperature",
         "noDataState": "no_data",
         "notifications": []
       },
@@ -164,7 +161,7 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "${DS_org-database}",
+      "datasource": null,
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -178,54 +175,44 @@
         "h": 14,
         "w": 24,
         "x": 0,
-        "y": 9
+        "y": 8
       },
       "hiddenSeries": false,
-      "id": 6,
+      "id": 2,
       "legend": {
         "alignAsTable": true,
-        "avg": true,
-        "current": true,
-        "hideEmpty": false,
-        "hideZero": false,
-        "max": true,
-        "min": true,
+        "avg": false,
+        "current": false,
+        "max": false,
+        "min": false,
         "rightSide": false,
         "show": true,
         "total": false,
-        "values": true
+        "values": false
       },
       "lines": true,
       "linewidth": 1,
-      "maxPerRow": 2,
       "nullPointMode": "null",
       "options": {
         "dataLinks": []
       },
       "percentage": false,
-      "pointradius": 1,
+      "pointradius": 2,
       "points": true,
       "renderer": "flot",
-      "repeatDirection": "v",
       "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "alias": "",
-          "groupBy": [
-            {
-              "params": [
-                "publisher"
-              ],
-              "type": "tag"
-            }
-          ],
-          "hide": false,
+          "alias": "Sensed temperature (ºC)",
+          "groupBy": [],
           "measurement": "messages",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT mean(\"value\") FROM \"messages\" WHERE (\"name\" = 'Temperature') AND $timeFilter GROUP BY time($__interval) fill(null)",
+          "rawQuery": false,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -253,7 +240,7 @@
           "fill": true,
           "line": true,
           "op": "lt",
-          "value": 20
+          "value": 11
         }
       ],
       "timeFrom": null,
@@ -262,7 +249,7 @@
       "title": "Temperature",
       "tooltip": {
         "shared": true,
-        "sort": 2,
+        "sort": 0,
         "value_type": "individual"
       },
       "type": "graph",
@@ -277,9 +264,9 @@
         {
           "decimals": null,
           "format": "short",
-          "label": "",
+          "label": "Celsius",
           "logBase": 1,
-          "max": null,
+          "max": "40",
           "min": "0",
           "show": true
         },
@@ -289,7 +276,7 @@
           "logBase": 1,
           "max": null,
           "min": null,
-          "show": false
+          "show": true
         }
       ],
       "yaxis": {
@@ -298,6 +285,7 @@
       }
     }
   ],
+  "refresh": "5s",
   "schemaVersion": 25,
   "style": "dark",
   "tags": [],
@@ -305,7 +293,7 @@
     "list": []
   },
   "time": {
-    "from": "now-7d",
+    "from": "now-15m",
     "to": "now"
   },
   "timepicker": {
@@ -323,6 +311,6 @@
   },
   "timezone": "",
   "title": "Alertes",
-  "uid": "mxilIVWGk",
-  "version": 15
+  "uid": "_QuLzfWGk",
+  "version": 20
 }

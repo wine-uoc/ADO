@@ -10,6 +10,14 @@ grafana_api = GrafanaFace(auth=('admin', 'admin'), host=ConfigRPI.SHORT_SERVER_U
 host = 'http://admin:admin@' + ConfigRPI.SHORT_SERVER_URL + ':3001'
 
 
+def _generic_get(url_):
+    url = host + url_
+    headers = {"Content-Type": 'application/json'}
+    response = requests.get(url, headers=headers)
+    print(response.text)
+    return response.json
+
+
 # ORGANIZATIONS
 def _organization_check(organization):  # checks if org exists or not in order to create it
     orgs = grafana_api.organizations.list_organization()
@@ -183,16 +191,18 @@ def update_preferences_user(dash_id):
 
 # DATASOURCES
 def _create_datasource(name, database, admin_name, admin_pass):
+    # https://community.influxdata.com/t/cannot-connect-to-influx-datasource-from-grafana/8048/2
     url = host + '/api/datasources'
     data = {
         "name": name,
         "type": "influxdb",
-        "url": "http://localhost:8086",
-        "access": "direct",  # vs proxy
+        "url": "http://influxdb:8086",
+        "access": "proxy",  # direct, proxy
         "password": admin_pass,
         "user": admin_name,
         "database": database,
-        "httpMode": "GET"  # very important field!!!
+        "isDefault": True,
+        "jsonData": {"httpMode": "GET"}
     }
     headers = {"Content-Type": 'application/json'}
     response = requests.post(url, json=data, headers=headers)
@@ -215,6 +225,13 @@ def add_persmission_datasource(data_source_id, user_id):
     }
     headers = {"Content-Type": 'application/json'}
     response = requests.post(url, json=data, headers=headers)
+    print(response.text)
+
+
+def _get_all_datasource():
+    url = host + '/api/datasources'
+    headers = {"Content-Type": 'application/json'}
+    response = requests.get(url, headers=headers)
     print(response.text)
 
 

@@ -28,7 +28,7 @@ def get_table_database(engine, table_name):
     table = metadata.tables[table_name]
     query = session.query(table).first()    # Get table (read-only!)
     session.close()
-    return query
+    return query, engine
 
 
 def update_tokens_table_database(engine, account_token, thing_id, thing_key, channel_id):

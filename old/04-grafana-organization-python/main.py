@@ -1,4 +1,3 @@
-import json
 import grafana_interactions as gr
 
 UOC_user_list = {}
@@ -42,7 +41,7 @@ def main():
 
 		print("******switch to created organization and create datasource")
 		gr._change_current_organization_to(org)
-		org_database_name = str(org)+ '_db'
+		org_database_name = str(org) + '_db'
 		gr._create_datasource(org_database_name, org_database_name, "admin", "admin")
 
 		print("******creating default organization dashboard")

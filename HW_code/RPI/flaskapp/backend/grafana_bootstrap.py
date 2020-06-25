@@ -36,12 +36,12 @@ def bootstrap(name, organization, email, password, channel_id):
 
     # Grafana data
     # TODO load all files in folder to list
+    noti_json = load_json('flaskapp/backend/alert_channels/slack.json')
     num_dashs = 4
     dash_pr_json = load_json('flaskapp/backend/dashboards/principal.json')
     dash_ag_json = load_json('flaskapp/backend/dashboards/agregat.json')
-    dash_al_json = load_json('flaskapp/backend/dashboards/alertes.json')
     dash_es_json = load_json('flaskapp/backend/dashboards/estat.json')
-    noti_json = load_json('flaskapp/backend/alert_channels/slack.json')
+    dash_al_json = load_json('flaskapp/backend/dashboards/alertes.json')
 
     # --- Provisioning
 
@@ -61,8 +61,8 @@ def bootstrap(name, organization, email, password, channel_id):
         dash_ids = []
         dash_ids.append(gr._create_dashboard(dash_pr_json))
         dash_ids.append(gr._create_dashboard(dash_ag_json))
-        # dash_ids.append(gr._create_dashboard(dash_al_json))
         dash_ids.append(gr._create_dashboard(dash_es_json))
+        dash_ids.append(gr._create_dashboard(dash_al_json))
 
         # Load preferences
         gr.update_preferences_org(dash_ids[0])
@@ -77,6 +77,7 @@ def bootstrap(name, organization, email, password, channel_id):
         gr.update_preferences_user(dash_ids[0])     # load user preferences
 
         # Give db permissions to new user
+        # NOTE: Datasource Permissions is now an Enterprise feature
         users = gr._get_all_users_org()
         for usr in users:
             if usr['email'] == str(email):

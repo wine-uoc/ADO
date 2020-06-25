@@ -1,31 +1,4 @@
 {
-  "__inputs": [],
-  "__requires": [
-    {
-      "type": "grafana",
-      "id": "grafana",
-      "name": "Grafana",
-      "version": "7.0.3"
-    },
-    {
-      "type": "panel",
-      "id": "graph",
-      "name": "Graph",
-      "version": ""
-    },
-    {
-      "type": "datasource",
-      "id": "influxdb",
-      "name": "InfluxDB",
-      "version": "1.0.0"
-    },
-    {
-      "type": "panel",
-      "id": "text",
-      "name": "Text",
-      "version": ""
-    }
-  ],
   "annotations": {
     "list": [
       {
@@ -43,7 +16,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1592501763766,
+  "iteration": 1593020645983,
   "links": [
     {
       "asDropdown": true,
@@ -79,6 +52,122 @@
       "type": "text"
     },
     {
+      "datasource": null,
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "displayName": "Piscina1",
+          "mappings": [],
+          "max": 40,
+          "min": 0,
+          "noValue": "OFF",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgb(76, 94, 255)",
+                "value": null
+              },
+              {
+                "color": "#6ED0E0",
+                "value": 10
+              },
+              {
+                "color": "green",
+                "value": 15
+              },
+              {
+                "color": "#EAB839",
+                "value": 20
+              },
+              {
+                "color": "red",
+                "value": 30
+              }
+            ]
+          },
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 5,
+        "w": 8,
+        "x": 0,
+        "y": 5
+      },
+      "id": 6,
+      "options": {
+        "displayMode": "gradient",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showUnfilled": true
+      },
+      "pluginVersion": "7.0.3",
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "10s"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "publisher"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "measurement": "messages",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "name",
+              "operator": "=~",
+              "value": "/^$Sensors$/"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Average $Sensors for each node",
+      "transparent": true,
+      "type": "bargauge"
+    },
+    {
       "aliasColors": {},
       "bars": false,
       "dashLength": 10,
@@ -97,7 +186,7 @@
         "h": 14,
         "w": 24,
         "x": 0,
-        "y": 5
+        "y": 10
       },
       "hiddenSeries": false,
       "id": 2,
@@ -127,13 +216,20 @@
       "renderer": "flot",
       "repeat": "Sensors",
       "repeatDirection": "v",
+      "scopedVars": {
+        "Sensors": {
+          "selected": true,
+          "text": "Temperature",
+          "value": "Temperature"
+        }
+      },
       "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
-          "alias": "",
+          "alias": "Piscina1",
           "groupBy": [
             {
               "params": [
@@ -238,8 +334,8 @@
       {
         "current": {
           "selected": false,
-          "text": "737b165c-29e7-40be-8f96-3602b67442a0",
-          "value": "737b165c-29e7-40be-8f96-3602b67442a0"
+          "text": "0f6b849a-d469-47eb-87dd-c05e8a1ae276",
+          "value": "0f6b849a-d469-47eb-87dd-c05e8a1ae276"
         },
         "hide": 2,
         "includeAll": false,
@@ -255,7 +351,13 @@
       },
       {
         "allValue": null,
-        "current": {},
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": [
+            "$__all"
+          ]
+        },
         "datasource": "$DB",
         "definition": "SHOW TAG VALUES WITH KEY = \"publisher\"",
         "hide": 2,
@@ -277,7 +379,11 @@
       },
       {
         "allValue": null,
-        "current": {},
+        "current": {
+          "selected": true,
+          "text": "Temperature",
+          "value": "Temperature"
+        },
         "datasource": "$DB",
         "definition": "SHOW TAG VALUES WITH  KEY = \"name\"",
         "hide": 0,
@@ -319,5 +425,5 @@
   "timezone": "",
   "title": "Agregat dispositius",
   "uid": "YT20LzWMk",
-  "version": 61
+  "version": 10
 }

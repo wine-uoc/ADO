@@ -47,7 +47,7 @@ def get_config():
 	serialcmd: dict
 	periodicity: dict
 	"""
-	node_config = get_table_database(None, 'nodeconfig')
+	node_config, _ = get_table_database(None, 'nodeconfig')
 	sampling_rates = list(node_config[1:])				# Get only sampling rates ([0] is id, rest are sensors sr)
 
 	# Create commands only if user has enabled one sensor at least

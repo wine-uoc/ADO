@@ -11,7 +11,7 @@ def initialize_client():
     global topic
     global client
 
-    tokens = get_table_database(None, 'tokens')
+    tokens, _ = get_table_database(None, 'tokens')
     thing_id = tokens.thing_id
     thing_key = tokens.thing_key
     channel_id = tokens.channel_id
