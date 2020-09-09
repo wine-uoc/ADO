@@ -62,7 +62,7 @@ def get_config():
 		num_enabled_sensors = len(sampling_rates_enabled_sensors)
 
 		# Create dict of commands from lists
-		cmd_types = ['read'] * num_enabled_sensors		# Bc user can only enable/disable sensors in the app
+		cmd_types = ['read'] * num_enabled_sensors		# Bc user can only enable/disable sensors in the rpi app
 		serialcmd = {i+1: create_cmd(cmd_types[i], sensor_types_enabled_sensors[i], sensor_params_enabled_sensors[i]) for i in range(0, num_enabled_sensors)}
 
 		# Create dict of sampling rates from list

@@ -73,6 +73,7 @@ def on_connect(client, userdata, flags, rc):
 
 
 def on_subscribe(client, userdata, mid, granted_qos):
+    """Callback for subscribed message."""
     print('Subscribed to %s.' % userdata['topic'])
     global MQTT_SUBSCRIBED
     MQTT_SUBSCRIBED = True
@@ -88,7 +89,7 @@ def on_message(client, userdata, msg):
     message = eval(message)
     if str(message['type']) == 'SET_SR':
         # if message[11:17] == 'SET_SR':  # A naive patch for the issue
-        # CAUTION: using message as dict does not work, because messages have different keys, like:
+        # CAUTION: using message as dict, because messages have different keys, like:
         # [{"bn": "", "n": "Air CO2", "u": "ppm", "v": 30, "t": 1587467662.0718532}]
         # [{"type": "SET_SR", "sensor": "Conductivity", "v": "1", "u": "s", "t": 1587467316.838788}]
         # message = eval(message)  # transform to dictionary
@@ -109,7 +110,7 @@ def set_sr(client, engine, topic, sensor, value, unit):
     # Update db
     update_nodeconfig_table_database(engine, i + 1, value)
 
-    # Send control message with new SR for grafana
+    # Send control message with new sampling rates for grafana
     data = [{"bn": "", "n": sensor, "u": unit, "v": int(value), "t": time.time()}]
     client.publish(topic, json.dumps(data))
 
@@ -125,14 +126,14 @@ def send_periodic_control(engine, client, mqtt_topic):
     time_stamp = time.time()
     passed_time = time_stamp - LAST_TIME
 
-    # Get current SR values in db
+    # Get current sampling rates values in db
     node_config, _ = get_table_database(engine, 'nodeconfig')
 
     # Get only sampling rates as list
     sampling_rates = list(node_config[1:])
 
     # 1- Send data if data is sensed:
-    # TODO DEMO: sends fake sensor data
+    # TODO: [DEMO state] sends fake sensor data
     for i in range(len(sampling_rates)):
         sr = sampling_rates[i]
         if sr != 0:
@@ -141,10 +142,11 @@ def send_periodic_control(engine, client, mqtt_topic):
             client.publish(mqtt_topic + '/messages', json.dumps(payload))
 
     # 2- Update control state:
-    # Compare to the last SR values that were send
+    # Compare to the last sampling rates values that were send
     sampling_rates.sort()
     LAST_SR_LIST.sort()
     if sampling_rates != LAST_SR_LIST or passed_time >= 30.:
+        # TODO: now using 30s, define value as variable
         # If values have changed, send new
         print(sampling_rates)
         for sensor in range(len(sampling_rates)):
@@ -155,12 +157,13 @@ def send_periodic_control(engine, client, mqtt_topic):
         LAST_TIME = time_stamp
     else:
         # Do not send
-        print(f'Not sending CONTROL, sampling_rates are the same {sampling_rates} and passed time {passed_time} is less than 55s')
+        print(f'Not sending CONTROL, sampling_rates are the same {sampling_rates} and passed time {passed_time} is less than 30s')
     # Unsort them
     LAST_SR_LIST = list(node_config[1:]).copy()
 
 
 def main_control_sensors():
+    """Main"""
     global MQTT_SUBSCRIBED
 
     # Check for a db
@@ -181,7 +184,8 @@ def main_control_sensors():
             print('Waiting for node signup.')
         time.sleep(2)
 
-    # # Wait and get again credentials, else: reads db faster than mainflux provides thing key and id
+    # If any error (should be solved) try the following:
+    # # Wait and get credentials again, else: reads db faster than mainflux provides thing key and id
     # del tokens
     # time.sleep(10)
     # tokens, _ = get_table_database(engine, 'tokens')
@@ -193,81 +197,9 @@ def main_control_sensors():
     # Periodic check on db and control message send
     do_every(ConfigRPI.PERIODIC_CONTROL_SECONDS, send_periodic_control, engine, client, mqtt_topic)
 
-    # do_every(ConfigRPI.PERIODIC_CONTROL_SECONDS, control_sr_function, engine)
-    # x = threading.Thread(target=thread_function, args=(engine,))
-    # x.start()
-    # x.join()
-    # with concurrent.futures.ThreadPoolExecutor(max_workers=3) as executor:
-    #     executor.map(thread_function, [alist]])
-
 
 if __name__ == "__main__":
     # ASSUMPTION: the script can be called before user registers in flaskapp
     logging.basicConfig(format="%(asctime)s: %(message)s", level=logging.INFO,
                         datefmt="%H:%M:%S")
     main_control_sensors()
-
-
-# ph = random.gauss(7, 1)
-# airco = random.gauss(150, 10)
-# temperature = random.gauss(22, 5)
-# conductivity = random.gauss(15, 3)
-# lux = random.gauss(250, 20)
-# flow = random.gauss(20, 4)
-#
-# #     SENSOR_MAGNITUDES = ['Temperature', 'Light', 'pH', 'Turbidity', 'Flow', 'Conductivity', 'AtmosphericTemp',
-# #                          'Oxygen', 'WaterLevel', 'AirCO2']
-# #    SENSOR_UNITS = ['Cel', 'lux', 'pH', 'NTU', 'L/min', 'mS/cm', 'Cel', 'mg/L', 'ppm', 'ppm']
-# payload3 = [{"bn": "", "n": "Temperature", "u": "C", "v": temperature, "t": time_stamp}]
-# payload5 = [{"bn": "", "n": "Light", "u": "lux", "v": lux, "t": time_stamp}]
-# payload1 = [{"bn": "", "n": "pH", "u": "ph", "v": ph, "t": time_stamp}]
-# payload6 = [{"bn": "", "n": "Flow", "u": "L/min", "v": flow, "t": time_stamp}]
-# payload4 = [{"bn": "", "n": "Conductivity", "u": "mS/cm", "v": conductivity, "t": time_stamp}]
-# payload2 = [{"bn": "", "n": "AirCO2", "u": "ppm", "v": airco, "t": time_stamp}]
-#
-# client.publish(mqtt_topic + '/messages', json.dumps(payload1))
-# client.publish(mqtt_topic + '/messages', json.dumps(payload2))
-# client.publish(mqtt_topic + '/messages', json.dumps(payload3))
-# client.publish(mqtt_topic + '/messages', json.dumps(payload4))
-# client.publish(mqtt_topic + '/messages', json.dumps(payload5))
-# client.publish(mqtt_topic + '/messages', json.dumps(payload6))
-#
-
-# def old_control_sr_function(engine):
-#     print('hello {} ({:.4f})'.format('asdf',time.time()))
-#     # Parameters
-#     broker_address = ConfigRPI.SHORT_SERVER_URL
-#     port = ConfigRPI.SERVER_PORT_MQTT
-#     magnitudes = ConfigRPI.SENSOR_MAGNITUDES
-#     units = ConfigRPI.SENSOR_UNITS
-#     time_stamp = time.time()
-#
-#     # Get data from db
-#     node_config = get_table_database(engine, 'nodeconfig')
-#     tokens = get_table_database(engine, 'tokens')
-#
-#     # Check that credentials to backend exist
-#     if tokens is not None:
-#         node_id = tokens.node_id
-#         sampling_rates = list(node_config[1:])  # Get only sampling rates ([0] is id, rest are sensors sr)
-#         thing_id = tokens.thing_id
-#         thing_key = tokens.thing_key
-#         channel_id = tokens.channel_id
-#
-#         # Connect to backend using mqtt
-#         client = mqtt.Client('thing' + str(node_id) + ': data publisher')  # create new instance
-#         client.username_pw_set(thing_id, thing_key)  # set username and password
-#         # Connected = False  # global variable for the state of the connection
-#         # client.on_connect = on_connect  # attach function to callback
-#         client.connect(broker_address, port=port)  # connect to broker
-#         client.loop_start()  # start the loop
-#
-#         topic = "channels/" + str(channel_id) + "/control/"
-#
-#         for sensor in range(len(sampling_rates)):
-#             data = {}  # json dictionary
-#             data = [{"bn": "", "n": magnitudes[sensor], "u": units[sensor], "v": sampling_rates[sensor], "t": time_stamp}]
-#             client.publish(topic, json.dumps(data))
-#
-#         client.disconnect()
-#

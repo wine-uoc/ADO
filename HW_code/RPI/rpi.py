@@ -7,5 +7,5 @@ if __name__ == "__main__":
 
 
 # TODO:
-#  - update local database using grafana sampling rate values
-#  - threads
+#  - classify and move each method of rpiapp to different sub-folders, to improve code and project readability
+

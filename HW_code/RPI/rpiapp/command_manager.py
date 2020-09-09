@@ -116,7 +116,7 @@ def main():
     #   reset A0 from rpi
     #   firm udpdate rpi and A0
     #   status message to grafana (https://grafana.com/grafana/plugins/flant-statusmap-panel, auto install in docker
-    #   rpi reboot
+    #   handle rpi reboot
 
     # print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
 

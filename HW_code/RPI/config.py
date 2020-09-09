@@ -67,7 +67,8 @@ class ConfigRPI:
     # note: assuming that S1A and S1B are connected to different pins D4 D0 (arqui doc; DS18B20)
     # BUT in A0 code: SplitCommand gets only first parameter of param_list, myArray[i] = obtainArray(fullArray, ',', 0);
     # note: how to select in python the two I2C sensors? request hex addresses to A0(scan)? (no code in A0)
-    # TODO: define I2C addresses for S2 and S3
+    # TODO: modify with only sensors that will used for the pilot deployment (this should match the ones in flaskApp)
 
     # Control messages
+    # time period to check on db and send control messages in channel
     PERIODIC_CONTROL_SECONDS = 2
