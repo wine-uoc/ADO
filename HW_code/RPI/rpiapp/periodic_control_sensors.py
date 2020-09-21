@@ -121,6 +121,7 @@ def send_periodic_control(engine, client, mqtt_topic):
     global LAST_TIME
     units = ConfigRPI.SENSOR_UNITS
     magnitudes = ConfigRPI.SENSOR_MAGNITUDES
+    #default_sr = ConfigFlaskApp.DEFAULT_SR
 
     # How much time have passed not sending
     time_stamp = time.time()
@@ -146,7 +147,7 @@ def send_periodic_control(engine, client, mqtt_topic):
     sampling_rates.sort()
     LAST_SR_LIST.sort()
     if sampling_rates != LAST_SR_LIST or passed_time >= 30.:
-        # TODO: now using 30s, define value as variable
+        # TODO: now using 30s, define value as variable: default_sr
         # If values have changed, send new
         print(sampling_rates)
         for sensor in range(len(sampling_rates)):

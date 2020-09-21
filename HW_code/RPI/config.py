@@ -21,7 +21,7 @@ class ConfigFlaskApp:
 
     # DB Config
     SQLALCHEMY_DATABASE_URI = 'sqlite:///database/db.sqlite'
-    SQLALCHEMY_ECHO = False
+    SQLALCHEMY_ECHO = True
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Assets Config

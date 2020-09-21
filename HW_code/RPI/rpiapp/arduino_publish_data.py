@@ -8,13 +8,18 @@ import time
 
 def valid_data(response, pinType, pinNb):
     if len(response) > 2:
+        print(response)
         data = json.loads(response)  # a SenML list
         for item in data:  # normally only one item
-            if int(item["pinType"]) == int(pinType) and int(item["pinNb"]) == int(pinNb):
-                logging.debug('pinType and pinNb checks')
-                return True
-            else:
-                logging.debug('Received data does not correspond to the last sent command')
+            try:
+                if int(item["pinType"]) == int(pinType) and int(item["pinNb"]) == int(pinNb):
+                    logging.debug('pinType and pinNb checks')
+                    return True
+                else:
+                    logging.debug('Received data does not correspond to the last sent command')
+            except ValueError:
+                # it was a string, not int
+                logging.debug('pinNb is a string')
     else:
         logging.debug('Data length is too small')
         return False

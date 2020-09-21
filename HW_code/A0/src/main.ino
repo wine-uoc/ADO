@@ -37,6 +37,7 @@ String obtainArray(String data, char separator, int index)
 
 void ProcessReading(int sensortype, String param_list[5])
 {
+  int value;
   SenMLdata = "\n";
   if (sensortype == SENSOR_ANALOG)
   {
@@ -52,14 +53,30 @@ void ProcessReading(int sensortype, String param_list[5])
     SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"pinType\":\"" + String(sensortype) + "\",\"pinNb\":" + String(param_list[0]) + ",\"pinValue\":" + String(reading) + "}]\n";
     Serial.print(SenMLdata); //IMPORTANT! DO NOT PUT PRINTLN, AS THE STRING ALREADY CONTAINS \n
   }
+  else if (sensortype == SENSOR_SPI)
+  {//TBD
+    value = 500;
+    SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"pinType\":\"" + String(sensortype) + "\",\"pinNb\":" + String(param_list[0]) + ",\"pinValue\":" + String(value) + "}]\n";
+    Serial.print(SenMLdata); //IMPORTANT! DO NOT PUT PRINTLN, AS THE STRING ALREADY CONTAINS \n
+  }
   else if (sensortype == SENSOR_ONEWIRE)
   {
     float value = OneWireRead(param_list[0].toInt());
     SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"pinType\":\"" + String(sensortype) + "\",\"pinNb\":" + String(param_list[0]) + ",\"pinValue\":" + String(value) + "}]\n";
     Serial.print(SenMLdata); //IMPORTANT! DO NOT PUT PRINTLN, AS THE STRING ALREADY CONTAINS \n
   }
-  else
-    Serial.print("SPI PLACEHOLDER\n");
+  else if (sensortype == SENSOR_I2C)
+  {//TBD
+    value = 500;
+    SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"pinType\":\"" + String(sensortype) + "\",\"pinNb\":\"" + String(param_list[0]) + "\",\"pinValue\":" + String(value) + "}]\n";
+    Serial.print(SenMLdata); //IMPORTANT! DO NOT PUT PRINTLN, AS THE STRING ALREADY CONTAINS \n
+  }
+  else if (sensortype == SENSOR_SERIAL){
+  //TBD 
+    value = 500;
+    SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"pinType\":\"" + String(0) + "\",\"pinNb\":" + String(value) + ",\"pinValue\":" + String(0) + "}]\n";
+    Serial.print(SenMLdata);
+  } 
 }
 
 void SplitCommand(String command, String fullArray)

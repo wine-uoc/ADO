@@ -19,7 +19,9 @@ enum SensorType{
   SENSOR_ANALOG  = 0,
   SENSOR_DIGITAL = 1,
   SENSOR_SPI     = 2,
-  SENSOR_ONEWIRE = 3
+  SENSOR_ONEWIRE = 3,
+  SENSOR_I2C = 4,
+  SENSOR_SERIAL = 5
 };
 
 
