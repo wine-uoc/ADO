@@ -35,9 +35,11 @@ def create_cmd(cmdtype, sensortype, param_list):
 
 def parse_cmd(command):
 	cmdtype = int(command[0])
-	pinType = int(command[1])
-	pinNb = int(command[5])
-	return cmdtype, pinType, pinNb
+	sensorType = int(command[1])
+	# extract the parameters of the command : 032 [0,4] -->  0,4
+	remaining_command = command[5:len(command)-1]
+	parameter1 = remaining_command.split(',')[0] #string
+	return cmdtype, sensorType, parameter1
 
 
 def get_config():
@@ -46,6 +48,7 @@ def get_config():
 	:return:
 	serialcmd: dict
 	periodicity: dict
+	magnitudes: dict
 	"""
 	node_config, _ = get_table_database(None, 'nodeconfig')
 	sampling_rates = list(node_config[1:])				# Get only sampling rates ([0] is id, rest are sensors sr)
@@ -58,6 +61,7 @@ def get_config():
 		sampling_rates_enabled_sensors = [i for (i, v) in zip(sampling_rates, enabled_sensors) if v]
 		sensor_types_enabled_sensors = [i for (i, v) in zip(ConfigRPI.SENSOR_TYPES, enabled_sensors) if v]
 		sensor_params_enabled_sensors = [i for (i, v) in zip(ConfigRPI.SENSOR_PARAMS, enabled_sensors) if v]
+		sensor_magnitudes_enabled_sensors = [i for (i, v) in zip(ConfigRPI.SENSOR_MAGNITUDES, enabled_sensors) if v]
 
 		num_enabled_sensors = len(sampling_rates_enabled_sensors)
 
@@ -68,6 +72,9 @@ def get_config():
 		# Create dict of sampling rates from list
 		periodicity = {i+1: sampling_rates_enabled_sensors[i] for i in range(0, num_enabled_sensors)}
 
+		# Create dict of magnitudes from list
+		magnitudes = {i+1: sensor_magnitudes_enabled_sensors[i] for i in range(0, num_enabled_sensors)}
+
 		# Create dict of delays from list
 		# START_DELAY = 0		# Hardcoded delay!
 		# ADDED_DELAY = 3		# Hardcoded delay!
@@ -75,6 +82,7 @@ def get_config():
 	else:
 		serialcmd = {}
 		periodicity = {}
+		magnitudes = {}
 		# delay = {}
 
-	return serialcmd, periodicity
+	return serialcmd, periodicity, magnitudes

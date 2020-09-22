@@ -42,7 +42,7 @@ void ProcessReading(int sensortype, String param_list[5])
   if (sensortype == SENSOR_ANALOG)
   {
     reading = analogRead(param_list[0].toInt());
-    SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"pinType\":\"" + String(sensortype) + "\",\"pinNb\":" + String(param_list[0]) + ",\"pinValue\":" + String(reading) + "}]\n";
+    SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"sensorType\":\"" + String(sensortype) + "\",\"parameter1\":" + String(param_list[0]) + ",\"pinValue\":" + String(reading) + "}]\n";
     Serial.print(SenMLdata); //IMPORTANT! DO NOT PUT PRINTLN, AS THE STRING ALREADY CONTAINS \n
   }
   else if (sensortype == SENSOR_DIGITAL)
@@ -50,31 +50,31 @@ void ProcessReading(int sensortype, String param_list[5])
     //Serial.println("digital read");
     reading = digitalRead(param_list[0].toInt());
     //Serial.println(reading);
-    SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"pinType\":\"" + String(sensortype) + "\",\"pinNb\":" + String(param_list[0]) + ",\"pinValue\":" + String(reading) + "}]\n";
+    SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"sensorType\":\"" + String(sensortype) + "\",\"parameter1\":" + String(param_list[0]) + ",\"pinValue\":" + String(reading) + "}]\n";
     Serial.print(SenMLdata); //IMPORTANT! DO NOT PUT PRINTLN, AS THE STRING ALREADY CONTAINS \n
   }
   else if (sensortype == SENSOR_SPI)
   {//TBD
-    value = 500;
-    SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"pinType\":\"" + String(sensortype) + "\",\"pinNb\":" + String(param_list[0]) + ",\"pinValue\":" + String(value) + "}]\n";
+    value = 10;
+    SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"sensorType\":\"" + String(sensortype) + "\",\"parameter1\":" + String(param_list[0]) + ",\"pinValue\":" + String(value) + "}]\n";
     Serial.print(SenMLdata); //IMPORTANT! DO NOT PUT PRINTLN, AS THE STRING ALREADY CONTAINS \n
   }
   else if (sensortype == SENSOR_ONEWIRE)
   {
     float value = OneWireRead(param_list[0].toInt());
-    SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"pinType\":\"" + String(sensortype) + "\",\"pinNb\":" + String(param_list[0]) + ",\"pinValue\":" + String(value) + "}]\n";
+    SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"sensorType\":\"" + String(sensortype) + "\",\"parameter1\":" + String(param_list[0]) + ",\"pinValue\":" + String(value) + "}]\n";
     Serial.print(SenMLdata); //IMPORTANT! DO NOT PUT PRINTLN, AS THE STRING ALREADY CONTAINS \n
   }
   else if (sensortype == SENSOR_I2C)
   {//TBD
-    value = 500;
-    SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"pinType\":\"" + String(sensortype) + "\",\"pinNb\":\"" + String(param_list[0]) + "\",\"pinValue\":" + String(value) + "}]\n";
+    value = 10;
+    SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"sensorType\":\"" + String(sensortype) + "\",\"parameter1\":\"" + String(param_list[0]) + "\",\"pinValue\":" + String(value) + "}]\n";
     Serial.print(SenMLdata); //IMPORTANT! DO NOT PUT PRINTLN, AS THE STRING ALREADY CONTAINS \n
   }
   else if (sensortype == SENSOR_SERIAL){
   //TBD 
-    value = 500;
-    SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"pinType\":\"" + String(0) + "\",\"pinNb\":" + String(value) + ",\"pinValue\":" + String(0) + "}]\n";
+    value = 10;
+    SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"sensorType\":\"" + String(0) + "\",\"parameter1\":" + String(value) + ",\"pinValue\":" + String(0) + "}]\n";
     Serial.print(SenMLdata);
   } 
 }

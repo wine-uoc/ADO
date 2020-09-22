@@ -13,21 +13,22 @@ SensorType = arduino_commands.SensorType
 
 
 def create_threads(ser):
-    serialcmd, periodicity = arduino_commands.get_config()
+    serialcmd, periodicity, magnitudes = arduino_commands.get_config()
     size = len(serialcmd)  # number of configs we have
     print('The set of commands is ', serialcmd)
     print('NB of threads is '+ str(size))
     print('periodicity of each thread is ', periodicity)
+    print('name of each sensor is ', magnitudes)
     for i in range(1, size + 1):
         # timer is given by expressing a delay
-        t = threading.Timer(1, TransmitThread, (ser, serialcmd[i], periodicity[i]))  # all sensors send data at startup
+        t = threading.Timer(1, TransmitThread, (ser, serialcmd[i], periodicity[i], magnitudes[i]))  # all sensors send data at startup
         t.setName(str(i))
         t.start()
         t.join()
 
 
 
-def TransmitThread(ser, serialcmd, periodicity):
+def TransmitThread(ser, serialcmd, periodicity, magnitude):
     global no_answer_pending
     global tx_lock
     # debug messages; get thread name and get the lock
@@ -38,7 +39,7 @@ def TransmitThread(ser, serialcmd, periodicity):
     #logging.debug('Acquired lock')
     # schedule this thread corresponding to its periodicity, with the same name it has now
     now = time.time()
-    tx = threading.Timer(periodicity, TransmitThread, (ser, serialcmd, periodicity))
+    tx = threading.Timer(periodicity, TransmitThread, (ser, serialcmd, periodicity, magnitude))
     tx.setName(threadname)
     tx.start()
     # expect an answer from A0 after sending the serial message
@@ -46,21 +47,21 @@ def TransmitThread(ser, serialcmd, periodicity):
     #logging.debug('%s', serialcmd)
     ser.write(serialcmd.encode('utf-8'))
     # create the RX thread; use join() to start right now
-    r = threading.Timer(1, ReceiveThread, (ser, serialcmd))
+    r = threading.Timer(1, ReceiveThread, (ser, serialcmd, magnitude))
     r.setName('RX Thread')
     r.start()
     r.join()
 
 
-def ReceiveThread(ser, serialcmd):
+def ReceiveThread(ser, serialcmd, magnitude):
     global no_answer_pending, client, topic
 
     # debug messages
     logging.debug('executing thread %s', threading.currentThread().getName())
     #logging.debug('%s', serialcmd)
-    cmdtype, pinType, pinNb = arduino_commands.parse_cmd(serialcmd)
+    cmdtype, sensorType, parameter1 = arduino_commands.parse_cmd(serialcmd)
     #logging.debug('pinType %s', pinType)
-    logging.debug('pinNb %s', pinNb)
+    logging.debug('parameter1 %s', parameter1)
     # set a timeout for waiting for serial
     # wait until receiving valid answer
     timeout = time.time() + 15
@@ -70,14 +71,11 @@ def ReceiveThread(ser, serialcmd):
             response = ser.readline()
             response = response.decode('utf-8')
            # logging.debug("%s", str(response))
-            if arduino_publish_data.valid_data(response, pinType, pinNb):
+            if arduino_publish_data.valid_data(response, sensorType, parameter1):
+                #issue for i2c 0xhex address if address not known apriori
                 no_answer_pending = True
-                # if (item["pinType"]) == str(SensorType["onewire"].value):
-                if pinType == int(SensorType["onewire"].value):
-                    arduino_publish_data.pack_data_onewire(response, client, topic)
-                    tx_lock.release()
-                else:
-                    tx_lock.release()
+                arduino_publish_data.publish_data(magnitude,response, client, topic)
+                tx_lock.release()
             else:
                 logging.debug("RX data does not correspond to the last command sent, checking again the serial")
 
