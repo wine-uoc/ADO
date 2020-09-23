@@ -5,9 +5,10 @@ from flask_login import login_required, logout_user
 
 from .assets import compile_main_assets
 from .control import get_node_id, get_config_obj, delete_tables_entries, update_config_values, get_wifi_obj, \
-    update_wifi_data
+    update_wifi_data, get_user_org
 from .forms import WifiForm
-
+import flaskapp.backend.grafana_interactions as gr
+from flaskapp.backend.grafana_bootstrap import load_json
 # Blueprint Configuration
 main_bp = Blueprint('main_bp', __name__,
                     template_folder='templates',
@@ -119,3 +120,29 @@ def get_post_js_data_setsensor():
     # update rpi db
     update_config_values(sensor_idx, new_value)
     return state
+
+@main_bp.route('/upgrade', methods=['GET','POST'])
+@login_required
+def dashboard_upgrade():
+  # TODO load all files from server or github for updated versions
+    #noti_json = load_json('flaskapp/backend/alert_channels/slack.json')
+    num_dashs = 4
+    dash_pr_json = load_json('flaskapp/backend/dashboards/principal.json')
+    dash_ag_json = load_json('flaskapp/backend/dashboards/agregat.json')
+    dash_es_json = load_json('flaskapp/backend/dashboards/estat.json')
+    dash_al_json = load_json('flaskapp/backend/dashboards/alertes.json')
+
+    organization = get_user_org()
+    gr._change_current_organization_to(organization)
+
+    # Create dashborads, rewrite flag is true --> existing dashs are updated
+    dash_ids = []
+    dash_ids.append(gr._create_dashboard(dash_pr_json))
+    dash_ids.append(gr._create_dashboard(dash_ag_json))
+    dash_ids.append(gr._create_dashboard(dash_es_json))
+    dash_ids.append(gr._create_dashboard(dash_al_json))
+
+    # Load preferences
+    gr.update_preferences_org(dash_ids[0])
+
+    return redirect(url_for('auth_bp.login'))

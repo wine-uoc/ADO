@@ -66,6 +66,14 @@ def get_node_id():
     """Query to db to get the unique node id."""
     return Tokens.query.filter_by(id=current_user.email).first().node_id
 
+def get_user_org():
+    """Query to db to get the user organization name."""
+    existing_user = User.query.first()
+    if existing_user is None:
+        return 0
+    else:
+        return existing_user.org
+
 
 def validate_user(email, password):
     """Validate user pass against db."""
