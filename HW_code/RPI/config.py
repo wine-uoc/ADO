@@ -55,8 +55,8 @@ class ConfigRPI:
     # Arduino
     # Mapping sensor type <-> sensor position in db
     SENSOR_TYPES = ['onewire', 'i2c', 'i2c', 'analog', 'analog', 'analog', 'digital', 'analog', 'digital', 'analog']
-    SENSOR_PINS = ['0,4', '11,12', '11,12', '0', '1', '2', '1,2', '3,4', '3', '5']
-    SENSOR_PARAMS = [[0, 4], ['0xHEX'], ['0xHEX'], [0], [1], [2], [1, 2], [3, 4], [3], [5]]
+    SENSOR_PINS = ['0', '11,12', '11,12', '0', '1', '2', '1,2', '3,4', '3', '5']
+    SENSOR_PARAMS = [[0], ['0xHEX'], ['0xHEX'], [0], [1], [2], [1, 2], [3, 4], [3], [5]]
     # SENSOR_MAGNITUDES = ['Temperature', 'Atmospheric Temperature', 'Light', 'pH', 'Turbidity', 'Oxygen Dissolution',
     #                      'Flow', 'Conductivity', 'Water Level', 'Air CO2']
     # SENSOR_UNITS = ['Cel', 'Cel', 'lux', 'pH', 'NTU', 'mg/L', 'L/min', 'mS/cm', 'ppm', 'ppm']

@@ -126,23 +126,27 @@ def get_post_js_data_setsensor():
 def dashboard_upgrade():
   # TODO load all files from server or github for updated versions
     #noti_json = load_json('flaskapp/backend/alert_channels/slack.json')
-    num_dashs = 4
-    dash_pr_json = load_json('flaskapp/backend/dashboards/principal.json')
-    dash_ag_json = load_json('flaskapp/backend/dashboards/agregat.json')
-    dash_es_json = load_json('flaskapp/backend/dashboards/estat.json')
-    dash_al_json = load_json('flaskapp/backend/dashboards/alertes.json')
+    try:
+      num_dashs = 4
+      dash_pr_json = load_json('flaskapp/backend/dashboards/principal.json')
+      dash_ag_json = load_json('flaskapp/backend/dashboards/agregat.json')
+      dash_es_json = load_json('flaskapp/backend/dashboards/estat.json')
+      dash_al_json = load_json('flaskapp/backend/dashboards/alertes.json')
 
-    organization = get_user_org()
-    gr._change_current_organization_to(organization)
+      organization = get_user_org()
+      gr._change_current_organization_to(organization)
 
-    # Create dashborads, rewrite flag is true --> existing dashs are updated
-    dash_ids = []
-    dash_ids.append(gr._create_dashboard(dash_pr_json))
-    dash_ids.append(gr._create_dashboard(dash_ag_json))
-    dash_ids.append(gr._create_dashboard(dash_es_json))
-    dash_ids.append(gr._create_dashboard(dash_al_json))
+      # Create dashborads, rewrite flag is true --> existing dashs are updated
+      dash_ids = []
+      dash_ids.append(gr._create_dashboard(dash_pr_json))
+      dash_ids.append(gr._create_dashboard(dash_ag_json))
+      dash_ids.append(gr._create_dashboard(dash_es_json))
+      dash_ids.append(gr._create_dashboard(dash_al_json))
 
-    # Load preferences
-    gr.update_preferences_org(dash_ids[0])
-
+      # Load preferences
+      gr.update_preferences_org(dash_ids[0])
+      flash('Dashboard has been upgraded to the last version')
+    except:
+      flash('Something went wrong, Try again later')
     return redirect(url_for('auth_bp.login'))
+    
