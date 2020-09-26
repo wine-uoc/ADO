@@ -2,7 +2,7 @@
 from flask import current_app as app
 from flask_login import current_user
 
-from .models import db, User, NodeConfig, Wifi, Tokens
+from .models import db, User, NodeConfig, Wifi, Tokens, Calibration_1, Calibration_2, Requires_Cal_1, Requires_Cal_2
 from .utils import create_node_name, delete_entries
 
 
@@ -12,6 +12,10 @@ def delete_tables_entries():
     delete_entries(NodeConfig.query.all())
     delete_entries(Tokens.query.all())
     delete_entries(User.query.all())
+    delete_entries(Calibration_1.query.all())
+    delete_entries(Calibration_2.query.all())
+    delete_entries(Re1uires_Cal_1.query.all())
+    delete_entries(Re1uires_Cal_2.query.all())
     db.session.commit()
 
 
@@ -111,10 +115,28 @@ def sign_up_database(name, org, email, password):
 
         tokens = Tokens(id=email, node_id=create_node_name())   # tokens table associated to email
 
+        calibration1 = Calibration_1(id=email)              # calibration table associated to email
+        calibration1.set_values([0] * app.config['MAX_NUM_SENSORS_IN_NODE'])   # All 1-pt calibration values set to 0 (disabled)
+        
+        calibration2 = Calibration_2(id=email)              # calibration table associated to email
+        calibration2.set_values([0] * app.config['MAX_NUM_SENSORS_IN_NODE'])   # All 2-pt calibration values set to 0 (disabled)
+        
+        #loads flags from config file
+        #flag = 1 for the sensors that require calibration before using
+        req_cal_1 = Requires_Cal_1(id=email)              # flag table associated to email
+        req_cal_1.set_values(app.config['REQ_CAL_1'])   # All flag values set to 0 (disabled calibration)
+        
+        req_cal_2 = Requires_Cal_2(id=email)              # flag table associated to email
+        req_cal_2.set_values(app.config['REQ_CAL_2'])   # All flag values set to 0 (disabled calibration)
+        
         db.session.add(user)                            # Commit changes
         db.session.add(node_config)
         db.session.add(wifi)
         db.session.add(tokens)
+        db.session.add(calibration1)
+        db.session.add(calibration2)
+        db.session.add(req_cal_1)
+        db.session.add(req_cal_2)
         db.session.commit()
         return False, user, tokens.node_id
     else:

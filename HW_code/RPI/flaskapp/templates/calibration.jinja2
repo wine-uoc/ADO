@@ -1,0 +1,43 @@
+{% extends "layout.jinja2" %}
+
+{% block pagestyles %}
+    <link href="{{ url_for('static', filename='dist/css/account.css') }}" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block content %}
+
+            {% for message in get_flashed_messages() %}
+                <div class="alert alert-warning">
+                    <button type="button" class="close" data-dismiss="alert">&times;</button>
+                    {{ message }}
+                </div>
+            {% endfor %}
+
+            <p style="text-align: right; border-bottom: none; margin-bottom: 1px; padding-bottom: 0px">
+                Calibration:
+            </p>
+            <h1 style="text-align: right; border-bottom: none; font-size: 1.8rem">
+                {{ sensor_name }}
+            </h1>
+            <br>
+            <p></p>
+            <br>
+            <p>1) Wash the probe with distilled water, then absorb the residual water-drops with paper. Insert the pH probe into the standard buffer solution of 7.0, stir gently, for a few seconds. Then press the button below.</p>
+            <button> Record pH 7 </button>
+            <br>
+
+            <p>2) Wash the probe with distilled water, then absorb the residual water-drops with paper. Insert the pH probe into the standard buffer solution of 4.0, stir gently, for a few seconds.</p>
+
+            <button> Record pH 4 </button>
+            <br>
+
+
+            <div class="submitbutton">
+                <input id="submit" type="submit" value="Upload Calibration">
+            </div>
+
+            <div class="loginsignup">
+                <span>Bring me back to <a href="{{ url_for('main_bp.dashboard') }}">configuration page.</a></span>
+            </div>
+
+{% endblock %}

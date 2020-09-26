@@ -150,3 +150,16 @@ def dashboard_upgrade():
       flash('Something went wrong, Try again later')
     return redirect(url_for('auth_bp.login'))
     
+@main_bp.route('/calibration', methods=['GET','POST'])
+@login_required
+def start_calibration():
+    """Receives post message from js push button, it should proceed with calibrating the specific sensor"""
+   # str_sensor_num = request.form['sensor_num']  # Data from js
+    #sensor_idx = int(str_sensor_num[-2:]) - 1
+   # sensor_name = read from config
+
+
+    # update rpi db
+    #update_config_values(sensor_idx, new_value)
+    return render_template('calibration.jinja2',title='Sensor Calibration - ADO',
+                           template='calibration-page')

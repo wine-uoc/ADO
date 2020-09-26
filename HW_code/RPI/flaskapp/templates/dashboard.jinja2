@@ -97,6 +97,17 @@
                     <input type="checkbox" name="boxs10" id="s10" onclick="sendEvent('s10')" {{ s10_state }}>
                     <span class="checkbox_mark"></span>
                 </label>  </div>
+            
+            <div class="column">
+                <p style="font-size: 1rem">Calibrate sensors:</p>
+                <button onclick="startCalibration('s03')">pH</button>
+                <br>
+                <button onclick="startCalibration('s06')">Conductivity 1/2 </button>
+                <br>
+                <button onclick="startCalibration('s08')">Oxygen</button>
+                <br>
+            </div>
+                
         </div>
 
         <p style="border-bottom: 1px solid lightblue;"></p>
@@ -125,6 +136,11 @@
             } else {
                 $.post( "/setsensor", {box_state: checkbox.checked, sensor_num: boxid});
             }
+        }
+
+        function startCalibration(buttonid) {  
+            window.location.assign("{{ url_for('main_bp.start_calibration') }}")
+            $.post("/calibration");    
         }
     </script>
 {% endblock %}
