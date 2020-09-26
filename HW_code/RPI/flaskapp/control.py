@@ -14,8 +14,8 @@ def delete_tables_entries():
     delete_entries(User.query.all())
     delete_entries(Calibration_1.query.all())
     delete_entries(Calibration_2.query.all())
-    delete_entries(Re1uires_Cal_1.query.all())
-    delete_entries(Re1uires_Cal_2.query.all())
+    delete_entries(Requires_Cal_1.query.all())
+    delete_entries(Requires_Cal_2.query.all())
     db.session.commit()
 
 

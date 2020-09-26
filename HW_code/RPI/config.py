@@ -17,7 +17,7 @@ class ConfigFlaskApp:
     PERMANENT_SESSION_LIFETIME = 10*60*60    # seconds
 
     # ENV Config
-    FLASK_ENV = 'production'    # development (to compile new CSS and JS)
+    FLASK_ENV = 'production'    #'production'    # development (to compile new CSS and JS)
 
     # DB Config
     SQLALCHEMY_DATABASE_URI = 'sqlite:///database/db.sqlite'
@@ -25,7 +25,7 @@ class ConfigFlaskApp:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Assets Config
-    LESS_BIN = '/usr/local/bin/lessc'
+    LESS_BIN = '/usr/bin/lessc'
     ASSETS_DEBUG = False
     ASSETS_AUTO_BUILD = True
 

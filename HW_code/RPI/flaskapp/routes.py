@@ -162,4 +162,4 @@ def start_calibration():
     # update rpi db
     #update_config_values(sensor_idx, new_value)
     return render_template('calibration.jinja2',title='Sensor Calibration - ADO',
-                           template='calibration-page')
+                           template='dashboard-template')
