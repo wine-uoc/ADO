@@ -20,12 +20,12 @@
             <p></p>
             <br>
             <p>1) Wash the probe with distilled water, then absorb the residual water-drops with paper. Insert the pH probe into the standard buffer solution of 7.0, stir gently, for a few seconds. Then press the button below.</p>
-            <button> Record pH 7 </button>
+            <button onclick="Acquire_data()"> Record pH 7 </button>
             <br>
 
             <p>2) Wash the probe with distilled water, then absorb the residual water-drops with paper. Insert the pH probe into the standard buffer solution of 4.0, stir gently, for a few seconds. Then press the button below.</p>
 
-            <button> Record pH 4 </button>
+            <button onclick="Acquire_data()"> Record pH 4 </button>
             <br>
 
 
@@ -37,4 +37,14 @@
                 <span>Bring me back to <a href="{{ url_for('main_bp.dashboard') }}">configuration page.</a></span>
             </div>
 
+{% endblock %}
+
+
+{% block additionalscripts %}
+    <script>
+        function Acquire_data() {
+            $.post( "/sendcontrol");
+        }
+
+    </script>
 {% endblock %}

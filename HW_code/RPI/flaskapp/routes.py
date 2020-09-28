@@ -5,16 +5,16 @@ from flask_login import login_required, logout_user
 
 from .assets import compile_main_assets
 from .control import get_node_id, get_config_obj, delete_tables_entries, update_config_values, get_wifi_obj, \
-    update_wifi_data, get_user_org
+    update_wifi_data, get_user_org, get_tokens_obj
 from .forms import WifiForm
 import flaskapp.backend.grafana_interactions as gr
 from flaskapp.backend.grafana_bootstrap import load_json
+from .mqtt import mqtt_connection, cal_sensor
 # Blueprint Configuration
 main_bp = Blueprint('main_bp', __name__,
                     template_folder='templates',
                     static_folder='static')
 compile_main_assets(app)
-
 
 @main_bp.route('/', methods=['GET', 'POST'])
 @login_required
@@ -24,6 +24,11 @@ def dashboard():
     GET:
     Show active sensors from database, allow enable/disable sensors, show menu options.
     """
+    global tokens, client, mqtt_topic
+    tokens = get_tokens_obj()
+    client, mqtt_topic = mqtt_connection(tokens)
+    mqtt_topic = mqtt_topic + '/control'
+
     str_current_config = ['checked' if sensor_sr != 0 else '' for sensor_sr in get_config_obj().get_values()]
     # str list of 'checked' if sensor sampling rate is not 0 else '' (checked is passed to html checkbox)
 
@@ -163,3 +168,18 @@ def start_calibration():
     #update_config_values(sensor_idx, new_value)
     return render_template('calibration.jinja2',title='Sensor Calibration - ADO',
                            template='dashboard-template')
+
+@main_bp.route('/sendcontrol', methods=['POST'])
+@login_required
+def cal_sendcontrol():
+    """sends message in control topic, to ask arduino to acquire data"""
+    #create control message
+    sensor = 'pH'
+    print("*************** topic is ", mqtt_topic)
+    cal_sensor(client, mqtt_topic, sensor)
+    #rpi receives arduino data and places it in db
+    #when there is data in db, display asking for the other ph
+
+    # update rpi db
+    #update_config_values(sensor_idx, new_value)
+    return sensor

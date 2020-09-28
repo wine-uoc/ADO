@@ -17,7 +17,7 @@ class ConfigFlaskApp:
     PERMANENT_SESSION_LIFETIME = 10*60*60    # seconds
 
     # ENV Config
-    FLASK_ENV = 'production'    #'production'    # development (to compile new CSS and JS)
+    FLASK_ENV = 'development'    #'production'    # development (to compile new CSS and JS)
 
     # DB Config
     SQLALCHEMY_DATABASE_URI = 'sqlite:///database/db.sqlite'
@@ -73,4 +73,4 @@ class ConfigRPI:
 
     # Control messages
     # time period to check on db and send control messages in channel
-    PERIODIC_CONTROL_SECONDS = 2
+    PERIODIC_CONTROL_SECONDS = 10

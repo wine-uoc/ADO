@@ -213,8 +213,16 @@ def register_node_backend(name, organization, email, password, node_id):
         channel_id = return_channel_id(token, channel_name)
         _ = connect_to_channel(token, channel_id, thing_id)
 
+        # register flaskapp to account (create thing)
+        _ = create_thing(token, node_name, "flaskapp")
+        flask_id = return_thing_id(token, node_name)
+        flask_key = return_thing_key(token, node_name)
+
+        # connect to the existing channel
+        _ = connect_to_channel(token, channel_id, flask_id)
+
         # store backend credentials to rpi database
-        update_tokens_values(token, thing_id, thing_key, channel_id)
+        update_tokens_values(token, thing_id, thing_key, flask_id, flask_key,channel_id)
 
     if response_c1.ok and response_c2.ok:
         # print('Backend account DOES NOT exist, creating account, channel, registering node.')
@@ -234,11 +242,19 @@ def register_node_backend(name, organization, email, password, node_id):
         channel_id = return_channel_id(token, channel_name)
         _ = connect_to_channel(token, channel_id, thing_id)
 
+         # register flaskapp to account (create thing)
+        _ = create_thing(token, node_name, "flaskapp")
+        flask_id = return_thing_id(token, node_name)
+        flask_key = return_thing_key(token, node_name)
+
+        # connect to the existing channel
+        _ = connect_to_channel(token, channel_id, flask_id)
+
         # boostrap grafana
         grafana.bootstrap(name, organization, email, password, channel_id)
 
         # store backend credentials to rpi database
-        update_tokens_values(token, thing_id, thing_key, channel_id)
+        update_tokens_values(token, thing_id, thing_key, flask_id, flask_key,channel_id)
 
     if not response_c1.ok and not response_c2.ok:
         # Account exists in ADO, but password does not match.

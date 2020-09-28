@@ -41,12 +41,14 @@ def update_wifi_data(ssid=None, password=None, activate=None):
     db.session.commit()
 
 
-def update_tokens_values(account_token, thing_id, thing_key, channel_id):
+def update_tokens_values(account_token, thing_id, thing_key, flask_id, flask_key, channel_id):
     """Add values to table.'"""
     tokens = get_tokens_obj()
     tokens.account_token = account_token
     tokens.thing_id = thing_id
     tokens.thing_key = thing_key
+    tokens.flask_id = flask_id
+    tokens.flask_key = flask_key
     tokens.channel_id = channel_id
     db.session.commit()
 

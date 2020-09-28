@@ -81,21 +81,27 @@ def on_subscribe(client, userdata, mid, granted_qos):
 
 def on_message(client, userdata, msg):
     """Callback for received message."""
-    print(msg.topic)
+    #print(msg.topic)
     # print("RX1")
     # print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
-    message = str(msg.payload.decode('UTF-8'))  # message is string now, not json
-    print(message)
-    message = eval(message)
-    if str(message['type']) == 'SET_SR':
-        # if message[11:17] == 'SET_SR':  # A naive patch for the issue
-        # CAUTION: using message as dict, because messages have different keys, like:
-        # [{"bn": "", "n": "Air CO2", "u": "ppm", "v": 30, "t": 1587467662.0718532}]
-        # [{"type": "SET_SR", "sensor": "Conductivity", "v": "1", "u": "s", "t": 1587467316.838788}]
-        # message = eval(message)  # transform to dictionary
-        set_sr(client, userdata['engine'], userdata['topic'], message['sensor'], message['v'], message['u'])
-    else:
-        print("Received message is not SET_SR type  ")
+    rx_data = str(msg.payload.decode('UTF-8'))  # message is string now, not json
+    rx_data = json.loads(rx_data) #message to json
+    for message in rx_data:
+        print(message)
+        #message = eval(message)
+        print ("***************************************")
+        print(message['type'])
+        if str(message['type']) == 'SET_SR':
+            # if message[11:17] == 'SET_SR':  # A naive patch for the issue
+            # CAUTION: using message as dict, because messages have different keys, like:
+            # [{"bn": "", "n": "Air CO2", "u": "ppm", "v": 30, "t": 1587467662.0718532}]
+            # [{"type": "SET_SR", "sensor": "Conductivity", "v": "1", "u": "s", "t": 1587467316.838788}]
+            # message = eval(message)  # transform to dictionary
+            set_sr(client, userdata['engine'], userdata['topic'], message['sensor'], message['v'], message['u'])
+        elif str(message['type']) == 'CAL':
+            print("***********Received message is CAL type, for the", message['n'], "sensor")
+        else:
+            print("Received message is not SET_SR type  ")
 
 
 def set_sr(client, engine, topic, sensor, value, unit):

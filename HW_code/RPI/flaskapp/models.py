@@ -126,6 +126,12 @@ class Tokens(UserMixin, db.Model):
     channel_id = db.Column(db.String(100),
                            nullable=True,
                            unique=True)
+    flask_id = db.Column(db.String(100),
+                         nullable=True,
+                         unique=True)
+    flask_key = db.Column(db.String(100),
+                          nullable=True,
+                          unique=True)
 
 
 class Calibration_1(UserMixin, db.Model):
