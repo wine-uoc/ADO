@@ -60,7 +60,7 @@ def TransmitThread(ser, serialcmd, periodicity, magnitude):
     r.join()
 
 def ReceiveThread(ser, serialcmd, magnitude):
-    global no_answer_pending, client, topic
+    global no_answer_pending, client, topic, engine
 
     # debug messages
     logging.debug('executing thread %s', threading.currentThread().getName())
@@ -80,7 +80,7 @@ def ReceiveThread(ser, serialcmd, magnitude):
             if arduino_publish_data.valid_data(response, sensorType, parameter1):
                 #issue for i2c 0xhex address if address not known apriori
                 no_answer_pending = True
-                arduino_publish_data.publish_data(magnitude,response, client, topic)
+                arduino_publish_data.publish_data(magnitude,response, client, topic, engine)
                 tx_lock.release()
             else:
                 logging.debug("RX data does not correspond to the last command sent, checking again the serial")
@@ -239,7 +239,7 @@ def on_message_0(client, userdata, msg):
             print("Received message is not of known type  ")
 
 def main():
-    global tx_lock, client, topic
+    global tx_lock, client, topic, engine
     format = "%(asctime)s: %(message)s"
     logging.basicConfig(format=format, level=logging.DEBUG, datefmt="%H:%M:%S")
 
