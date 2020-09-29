@@ -10,6 +10,8 @@ import paho.mqtt.client as mqtt
 from config import ConfigRPI
 from rpiapp.db_management import get_table_database, check_table_database, update_nodeconfig_table_database
 from rpiapp.ini_client import on_connect
+from rpiapp.arduino_commands import create_cmd
+
 
 MQTT_CONNECTED = False  # global variable for the state
 MQTT_SUBSCRIBED = False
@@ -95,13 +97,35 @@ def on_message(client, userdata, msg):
             # if message[11:17] == 'SET_SR':  # A naive patch for the issue
             # CAUTION: using message as dict, because messages have different keys, like:
             # [{"bn": "", "n": "Air CO2", "u": "ppm", "v": 30, "t": 1587467662.0718532}]
-            # [{"type": "SET_SR", "sensor": "Conductivity", "v": "1", "u": "s", "t": 1587467316.838788}]
+            # [{"type": "SET_SR", "n": "Conductivity", "v": "1", "u": "s", "t": 1587467316.838788}]
             # message = eval(message)  # transform to dictionary
             set_sr(client, userdata['engine'], userdata['topic'], message['sensor'], message['v'], message['u'])
+        
+
         elif str(message['type']) == 'CAL':
             print("***********Received message is CAL type, for the", message['n'], "sensor")
+            sensor = str(message['n'])
+            magnitudes = ConfigRPI.SENSOR_MAGNITUDES
+            for i in range(len(magnitudes)):
+                if magnitudes[i] == sensor:
+                    break
+            # Create command for A0
+            cmd_type = 'read'  
+            sensor_type = ConfigRPI.SENSOR_TYPES[i]
+            sensor_params = ConfigRPI.SENSOR_PARAMS[i]
+            serialcmd = create_cmd(cmd_type, sensor_type, sensor_params)
+
+            #create calibration thread; use join() to wait for this thread to finish
+            print("creating cal thread")
+            r = threading.Timer(1, CalibrationThread, (userdata['serial'], serialcmd, i, userdata['engine']))
+            print("after cal thread")
+            r.setName('CAL Thread')
+            r.start()
+            r.join()
+            print("after join")
+
         else:
-            print("Received message is not SET_SR type  ")
+            print("Received message is not of known type  ")
 
 
 def set_sr(client, engine, topic, sensor, value, unit):
