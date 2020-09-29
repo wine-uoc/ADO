@@ -20,18 +20,18 @@
             <p></p>
             <br>
             <p>1) Wash the probe with distilled water, then absorb the residual water-drops with paper. Insert the pH probe into the standard buffer solution of 7.0, stir gently, for a few seconds. Then press the button below.</p>
-            <button onclick="Acquire_data()"> Record pH 7 </button>
+            <button onclick="Acquire_data('pH','1')"> Record pH 7 </button>
             <br>
 
             <p>2) Wash the probe with distilled water, then absorb the residual water-drops with paper. Insert the pH probe into the standard buffer solution of 4.0, stir gently, for a few seconds. Then press the button below.</p>
 
-            <button onclick="Acquire_data()"> Record pH 4 </button>
-            <br>
+            <button onclick="Acquire_data('pH','2')"> Record pH 4 </button>
+            <p></p>
 
 
-            <div class="submitbutton">
-                <input id="submit" type="submit" value="Upload Calibration">
-            </div>
+            <button onclick="Check_calibration('pH')"> Upload Calibration </button>
+
+            <div id= "display-upload-result">  </div>
 
             <div class="loginsignup">
                 <span>Bring me back to <a href="{{ url_for('main_bp.dashboard') }}">configuration page.</a></span>
@@ -42,8 +42,13 @@
 
 {% block additionalscripts %}
     <script>
-        function Acquire_data() {
-            $.post( "/sendcontrol");
+        function Acquire_data(sensor_name, db) {
+            $.post( "/sendcontrol", {sensor: sensor_name, db_to_use: db});
+        }
+
+        function Check_calibration(sensor_name) {
+            $.post( "/calcheck", {sensor: sensor_name}, function(result){
+                $("#display-upload-result").text(result);});
         }
 
     </script>

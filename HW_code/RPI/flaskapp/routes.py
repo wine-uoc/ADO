@@ -5,11 +5,14 @@ from flask_login import login_required, logout_user
 
 from .assets import compile_main_assets
 from .control import get_node_id, get_config_obj, delete_tables_entries, update_config_values, get_wifi_obj, \
-    update_wifi_data, get_user_org, get_tokens_obj
+    update_wifi_data, get_user_org, get_tokens_obj, get_calib_1_obj, get_calib_2_obj
 from .forms import WifiForm
 import flaskapp.backend.grafana_interactions as gr
 from flaskapp.backend.grafana_bootstrap import load_json
 from .mqtt import mqtt_connection, cal_sensor
+from config import ConfigFlaskApp, ConfigRPI
+
+
 # Blueprint Configuration
 main_bp = Blueprint('main_bp', __name__,
                     template_folder='templates',
@@ -155,6 +158,7 @@ def dashboard_upgrade():
       flash('Something went wrong, Try again later')
     return redirect(url_for('auth_bp.login'))
     
+
 @main_bp.route('/calibration', methods=['GET','POST'])
 @login_required
 def start_calibration():
@@ -169,17 +173,35 @@ def start_calibration():
     return render_template('calibration.jinja2',title='Sensor Calibration - ADO',
                            template='dashboard-template')
 
+
 @main_bp.route('/sendcontrol', methods=['POST'])
 @login_required
 def cal_sendcontrol():
     """sends message in control topic, to ask arduino to acquire data"""
     #create control message
-    sensor = 'pH'
-    print("*************** topic is ", mqtt_topic)
-    cal_sensor(client, mqtt_topic, sensor)
-    #rpi receives arduino data and places it in db
-    #when there is data in db, display asking for the other ph
-
-    # update rpi db
-    #update_config_values(sensor_idx, new_value)
+    sensor = str(request.form['sensor']) 
+    db_to_use = str(request.form['db_to_use'])
+    cal_sensor(client, mqtt_topic, sensor, db_to_use)
     return sensor
+
+
+@main_bp.route('/calcheck', methods=['POST'])
+@login_required
+def cal_check():
+    """checks if calibration databases are full"""
+    sensor = str(request.form['sensor']) 
+    db1_values = get_calib_1_obj().get_values()
+    db2_values = get_calib_2_obj().get_values()
+    print(db2_values)
+    #find sensor index i
+    magnitudes = ConfigRPI.SENSOR_MAGNITUDES
+    for i in range(len(magnitudes)):  #starts with 0
+      if magnitudes[i] == sensor:
+        break
+
+    if db1_values[i] != 0.0 and db2_values[i] != 0.0 :
+      message = "calibration database is correctly updated"
+      return message
+    else:
+      message = "One of the values seems to be missing, please restart the calibration process"
+      return message

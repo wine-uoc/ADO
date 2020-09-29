@@ -7,7 +7,7 @@ import json
 
 import serial
 from rpiapp import arduino_publish_data, arduino_commands, ini_client
-from rpiapp.db_management import check_table_database, get_table_database, update_calibration_1_table_database
+from rpiapp.db_management import check_table_database, get_table_database, update_calibration_1_table_database, update_calibration_2_table_database
 from rpiapp.periodic_control_sensors import set_sr
 import paho.mqtt.client as mqtt
 from config import ConfigRPI
@@ -89,7 +89,7 @@ def ReceiveThread(ser, serialcmd, magnitude):
         tx_lock.release()
     print(time.time(), " End RX processing")
 
-def CalibrationThread(ser, serialcmd, index, engine): #not periodic
+def CalibrationThread(ser, serialcmd, index, engine, db): #not periodic
     global no_answer_pending
     global tx_lock
     # debug messages; get thread name and get the lock
@@ -102,12 +102,12 @@ def CalibrationThread(ser, serialcmd, index, engine): #not periodic
     #logging.debug('%s', serialcmd)
     ser.write(serialcmd.encode('utf-8'))
     # create the RX thread; use join() to start right now
-    r = threading.Timer(1, SetCalibrationDBThread, (ser, serialcmd, index, engine))
+    r = threading.Timer(1, SetCalibrationDBThread, (ser, serialcmd, index, engine, db))
     r.setName('RX CAL Thread')
     r.start()
     r.join()
 
-def SetCalibrationDBThread(ser, serialcmd, index, engine):
+def SetCalibrationDBThread(ser, serialcmd, index, engine, db):
     global no_answer_pending, client, topic
 
     # debug messages
@@ -131,8 +131,13 @@ def SetCalibrationDBThread(ser, serialcmd, index, engine):
                 idx_sensor = index + 1
                 data = json.loads(response)
                 value = data[0]['pinValue'] #there should be only one item in data
-                update_calibration_1_table_database(engine, idx_sensor, value)
-                tx_lock.release()
+                if db == "1":
+                    update_calibration_1_table_database(engine, idx_sensor, value)
+                    tx_lock.release()
+                elif db == "2":
+                    update_calibration_2_table_database(engine, idx_sensor, value)
+                    tx_lock.release()
+
             else:
                 logging.debug("RX data does not correspond to the last command sent, checking again the serial")
 
@@ -213,6 +218,7 @@ def on_message_0(client, userdata, msg):
         elif str(message['type']) == 'CAL':
             print("***********Received message is CAL type, for the", message['n'], "sensor")
             sensor = str(message['n'])
+            db_to_use = str(message['v']) #indicates in which calibration db to save the data
             magnitudes = ConfigRPI.SENSOR_MAGNITUDES
             for i in range(len(magnitudes)):
                 if magnitudes[i] == sensor:
@@ -224,7 +230,7 @@ def on_message_0(client, userdata, msg):
             serialcmd = arduino_commands.create_cmd(cmd_type, sensor_type, sensor_params)
 
             #create calibration thread; use join() to wait for this thread to finish
-            r = threading.Timer(1, CalibrationThread, (userdata['serial'], serialcmd, i, userdata['engine']))
+            r = threading.Timer(1, CalibrationThread, (userdata['serial'], serialcmd, i, userdata['engine'], db_to_use))
             r.setName('CAL Thread')
             r.start()
             r.join()

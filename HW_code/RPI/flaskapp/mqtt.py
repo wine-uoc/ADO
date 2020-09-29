@@ -54,9 +54,10 @@ def on_subscribe(client, userdata, mid, granted_qos):
     global MQTT_SUBSCRIBED
     MQTT_SUBSCRIBED = True
 
-def cal_sensor(client, topic, sensor):
+def cal_sensor(client, topic, sensor, db_to_use):
     """Send the control message to RPI to ask arduino for data."""
-    print("******Calibrating the " + str(sensor) + " sensor")
+    """sensor holds the sensor name; param is what we calibrate, e.g 4 for pH 4"""
+    print("******Calibrating the " + str(sensor) + " sensor, to be stored in db ", str(db_to_use))
     # Find number of sensor
     #magnitudes = ConfigRPI.SENSOR_MAGNITUDES
     #for i in range(len(magnitudes)):
@@ -68,7 +69,7 @@ def cal_sensor(client, topic, sensor):
     # Send control message to rpiapp
     #{"type": "SET_SR", "sensor":sensor_name, "v":selectedvalue, "u":"s", "t":timestamp}
     timestamp = time.time()
-    data = [{"type": "CAL", "n": sensor, "t": timestamp}]
+    data = [{"type": "CAL", "n": sensor, "v": db_to_use, "t": timestamp}]
 
     #data = [{"type": "SET_SR", "sensor":sensor, "v":28, "u":"s", "t":timestamp}]
     client.publish(topic, json.dumps(data))
