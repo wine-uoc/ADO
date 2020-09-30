@@ -12,7 +12,8 @@ from flaskapp.backend.grafana_bootstrap import load_json
 from .mqtt import mqtt_connection, cal_sensor
 from config import ConfigFlaskApp, ConfigRPI
 
-
+MQTT_CONNECTED = False  # global variable for handling mqtt connection
+MQTT_SUBSCRIBED = False
 # Blueprint Configuration
 main_bp = Blueprint('main_bp', __name__,
                     template_folder='templates',
@@ -27,10 +28,12 @@ def dashboard():
     GET:
     Show active sensors from database, allow enable/disable sensors, show menu options.
     """
-    global tokens, client, mqtt_topic
+    global tokens, client, mqtt_topic, MQTT_CONNECTED, MQTT_SUBSCRIBED
     tokens = get_tokens_obj()
-    client, mqtt_topic = mqtt_connection(tokens)
-    mqtt_topic = mqtt_topic + '/control'
+
+    while not MQTT_CONNECTED:
+      MQTT_CONNECTED, client, mqtt_topic = mqtt_connection(tokens)
+      mqtt_topic = mqtt_topic + '/control'
 
     str_current_config = ['checked' if sensor_sr != 0 else '' for sensor_sr in get_config_obj().get_values()]
     # str list of 'checked' if sensor sampling rate is not 0 else '' (checked is passed to html checkbox)

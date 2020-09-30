@@ -64,25 +64,38 @@ def publish_data(magnitude,response, client, topic, engine):
         #for pH, special payload construction is needed, to use the calibration values
         if name == "pH":
             temperature = 25 #there is no temp compensation in dfrobot library code
-            ph_index = get_sensor_index(name) + 1 #index 1 to 10
+            ph_index = get_sensor_index(name) + 1 #index 1 to 10, to extract from calibration table
             if ph_index < 10:
                 idx_sensor_str = 's0' + str(ph_index)
             else:
                 idx_sensor_str = 's' + str(ph_index)
 
             neutral_row,_=get_table_database(engine,"calibration_1")
-            neutralVoltage = getattr(neutral_row, idx_sensor_str)
+            neutralVoltage = getattr(neutral_row, idx_sensor_str) #*5000/1024 #mV @ 5
 
             acid_row,_=get_table_database(engine,"calibration_2")
-            acidVoltage = getattr(acid_row, idx_sensor_str)
+            acidVoltage = getattr(acid_row, idx_sensor_str)#*5000/1024#mV @ 5V
+
 
             #todo: neutral voltage check between 1322-1678
             # value/1024*5000?
-            #todo handle division by zero in readPH
+
             print ("neutral, ", neutralVoltage)
             print("acid, ", acidVoltage) 
-            ph =  readPH(value, temperature, neutralVoltage, acidVoltage)
-            value = ph
+            try:
+                ph =  readPH_library(value, temperature, neutralVoltage, acidVoltage)
+                value = ph
+            except:#division by zero
+                print("division by zero")
+        
+        elif name == "Turbidity":
+            try:
+                #attention! voltage reading is artificially shifted to 5V from 3.3V
+                value = readTurbidity(value) 
+            except:
+                print("error in turbidity computation")
+
+
 
         payload = [{"bn": "", "n": name, "u": unit, "v": value, "t": timestamp}]
         print(payload)
@@ -90,13 +103,24 @@ def publish_data(magnitude,response, client, topic, engine):
 
 
 
-def readPH(voltage, temperature, neutralVoltage, acidVoltage):
+def readPH_library(voltage, temperature, neutralVoltage, acidVoltage):
     slope = (7.0-4.0)/((neutralVoltage-1500.0)/3.0 - (acidVoltage-1500.0)/3.0)  
     #two point: (_neutralVoltage,7.0),(_acidVoltage,4.0)
     intercept =  7.0 - slope*(neutralVoltage-1500.0)/3.0
     phValue = slope*(voltage-1500.0)/3.0+intercept;  
     #y = k*x + b
     return phValue
+
+def readTurbidity(reading):
+    #from dfrobot wiki page
+    #transform reading 0-1023 to voltage 0-5V
+    #reading is 0-3.3V
+    voltage = reading * 5/1024 # converts reading to 5V value
+    #voltage3.3 = reading * 3.3/1024 #maximum pin input is 3.3V
+    #voltage5 = voltage3.3 * 5/3.3
+    NTU = -1120.4*(voltage**2) + 5742.3*voltage -4352.9
+    return NTU 
+
 
 def get_sensor_index(name):
     sensor_list = ConfigRPI.SENSOR_MAGNITUDES

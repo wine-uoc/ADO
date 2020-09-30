@@ -29,7 +29,7 @@ def mqtt_connection(tokens):
     while not MQTT_CONNECTED:
         time.sleep(1)
 
-    return client, mqtt_topic
+    return MQTT_CONNECTED, client, mqtt_topic
 
 
 def on_connect(client, userdata, flags, rc):
