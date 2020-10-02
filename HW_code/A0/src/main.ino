@@ -6,16 +6,15 @@
 String inString, remainingstring;
 String myArray[5];
 String commandWords[2];
-byte reading, real;
+int reading, real;
 int test_pin = 6;
 String SenMLdata;
 
 void setup()
 {
   pinMode(test_pin, INPUT);
-  analogReadResolution(10);
-
   Serial.begin(9600); //Starting serial communication
+  analogReadResolution(10);
 }
 
 String obtainArray(String data, char separator, int index)
@@ -41,8 +40,9 @@ void ProcessReading(int sensortype, String param_list[5])
   SenMLdata = "\n";
   if (sensortype == SENSOR_ANALOG)
   {
-    reading = analogRead(param_list[0].toInt());
-    SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"sensorType\":\"" + String(sensortype) + "\",\"parameter1\":" + String(param_list[0]) + ",\"pinValue\":" + String(reading) + "}]\n";
+    int pin = param_list[0].toInt();
+    reading = analogRead(pin);
+    SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"sensorType\":\"" + String(sensortype) + "\",\"parameter1\":" + String(pin) + ",\"pinValue\":" + String(reading) + "}]\n";
     Serial.print(SenMLdata); //IMPORTANT! DO NOT PUT PRINTLN, AS THE STRING ALREADY CONTAINS \n
   }
   else if (sensortype == SENSOR_DIGITAL)

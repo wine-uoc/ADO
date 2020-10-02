@@ -5,7 +5,8 @@
 {% endblock %}
 
 {% block content %}
-            <h1 style="margin-top: 80px">Sensor Calibration</h1>
+            
+            <h1 style="margin-top: 80px">{{ sensor_name }} Sensor Calibration</h1>
             {% for message in get_flashed_messages() %}
                 <div class="alert alert-warning">
                     <button type="button" class="close" data-dismiss="alert">&times;</button>
@@ -13,25 +14,24 @@
                 </div>
             {% endfor %}
 
-            <h1 style="text-align: right; border-bottom: none; font-size: 1.8rem">
-                {{ sensor_name }}
             </h1>
             <br>
             <p></p>
             <br>
-            <p>1) Wash the probe with distilled water, then absorb the residual water-drops with paper. Insert the pH probe into the standard buffer solution of 7.0, stir gently, for a few seconds. Then press the button below.</p>
-            <button onclick="Acquire_data('pH','1')"> Record pH 7 </button>
+            <p>{{ message1 }}</p>
+            <button id = "db1button" onclick = Acquire_data('1')> {{ button1 }} </button>
             <br>
 
-            <p>2) Wash the probe with distilled water, then absorb the residual water-drops with paper. Insert the pH probe into the standard buffer solution of 4.0, stir gently, for a few seconds. Then press the button below.</p>
+            <p>{{ message2 }}</p>
 
-            <button onclick="Acquire_data('pH','2')"> Record pH 4 </button>
+            <button id = "db2button" onclick = Acquire_data('2')> {{ button2 }} </button>
             <p></p>
 
 
-            <button onclick="Check_calibration('pH')"> Upload Calibration </button>
+            <button id = "uploadbutton" onclick = Check_calibration()> Upload {{ sensor_name }} Calibration </button>
 
             <div id= "display-upload-result">  </div>
+
 
             <div class="loginsignup">
                 <span>Bring me back to <a href="{{ url_for('main_bp.dashboard') }}">configuration page.</a></span>
@@ -42,14 +42,17 @@
 
 {% block additionalscripts %}
     <script>
-        function Acquire_data(sensor_name, db) {
-            $.post( "/sendcontrol", {sensor: sensor_name, db_to_use: db});
+ 
+        function Acquire_data(db) {
+            var sensorname = '{{ sensor_name }}';
+            $.post( "/sendcontrol", {sensor: sensorname, db_to_use:db});
         }
 
-        function Check_calibration(sensor_name) {
-            $.post( "/calcheck", {sensor: sensor_name}, function(result){
+        function Check_calibration() {
+            var sensorname = '{{ sensor_name }}';
+            $.post( "/calcheck", {sensor: sensorname}, function(result){
                 $("#display-upload-result").text(result);});
         }
-
     </script>
 {% endblock %}
+

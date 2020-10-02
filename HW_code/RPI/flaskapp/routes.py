@@ -14,6 +14,7 @@ from config import ConfigFlaskApp, ConfigRPI
 
 MQTT_CONNECTED = False  # global variable for handling mqtt connection
 MQTT_SUBSCRIBED = False
+sensor_idx = -1
 # Blueprint Configuration
 main_bp = Blueprint('main_bp', __name__,
                     template_folder='templates',
@@ -166,15 +167,37 @@ def dashboard_upgrade():
 @login_required
 def start_calibration():
     """Receives post message from js push button, it should proceed with calibrating the specific sensor"""
-   # str_sensor_num = request.form['sensor_num']  # Data from js
-    #sensor_idx = int(str_sensor_num[-2:]) - 1
-   # sensor_name = read from config
+    global sensor_idx
+    if request.method == 'POST':
+      str_sensor_idx = str(request.form['sensor_index'])  # Data from js
+      sensor_idx = int(str_sensor_idx[-2:]) - 1 #name goes from 1 to 10, but index from 0 to 9
+      return str_sensor_idx
+    else:
+      #I should add parameters to GET
+      sensor_name = ConfigRPI.SENSOR_MAGNITUDES[sensor_idx]
+      if sensor_name == 'pH':
+        text1 = " Wash the probe with distilled water,\
+               then absorb the residual water-drops with paper.\
+               Insert the pH probe into the standard buffer solution of"
+        text2 = ", stir gently, for a few seconds. Then press the button below."
 
+        ph7 = " 7.0"
+        ph4 = " 4.0"
+        message1 = "1) "+ text1 + str(ph7) + text2
+        message2 = "2) "+ text1 + str(ph4) + text2
+        button1 = "Record pH 7.0"
+        button2 = "Record pH 4.0"
+      else:
+        message1= "not implemented"
+        message2= "not implemented"
+        button1= "not implemented"
+        button2= "not implemented"
 
-    # update rpi db
-    #update_config_values(sensor_idx, new_value)
-    return render_template('calibration.jinja2',title='Sensor Calibration - ADO',
-                           template='dashboard-template')
+    #render template with variables: sensor name, sensor message, button text
+    return render_template('calibration.jinja2', title= "ADO- Sensor Calibration",
+                           sensor_name= sensor_name, message1=message1,
+                            message2=message2, button1=button1,
+                            button2=button2, template='dashboard-template')
 
 
 @main_bp.route('/sendcontrol', methods=['POST'])
@@ -183,7 +206,9 @@ def cal_sendcontrol():
     """sends message in control topic, to ask arduino to acquire data"""
     #create control message
     sensor = str(request.form['sensor']) 
+    print(sensor)
     db_to_use = str(request.form['db_to_use'])
+    print(db_to_use)
     cal_sensor(client, mqtt_topic, sensor, db_to_use)
     return sensor
 
@@ -195,6 +220,7 @@ def cal_check():
     sensor = str(request.form['sensor']) 
     db1_values = get_calib_1_obj().get_values()
     db2_values = get_calib_2_obj().get_values()
+    print(db1_values)
     print(db2_values)
     #find sensor index i
     magnitudes = ConfigRPI.SENSOR_MAGNITUDES

@@ -58,7 +58,7 @@
                 <br>
 
                 <label class="checkbox_container">
-                    Flow
+                    Conductivity 1-15 ms/cm
                     <input type="checkbox" name="boxs05" id="s05" onclick="sendEvent('s05')" {{ s05_state }}>
                     <span class="checkbox_mark"></span>
                 </label>
@@ -102,7 +102,9 @@
                 <p style="font-size: 1rem">Calibrate sensors:</p>
                 <button onclick="startCalibration('s03')">pH</button>
                 <br>
-                <button onclick="startCalibration('s06')">Conductivity 1/2 </button>
+                <button onclick="startCalibration('s05')">Conductivity 1-15 ms/cm </button>
+                <br>
+                <button onclick="startCalibration('s06')">Conductivity 2 </button>
                 <br>
                 <button onclick="startCalibration('s08')">Oxygen</button>
                 <br>
@@ -146,9 +148,9 @@
             }
         }
 
-        function startCalibration(buttonid) {  
+        function startCalibration(s_idx) {  
             window.location.assign("{{ url_for('main_bp.start_calibration') }}")
-            $.post("/calibration");    
+            $.post("/calibration", {sensor_index: s_idx});    
         }
     </script>
 {% endblock %}
