@@ -148,9 +148,19 @@
             }
         }
 
-        function startCalibration(s_idx) {  
-            window.location.assign("{{ url_for('main_bp.start_calibration') }}")
-            $.post("/calibration", {sensor_index: s_idx});    
+        function startCalibration(s_idx) { 
+            if (s_idx == 's03'){
+                window.location.assign("{{ url_for('main_bp.start_calibration', sensor_index='s03') }}");
+            }
+            else if (s_idx == 's05'){
+                window.location.assign("{{ url_for('main_bp.start_calibration', sensor_index='s05') }}");
+            }
+            else if (s_idx == 's06'){
+                window.location.assign("{{ url_for('main_bp.start_calibration', sensor_index='s06') }}");
+            }
+            else if (s_idx == 's08'){
+                window.location.assign("{{ url_for('main_bp.start_calibration', sensor_index='s08') }}");
+            } 
         }
     </script>
 {% endblock %}

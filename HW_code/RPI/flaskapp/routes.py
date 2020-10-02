@@ -14,7 +14,7 @@ from config import ConfigFlaskApp, ConfigRPI
 
 MQTT_CONNECTED = False  # global variable for handling mqtt connection
 MQTT_SUBSCRIBED = False
-sensor_idx = -1
+
 # Blueprint Configuration
 main_bp = Blueprint('main_bp', __name__,
                     template_folder='templates',
@@ -163,41 +163,42 @@ def dashboard_upgrade():
     return redirect(url_for('auth_bp.login'))
     
 
-@main_bp.route('/calibration', methods=['GET','POST'])
+@main_bp.route('/calibration', methods=['GET'])
 @login_required
 def start_calibration():
-    """Receives post message from js push button, it should proceed with calibrating the specific sensor"""
-    global sensor_idx
-    if request.method == 'POST':
-      str_sensor_idx = str(request.form['sensor_index'])  # Data from js
-      sensor_idx = int(str_sensor_idx[-2:]) - 1 #name goes from 1 to 10, but index from 0 to 9
-      return str_sensor_idx
-    else:
-      #I should add parameters to GET
-      sensor_name = ConfigRPI.SENSOR_MAGNITUDES[sensor_idx]
-      if sensor_name == 'pH':
-        text1 = " Wash the probe with distilled water,\
+    """it should proceed with calibrating the specific sensor"""
+    str_sensor_idx = str(request.args.get('sensor_index'))
+    print(str_sensor_idx)
+    sensor_idx = int(str_sensor_idx[-2:]) - 1 #name goes from 1 to 10, but index from 0 to 9
+    sensor_name = ConfigRPI.SENSOR_MAGNITUDES[sensor_idx]
+    text1 = " Wash the probe with distilled water,\
                then absorb the residual water-drops with paper.\
-               Insert the pH probe into the standard buffer solution of"
-        text2 = ", stir gently, for a few seconds. Then press the button below."
+               Insert the probe into the standard buffer solution of"
+    text2 = ", stir gently, for a few seconds. Then press the button below."
+    if sensor_name == 'pH':
+      ph7 = " 7.0"
+      ph4 = " 4.0"
+      message1 = "1) "+ text1 + str(ph7) + text2
+      message2 = "2) "+ text1 + str(ph4) + text2
+      button1 = "Record pH 7.0"
+      button2 = "Record pH 4.0"
+    elif sensor_name == 'Conductivity1':
+      cd1 = " 1413us/cm"
+      cd2 = " 12.88ms/cm"
+      message1 = "1) "+ text1 + str(cd1) + text2
+      message2 = "2) "+ text1 + str(cd2) + text2
+      button1 = "Record" + str(cd1)
+      button2 = "Record" + str(cd2)
+    else:
+      message1= "not implemented"
+      message2= "not implemented"
+      button1= "not implemented"
+      button2= "not implemented"
 
-        ph7 = " 7.0"
-        ph4 = " 4.0"
-        message1 = "1) "+ text1 + str(ph7) + text2
-        message2 = "2) "+ text1 + str(ph4) + text2
-        button1 = "Record pH 7.0"
-        button2 = "Record pH 4.0"
-      else:
-        message1= "not implemented"
-        message2= "not implemented"
-        button1= "not implemented"
-        button2= "not implemented"
-
-    #render template with variables: sensor name, sensor message, button text
+  #render template with variables: sensor name, sensor message, button text
     return render_template('calibration.jinja2', title= "ADO- Sensor Calibration",
-                           sensor_name= sensor_name, message1=message1,
-                            message2=message2, button1=button1,
-                            button2=button2, template='dashboard-template')
+                             sensor_name= sensor_name, message1=message1, message2=message2,
+                              button1=button1, button2=button2, template='dashboard-template')
 
 
 @main_bp.route('/sendcontrol', methods=['POST'])
