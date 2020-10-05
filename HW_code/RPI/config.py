@@ -35,8 +35,8 @@ class ConfigFlaskApp:
     # Sensors Config
     DEFAULT_SR = 10
     MAX_NUM_SENSORS_IN_NODE = 10
-    REQ_CAL_1 = [0, 0, 1, 0, 0, 0, 0, 0, 0, 0]
-    REQ_CAL_2 = [0, 0, 1, 0, 0, 0, 0, 0, 0, 0] #pH sensor requiers 2pt cal
+    REQ_CAL_1 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    REQ_CAL_2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] #db to be used if some cal point needs to be retaken
 
 
 class ConfigRPI:

@@ -5,7 +5,7 @@ from flask_login import login_required, logout_user
 
 from .assets import compile_main_assets
 from .control import get_node_id, get_config_obj, delete_tables_entries, update_config_values, get_wifi_obj, \
-    update_wifi_data, get_user_org, get_tokens_obj, get_calib_1_obj, get_calib_2_obj
+    update_wifi_data, get_user_org, get_tokens_obj, get_calib_1_obj, get_calib_2_obj, get_req_calib_1_obj, get_req_calib_2_obj
 from .forms import WifiForm
 import flaskapp.backend.grafana_interactions as gr
 from flaskapp.backend.grafana_bootstrap import load_json
@@ -219,8 +219,8 @@ def cal_sendcontrol():
 def cal_check():
     """checks if calibration databases are full"""
     sensor = str(request.form['sensor']) 
-    db1_values = get_calib_1_obj().get_values()
-    db2_values = get_calib_2_obj().get_values()
+    db1_values = get_req_calib_1_obj().get_values()
+    db2_values = get_req_calib_2_obj().get_values()
     print(db1_values)
     print(db2_values)
     #find sensor index i
@@ -229,9 +229,15 @@ def cal_check():
       if magnitudes[i] == sensor:
         break
 
-    if db1_values[i] != 0.0 and db2_values[i] != 0.0 :
+    if db1_values[i] == 0 and db2_values[i] == 0 : #calib not required anymore
       message = "calibration database is correctly updated"
       return message
+    elif db1_values[i] ==1 and  db2_values[i] == 0:
+      message = "Please retake the first measurement"
+      return message
+    elif db1_values[i] ==0 and  db2_values[i] == 1:
+      message = "Please retake the second measurement"
+      return message
     else:
-      message = "One of the values seems to be missing, please restart the calibration process"
+      message = "Please retake both measurements"
       return message

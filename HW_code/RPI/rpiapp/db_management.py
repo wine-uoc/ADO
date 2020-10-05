@@ -120,3 +120,49 @@ def update_nodeconfig_table_database(engine, idx_sensor, value):
     # table_row.update({"s08": 11})
     session.commit()
     session.close()
+
+def update_req_cal_1_table_database(engine, idx_sensor, value):
+    """Reflect table, update given new values and commit."""
+    if not engine:
+        engine = create_engine(ConfigRPI.DATABASE_URI, echo=False)
+
+    Base = automap_base()   # Ask SQLAlchemy to reflect the tables and create the corresponding ORM classes
+    Base.prepare(engine, reflect=True)
+
+    table = Base.classes.req_cal_1     # ORM class we are interested in
+
+    Session = sessionmaker(bind=engine)     # Create the session, query, update and commit
+    session = Session()
+    table_row = session.query(table).first()
+
+    if idx_sensor < 10:
+        idx_sensor_str = 's0' + str(idx_sensor)
+    else:
+        idx_sensor_str = 's' + str(idx_sensor)
+    setattr(table_row, idx_sensor_str, value)
+    # table_row.update({"s08": 11})
+    session.commit()
+    session.close()
+
+def update_req_cal_2_table_database(engine, idx_sensor, value):
+    """Reflect table, update given new values and commit."""
+    if not engine:
+        engine = create_engine(ConfigRPI.DATABASE_URI, echo=False)
+
+    Base = automap_base()   # Ask SQLAlchemy to reflect the tables and create the corresponding ORM classes
+    Base.prepare(engine, reflect=True)
+
+    table = Base.classes.req_cal_2    # ORM class we are interested in
+
+    Session = sessionmaker(bind=engine)     # Create the session, query, update and commit
+    session = Session()
+    table_row = session.query(table).first()
+
+    if idx_sensor < 10:
+        idx_sensor_str = 's0' + str(idx_sensor)
+    else:
+        idx_sensor_str = 's' + str(idx_sensor)
+    setattr(table_row, idx_sensor_str, value)
+    # table_row.update({"s08": 11})
+    session.commit()
+    session.close()

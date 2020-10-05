@@ -80,6 +80,14 @@ def get_calib_2_obj():
     """Query to db to get current node config. object."""
     return Calibration_2.query.filter_by(id=current_user.email).first()
 
+def get_req_calib_1_obj():
+    """Query to db to get current node config. object."""
+    return Requires_Cal_1.query.filter_by(id=current_user.email).first()
+
+def get_req_calib_2_obj():
+    """Query to db to get current node config. object."""
+    return Requires_Cal_2.query.filter_by(id=current_user.email).first()
+
 def get_user_org():
     """Query to db to get the user organization name."""
     existing_user = User.query.first()
@@ -126,10 +134,10 @@ def sign_up_database(name, org, email, password):
         tokens = Tokens(id=email, node_id=create_node_name())   # tokens table associated to email
 
         calibration1 = Calibration_1(id=email)              # calibration table associated to email
-        calibration1.set_values([0] * app.config['MAX_NUM_SENSORS_IN_NODE'])   # All 1-pt calibration values set to 0 (disabled)
+        calibration1.set_values([1] * app.config['MAX_NUM_SENSORS_IN_NODE'])   # All 1-pt calibration values set to 1 (default)
         
         calibration2 = Calibration_2(id=email)              # calibration table associated to email
-        calibration2.set_values([0] * app.config['MAX_NUM_SENSORS_IN_NODE'])   # All 2-pt calibration values set to 0 (disabled)
+        calibration2.set_values([1] * app.config['MAX_NUM_SENSORS_IN_NODE'])   # All 2-pt calibration values set to 1 (default)
         
         #loads flags from config file
         #flag = 1 for the sensors that require calibration before using

@@ -89,9 +89,13 @@ def ReceiveThread(ser, serialcmd, magnitude):
         tx_lock.release()
     print(time.time(), " End RX processing")
 
-def CalibrationThread(ser, serialcmd, index, engine, db): #not periodic
+def CalibrationThread(ser, serialcmd, index, engine, db): #not periodic, index 0 to 9
     global no_answer_pending
     global tx_lock
+    if db =='1':
+        arduino_publish_data.update_req_cal_1_table_database(engine, index+1, 1) #reset to requires cal
+    else:
+        arduino_publish_data.update_req_cal_2_table_database(engine, index+1, 1) #reset to requires cal
     # debug messages; get thread name and get the lock
     logging.debug('executing thread %s', threading.currentThread().getName())
     threadname = threading.currentThread().getName()
@@ -129,15 +133,12 @@ def SetCalibrationDBThread(ser, serialcmd, index, engine, db):
                 no_answer_pending = True
                 #save data to database, indexed 1 to 10
                 idx_sensor = index + 1
+                #arduino_publish_data.reset_iscalibrated_flags(index) #reset calibration flags 
                 data = json.loads(response)
                 value = data[0]['pinValue'] #there should be only one item in data
-                if db == "1":
-                    update_calibration_1_table_database(engine, idx_sensor, value)
-                    tx_lock.release()
-                elif db == "2":
-                    update_calibration_2_table_database(engine, idx_sensor, value)
-                    tx_lock.release()
-
+                temperature = 22 #todo get real value
+                arduino_publish_data.HandleCalibration(engine, db, value, idx_sensor, temperature)
+                tx_lock.release()
             else:
                 logging.debug("RX data does not correspond to the last command sent, checking again the serial")
 

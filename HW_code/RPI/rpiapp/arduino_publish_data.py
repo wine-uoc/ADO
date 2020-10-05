@@ -6,7 +6,15 @@ import logging
 import time
 from config import ConfigRPI
 from rpiapp.arduino_commands import CmdType, SensorType
-from rpiapp.db_management import get_table_database
+from rpiapp.db_management import get_table_database, update_req_cal_1_table_database, update_req_cal_2_table_database, update_calibration_1_table_database, update_calibration_2_table_database
+
+isCalibrated = [0,0,0,0,0,0,0,0,0,0] #flag for each sensor
+_kvalue = 1
+
+def reset_iscalibrated_flags(idx_sensor):
+    global isCalibrated
+    isCalibrated[idx_sensor] = 0
+
 
 def valid_data(response, sensorType, parameter1):
     if len(response) > 2:
@@ -60,26 +68,25 @@ def publish_data(magnitude,response, client, topic, engine):
         bn = item['bn']
         name = magnitude
         unit = [i for (i, v) in zip(ConfigRPI.SENSOR_UNITS, ConfigRPI.SENSOR_MAGNITUDES) if v == name][0]
+
+        #handle calibration db
+        temperature = 22 #to do, import real value
+        sensor_index = get_sensor_index(name) + 1 #index 1 to 10, to extract from calibration table
+        if sensor_index < 10:
+            idx_sensor_str = 's0' + str(sensor_index)
+        else:
+            idx_sensor_str = 's' + str(sensor_index)
+
+        db1_row,_ = get_table_database(engine,"calibration_1")
+        db2_row,_ = get_table_database(engine,"calibration_2")
         #constructing the payload for mainflux
-        #for pH, special payload construction is needed, to use the calibration values
+        #for some sensors, special payload construction is needed, to use the calibration values
+        #********************************************
         if name == "pH":
-            temperature = 25 #there is no temp compensation in dfrobot library code
-            ph_index = get_sensor_index(name) + 1 #index 1 to 10, to extract from calibration table
-            if ph_index < 10:
-                idx_sensor_str = 's0' + str(ph_index)
-            else:
-                idx_sensor_str = 's' + str(ph_index)
-
-            neutral_row,_=get_table_database(engine,"calibration_1")
-            neutralVoltage = getattr(neutral_row, idx_sensor_str) #*5000/1024 #mV @ 5
-
-            acid_row,_=get_table_database(engine,"calibration_2")
-            acidVoltage = getattr(acid_row, idx_sensor_str)#*5000/1024#mV @ 5V
-
-
+            neutralVoltage = getattr(db1_row, idx_sensor_str) #*5000/1024 #mV @ 5
+            acidVoltage = getattr(db2_row, idx_sensor_str)#*5000/1024#mV @ 5V
             #todo: neutral voltage check between 1322-1678
             # value/1024*5000?
-
             print ("neutral, ", neutralVoltage)
             print("acid, ", acidVoltage) 
             try:
@@ -87,15 +94,28 @@ def publish_data(magnitude,response, client, topic, engine):
                 value = ph
             except:#division by zero
                 print("division by zero")
-        
+        #***********************************************
         elif name == "Turbidity":
             try:
                 #attention! voltage reading is artificially shifted to 5V from 3.3V
                 value = readTurbidity(value) 
             except:
                 print("error in turbidity computation")
-
-
+        #************************************************
+        elif name == "Conductivity1": #add if calibrated flag
+            print("pinvalue: ", value)
+            voltage = value/1024*5000
+            print("voltage:", voltage)
+            global _kvalueLow, _kvalueHigh
+            _kvalueLow = getattr(db1_row, idx_sensor_str)
+            _kvalueHigh = getattr(db2_row, idx_sensor_str)
+            #if isCalibrated[sensor_index-1] == 1: #switch to 0-9 indexes
+             #   print("sensor is calibrated")
+            #else:
+            #    HandleCalibration(engine, name, voltage, db1_row, db2_row, idx_sensor_str, sensor_index, temperature)
+            value = readEC(voltage, temperature)
+        #***********************************************
+            
 
         payload = [{"bn": "", "n": name, "u": unit, "v": value, "t": timestamp}]
         print(payload)
@@ -121,6 +141,19 @@ def readTurbidity(reading):
     NTU = -1120.4*(voltage**2) + 5742.3*voltage -4352.9
     return NTU 
 
+def readEC(voltage,temperature):
+    global _kvalue, _kvalueHigh, _kvalueLow
+    rawEC = 1000*voltage/820.0/200.0
+    valueTemp = rawEC * _kvalue
+    if(valueTemp > 2.5):
+        _kvalue = _kvalueHigh
+    elif(valueTemp < 2.0):
+        _kvalue = _kvalueLow
+    value = rawEC * _kvalue
+    value = value / (1.0+0.0185*(temperature-25.0))
+    print("Voltage:", voltage)
+    print("EC:",value)
+    return value
 
 def get_sensor_index(name):
     sensor_list = ConfigRPI.SENSOR_MAGNITUDES
@@ -128,3 +161,72 @@ def get_sensor_index(name):
         if sensor_list[i] == name:
             break
     return i
+
+def HandleCalibration(engine, db, value, sensor_index, temperature):
+    global _kvalue, _kvalueLow, _kvalueHigh, isCalibrated
+    flag1 = 0
+    flag2 = 0
+
+    name = ConfigRPI.SENSOR_MAGNITUDES[sensor_index-1]
+    if name == "Conductivity1":
+        #read cal db\
+        print("*******************Handling calibration********************")
+        voltage = value *5000/1024
+        if db == '1':
+            dbname= "calibration_1"
+            db_index = 1
+        else:
+            dbname= "calibration_2"
+            db_index = 2
+
+        if sensor_index < 10:
+            idx_sensor_str = 's0' + str(sensor_index)
+        else:
+            idx_sensor_str = 's' + str(sensor_index)
+    
+            
+        print ("db value:", voltage)
+        rawEC = 1000*voltage/820.0/200.0 
+        print("rawEC:", rawEC)
+        if (rawEC>0.9 and rawEC<2): #Buffer Solution:1.413us/cm
+            compECsolution = 1.413*(1.0+0.0185*(temperature-25.0))
+            KValueTemp = 820.0*200.0*compECsolution/1000.0/voltage
+            round(KValueTemp,2)
+            _kvalueLow = KValueTemp 
+            print ("kLOW:",_kvalueLow)
+            update_req_cal_1_table_database(engine, sensor_index, 0) #cal not needed anymore
+            flag1 = 1
+        elif (rawEC>9 and rawEC<16.8): #Buffer Solution:12.88ms/cm
+            compECsolution = 12.88*(1.0+0.0185*(temperature-25.0))
+            KValueTemp = 820.0*200.0*compECsolution/1000.0/voltage
+            _kvalueHigh = KValueTemp
+            print("kHIGH:",_kvalueHigh)
+            update_req_cal_2_table_database(engine, sensor_index, 0)
+            flag2 = 1
+        else:
+            if db_index == 1:
+                update_req_cal_1_table_database(engine, sensor_index, 1)
+            elif db_index == 2:
+                update_req_cal_2_table_database(engine, sensor_index, 1)
+            print ("error with calibration values, setting db:", db_index ,"flag to retake measurement")
+                #to do: flag a database for check_cal fc in flaskapp
+
+        if flag1 == 1 or flag2 == 1: #this function will be called once for a db, and once again for the other
+            print ("value is updated")
+            if db_index == 1:
+                update_req_cal_1_table_database(engine, sensor_index, 0) #cal not needed anymore for this db
+                update_calibration_1_table_database(engine, sensor_index, _kvalueLow) #1 to 10
+            elif db_index == 2:
+                update_req_cal_2_table_database(engine, sensor_index, 0)
+                update_calibration_2_table_database(engine, sensor_index, _kvalueHigh) #1 to 10
+            #isCalibrated[sensor_index-1] = 1 # 0 to 9 indexes
+        else:
+            print ("_kvalueLow and _kvalueHigh were not updated correctly")
+            #here we should set a flag for flaskapp
+
+    else: #other sensor than conductivity1
+        if db == '1':
+            update_calibration_1_table_database(engine, sensor_index, value) #1 to 10
+        else:
+            update_calibration_2_table_database(engine, sensor_index, value)
+        
