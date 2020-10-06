@@ -2,19 +2,25 @@
 #include <stdlib.h>
 #include "main.h"
 #include <OneWire.h>
+#include <Wire.h>
+#include "DFRobot_SHT20.h"
 
 String inString, remainingstring;
 String myArray[5];
 String commandWords[2];
 int reading, real;
 int test_pin = 6;
+float value;
 String SenMLdata;
+DFRobot_SHT20    sht20;
 
 void setup()
 {
   pinMode(test_pin, INPUT);
   Serial.begin(9600); //Starting serial communication
   analogReadResolution(10);
+  sht20.initSHT20();                                  // Init SHT20 Sensor
+  delay(100);
 }
 
 String obtainArray(String data, char separator, int index)
@@ -36,7 +42,6 @@ String obtainArray(String data, char separator, int index)
 
 void ProcessReading(int sensortype, String param_list[5])
 {
-  int value;
   SenMLdata = "\n";
   if (sensortype == SENSOR_ANALOG)
   {
@@ -61,15 +66,26 @@ void ProcessReading(int sensortype, String param_list[5])
   }
   else if (sensortype == SENSOR_ONEWIRE)
   {
-    float value = OneWireRead(param_list[0].toInt());
+    value = OneWireRead(param_list[0].toInt());
     SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"sensorType\":\"" + String(sensortype) + "\",\"parameter1\":" + String(param_list[0]) + ",\"pinValue\":" + String(value) + "}]\n";
     Serial.print(SenMLdata); //IMPORTANT! DO NOT PUT PRINTLN, AS THE STRING ALREADY CONTAINS \n
   }
   else if (sensortype == SENSOR_I2C)
-  {//TBD
-    value = 10;
-    SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"sensorType\":\"" + String(sensortype) + "\",\"parameter1\":\"" + String(param_list[0]) + "\",\"pinValue\":" + String(value) + "}]\n";
-    Serial.print(SenMLdata); //IMPORTANT! DO NOT PUT PRINTLN, AS THE STRING ALREADY CONTAINS \n
+  {
+    if (String(param_list[0]) == "0x40") //SEN0227 Temp&Hum sensor
+    {
+      value=500; //test value 
+      if (String(param_list[1]) == "T") //Temp
+      {
+       value =  sht20.readTemperature();
+      } 
+      else if (String(param_list[1]) == "H") //Hum
+      {
+       value =  sht20.readHumidity();
+      }
+      SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"sensorType\":\"" + String(sensortype) + "\",\"parameter1\":\"" + String(param_list[0]) + "\",\"pinValue\":" + String(value) + "}]\n";
+      Serial.print(SenMLdata); //IMPORTANT! DO NOT PUT PRINTLN, AS THE STRING ALREADY CONTAINS \n
+    }
   }
   else if (sensortype == SENSOR_SERIAL){
   //TBD 
@@ -86,13 +102,13 @@ void SplitCommand(String command, String fullArray)
   stype = command.charAt(1) - '0';     //sensortype
   num_param = command.charAt(2) - '0'; //param list size
 
-  remainingstring = fullArray; //the array of parameters "a, b, c]" or "a]"
+  remainingstring = fullArray; //the array of parameters "a,b,c]" or "a]"
   //Serial.println(cmdtype);
   //Serial.println(num_param);
   for (int i = 0; i < num_param; i++)
   {
     myArray[i] = obtainArray(fullArray, ',', 0);
-    remainingstring = fullArray.substring(myArray[i].length() + 2, fullArray.length());
+    remainingstring = fullArray.substring(myArray[i].length() + 1, fullArray.length()); //skip the comma; old:2
     fullArray = remainingstring;
     // TODO: Do something with remainingstring (rest of parameters)
     //Serial.println(myArray[i]);
