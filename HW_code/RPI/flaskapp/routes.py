@@ -189,6 +189,13 @@ def start_calibration():
       message2 = "2) "+ text1 + str(cd2) + text2
       button1 = "Record" + str(cd1)
       button2 = "Record" + str(cd2)
+    elif sensor_name == 'Conductivity2':
+      cd1 = " 12.88ms/cm"
+      message1 = text1 + cd1
+      button1 = "Record" + cd1
+      message2 = ""
+      button2 = ""
+
     else:
       message1= "not implemented"
       message2= "not implemented"

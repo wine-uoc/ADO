@@ -136,7 +136,7 @@ def SetCalibrationDBThread(ser, serialcmd, index, engine, db):
                 #arduino_publish_data.reset_iscalibrated_flags(index) #reset calibration flags 
                 data = json.loads(response)
                 value = data[0]['pinValue'] #there should be only one item in data
-                temperature = 22 #todo get real value
+                temperature = 25 #todo get real value
                 arduino_publish_data.HandleCalibration(engine, db, value, idx_sensor, temperature)
                 tx_lock.release()
             else:
