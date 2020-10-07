@@ -53,6 +53,7 @@ void ProcessReading(int sensortype, String param_list[5])
   else if (sensortype == SENSOR_DIGITAL)
   {
     //Serial.println("digital read");
+    pinMode(param_list[0].toInt(), INPUT);
     reading = digitalRead(param_list[0].toInt());
     //Serial.println(reading);
     SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"sensorType\":\"" + String(sensortype) + "\",\"parameter1\":" + String(param_list[0]) + ",\"pinValue\":" + String(reading) + "}]\n";

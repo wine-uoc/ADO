@@ -119,7 +119,7 @@ def publish_data(magnitude,response, client, topic, engine):
             voltage = value/1024*5000
             _kvalue2 = getattr(db1_row, idx_sensor_str)
             value = readEC2(voltage, temperature, _kvalue2)
-
+        #***********************************************
         elif name == "Oxygen":
             voltage = value/1024*5000 #mV
             calib_mode = 0 #1 point calib, or two point
@@ -135,6 +135,12 @@ def publish_data(magnitude,response, client, topic, engine):
                 CAL2_V=getattr(db2_row, idx_sensor_str)
 
             value = readDO(voltage, temperature, calib_mode, CAL1_T,CAL1_V,CAL2_T,CAL2_V)
+        #***********************************************
+        elif name == 'AirCO2':
+            voltage = value/1024*3300 #mV
+            print("voltage:", voltage)
+            value = readCO2(voltage)
+            print("CO2: ", value)
 
             
 
@@ -193,8 +199,12 @@ def readDO(voltage, temperature, calib_mode, CAL1_T, CAL1_V, CAL2_T, CAL2_V):
         V_saturation = (temperature - CAL2_T) * (CAL1_V - CAL2_V) / (CAL1_T - CAL2_T) + CAL2_V
     return voltage * DO_Table[temperature] / V_saturation
 
-
-
+def readCO2(voltage):
+    if voltage<400: #preheating
+        return 0
+    else:
+        concentration = (voltage-400)*50/16
+        return concentration
 
 def get_sensor_index(name):
     sensor_list = ConfigRPI.SENSOR_MAGNITUDES
