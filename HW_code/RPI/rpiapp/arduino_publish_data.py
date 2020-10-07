@@ -10,7 +10,11 @@ from rpiapp.db_management import get_table_database, update_req_cal_1_table_data
 
 isCalibrated = [0,0,0,0,0,0,0,0,0,0] #flag for each sensor
 _kvalue = 1
-
+DO_Table = [
+    14460, 14220, 13820, 13440, 13090, 12740, 12420, 12110, 11810, 11530,
+    11260, 11010, 10770, 10530, 10300, 10080, 9860, 9660, 9460, 9270,
+    9080, 8900, 8730, 8570, 8410, 8250, 8110, 7960, 7820, 7690,
+    7560, 7430, 7300, 7180, 7070, 6950, 6840, 6730, 6630, 6530, 6410]
 
 def reset_iscalibrated_flags(idx_sensor):
     global isCalibrated
@@ -116,6 +120,22 @@ def publish_data(magnitude,response, client, topic, engine):
             _kvalue2 = getattr(db1_row, idx_sensor_str)
             value = readEC2(voltage, temperature, _kvalue2)
 
+        elif name == "Oxygen":
+            voltage = value/1024*5000 #mV
+            calib_mode = 0 #1 point calib, or two point
+            if calib_mode ==0:
+                CAL1_T=25 #to do: fixed or user dependent?
+                CAL1_V=getattr(db1_row, idx_sensor_str)
+                CAL2_T=0
+                CAL2_V=0
+            else:
+                CAL1_T=25 #to do: fixed or user dependent?
+                CAL1_V=getattr(db1_row, idx_sensor_str)
+                CAL2_T=15 #to do: fixed or user dependent?
+                CAL2_V=getattr(db2_row, idx_sensor_str)
+
+            value = readDO(voltage, temperature, calib_mode, CAL1_T,CAL1_V,CAL2_T,CAL2_V)
+
             
 
         payload = [{"bn": "", "n": name, "u": unit, "v": value, "t": timestamp}]
@@ -162,6 +182,16 @@ def readEC2(voltage,temperature, _kvalue2):
     _ecvalueRaw = 1000*voltage/RES2/ECREF*_kvalue2*10.0
     value = _ecvalueRaw / (1.0+0.0185*(temperature-25.0)) #temperature compensation
     return value
+
+def readDO(voltage, temperature, calib_mode, CAL1_T, CAL1_V, CAL2_T, CAL2_V):
+    global DO_Table
+
+    if calib_mode == 0: #one point
+        V_saturation = CAL1_V + 35 * temperature - CAL1_T * 35
+        return voltage * DO_Table[temperature] / V_saturation
+    else:
+        V_saturation = (temperature - CAL2_T) * (CAL1_V - CAL2_V) / (CAL1_T - CAL2_T) + CAL2_V
+    return voltage * DO_Table[temperature] / V_saturation
 
 
 
@@ -231,7 +261,7 @@ def HandleCalibration(engine, db, value, sensor_index, temperature):
 
 
     #************************************************************************************
-    if name == "Conductivity2":
+    elif name == "Conductivity2":
         RES2 = (7500.0/0.66)
         ECREF = 20.0
         _kvalue2 = 1
@@ -262,8 +292,21 @@ def HandleCalibration(engine, db, value, sensor_index, temperature):
 
 
 
+    #************************************************************************************   
+    elif name == "Oxygen":
+        #todo: somehow store the temperature value too, or fix it for the user
+        voltage = value *5000/1024 
+        if db == '1': #high temp
+            update_req_cal_1_table_database(engine, sensor_index, 0) #cal not needed anymore
+            update_calibration_1_table_database(engine, sensor_index, voltage) #1 to 10
+        elif db == '2':
+            update_req_cal_2_table_database(engine, sensor_index, 0) #cal not needed anymore
+            update_calibration_2_table_database(engine, sensor_index, voltage) #1 to 10
+
+
+
     #************************************************************************************
-    else: #other sensor than conductivity1
+    else: #other sensor 
         if db == '1':
             update_calibration_1_table_database(engine, sensor_index, value) #1 to 10
         else:

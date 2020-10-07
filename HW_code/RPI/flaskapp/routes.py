@@ -195,6 +195,27 @@ def start_calibration():
       button1 = "Record" + cd1
       message2 = ""
       button2 = ""
+    elif sensor_name == 'Oxygen':
+      message1 = "Before using the dissolved oxygen probe, 0.5 mol/L NaOH solution should be added\
+                 into the membrane cap as the filling solution of the probe. As NaOH solution has strong corrosivity,\
+                protective gloves should be put on before handling the solution. If the solution accidentally drops onto the skin,\
+                wash your skin with plenty of water immediately.\
+                The oxygen permeable membrane in the membrane cap is sensitive and vulnerable. Use caution when handling with it.\
+                Fingernail and other sharp objects should be avoided.\
+                During the measuring process, the oxygen probe will consume a little oxygen. You need to gently stir the water and let\
+                the oxygen to be distributed evenly in water. On the other hand, do not stirring violently to prevent the oxygen in the air\
+                from quickly entering into the water.Two-point calibration\
+                1 .Prepare two cups of purified water, put one cup in the refrigerator, and one cup to warm up (Do not exceed 40°C, otherwise the probe may be damaged.)\
+                Use one of the following methods to make saturated oxygen water:\
+                A: Use a stirrer or an eggbeater to continuously stir for 10 minutes to saturate the dissolved oxygen.\
+                B: Use an air pump to continuously inflate the water for 10 minutes to saturate the dissolved oxygen.\
+                Stop stirring or pumping, and put the probe after the bubbles disappear.\
+                After placing the probe, keep stirring slowly while avoiding any bubbles.\
+                After the output voltage stable, please press the button below to record the high temperature value and voltage."
+      button1 = "Record high temperature"
+
+      message2 = "Perform the same operation on the glass of cold water. Press the button below to record the low temperature value and voltage."
+      button2 = "Record low temperature"
 
     else:
       message1= "not implemented"
