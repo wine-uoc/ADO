@@ -8,6 +8,7 @@ class CmdType(Enum):
 	read = 0
 	config = 1
 	actuate = 2
+	calibrate = 3
 
 
 class SensorType(Enum):

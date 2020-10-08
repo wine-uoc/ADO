@@ -88,14 +88,15 @@ def publish_data(magnitude,response, client, topic, engine):
         #for some sensors, special payload construction is needed, to use the calibration values
         #********************************************
         if name == "pH":
-            neutralVoltage = getattr(db1_row, idx_sensor_str) #*5000/1024 #mV @ 5
-            acidVoltage = getattr(db2_row, idx_sensor_str)#*5000/1024#mV @ 5V
-            #todo: neutral voltage check between 1322-1678
-            # value/1024*5000?
+            neutralVoltage = getattr(db1_row, idx_sensor_str) 
+            acidVoltage = getattr(db2_row, idx_sensor_str)
+            voltage = value * 3300/1024 #mkr1000  max 3.3V input
+
             print ("neutral, ", neutralVoltage)
-            print("acid, ", acidVoltage) 
+            print("acid, ", acidVoltage)
+            print("current, ", voltage)  
             try:
-                ph =  readPH_library(value, temperature, neutralVoltage, acidVoltage)
+                ph =  readPH_library(voltage, temperature, neutralVoltage, acidVoltage)
                 value = ph
             except:#division by zero
                 print("division by zero")
@@ -223,8 +224,21 @@ def HandleCalibration(engine, db, value, sensor_index, temperature):
         idx_sensor_str = 's0' + str(sensor_index)
     else:
         idx_sensor_str = 's' + str(sensor_index)
-    #************************************************************************************
-    if name == "Conductivity1":
+    
+    #************************************************************************************  
+    if name == "pH":
+        #todo: somehow store the temperature value too, or fix it for the user
+        voltage = value *3300/1024 
+        if db == '1': #high temp
+            update_req_cal_1_table_database(engine, sensor_index, 0) #cal not needed anymore
+            update_calibration_1_table_database(engine, sensor_index, voltage) #1 to 10
+        elif db == '2':
+            update_req_cal_2_table_database(engine, sensor_index, 0) #cal not needed anymore
+            update_calibration_2_table_database(engine, sensor_index, voltage) #1 to 10
+
+    #************************************************************************************  
+
+    elif name == "Conductivity1":
         #read cal db\
         print("*******************Handling calibration********************")
         voltage = value *5000/1024

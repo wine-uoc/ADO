@@ -10,7 +10,8 @@
 enum CmdType {
   CMD_READ    = 0,
   CMD_CONFIG  = 1,
-  CMD_ACTUATE = 2  
+  CMD_ACTUATE = 2,
+  CMD_CALIBRATE = 3  
 };
 
 /* Types of Sensors */

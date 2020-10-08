@@ -225,7 +225,7 @@ def on_message_0(client, userdata, msg):
                 if magnitudes[i] == sensor:
                     break
             # Create command for A0
-            cmd_type = 'read'  
+            cmd_type = 'calibrate'#'read'  
             sensor_type = ConfigRPI.SENSOR_TYPES[i]
             sensor_params = ConfigRPI.SENSOR_PARAMS[i]
             serialcmd = arduino_commands.create_cmd(cmd_type, sensor_type, sensor_params)

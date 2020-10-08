@@ -10,6 +10,8 @@ String myArray[5];
 String commandWords[2];
 int reading, real;
 int test_pin = 6;
+#define ArrayLength  40    //times of collection for calibration
+int Array[ArrayLength];   //Store the sensor readings for calibration
 float value;
 String SenMLdata;
 DFRobot_SHT20    sht20;
@@ -96,6 +98,27 @@ void ProcessReading(int sensortype, String param_list[5])
   } 
 }
 
+void AverageReading(int sensortype, String param_list[5]){
+  SenMLdata = "\n";
+  int array_sum = 0;
+  float avg_reading = 0;
+
+  if (sensortype == SENSOR_ANALOG)
+  {
+    int pin = param_list[0].toInt();
+    for (int i=0; i<ArrayLength; i++) //40samples
+    {
+      Array[i]=analogRead(pin);
+      array_sum = array_sum + Array[i];
+      delay(100); //100 miliseconds delay between readings
+    }
+
+    avg_reading = array_sum/ArrayLength;
+    SenMLdata = "[{\"bn\":\"ArduinoMKR1000-CALIBRATION\",\"sensorType\":\"" + String(sensortype) + "\",\"parameter1\":" + String(pin) + ",\"pinValue\":" + String(avg_reading) + "}]\n";
+    Serial.print(SenMLdata); //IMPORTANT! DO NOT PUT PRINTLN, AS THE STRING ALREADY CONTAINS \n
+  }
+}
+
 void SplitCommand(String command, String fullArray)
 {
   int ctype, stype, num_param;
@@ -117,6 +140,8 @@ void SplitCommand(String command, String fullArray)
   //sensortype = stype;
   if (ctype == CMD_READ) //read
     ProcessReading(stype, myArray);
+  else if (ctype == CMD_CALIBRATE) //only analog sensors need to be calibrated
+    AverageReading(stype, myArray);
 }
 
 float OneWireRead(int one_pin)
