@@ -101,7 +101,7 @@ def publish_data(magnitude,response, client, topic, engine):
             except:#division by zero
                 print("division by zero")
         #***********************************************
-        elif name == "Turbidity":
+        elif name == "Turbidity": #current formula can only be used with 5V readings
             try:
                 #attention! voltage reading is artificially shifted to 5V from 3.3V
                 value = readTurbidity(value) 
@@ -110,19 +110,19 @@ def publish_data(magnitude,response, client, topic, engine):
         #************************************************
         elif name == "Conductivity1": #add if calibrated flag
             print("pinvalue: ", value)
-            voltage = value/1024*5000
+            voltage = value/1024*3300 #max analog input mkr1000
             print("voltage:", voltage)
             _kvalueLow = getattr(db1_row, idx_sensor_str)
             _kvalueHigh = getattr(db2_row, idx_sensor_str)
             value = readEC(voltage, temperature, _kvalueLow, _kvalueHigh)
         #***********************************************
         elif name == "Conductivity2":
-            voltage = value/1024*5000
+            voltage = value/1024*3300 #mkr1000
             _kvalue2 = getattr(db1_row, idx_sensor_str)
             value = readEC2(voltage, temperature, _kvalue2)
         #***********************************************
         elif name == "Oxygen":
-            voltage = value/1024*5000 #mV
+            voltage = value/1024*3300 #mV
             calib_mode = 0 #1 point calib, or two point
             if calib_mode ==0:
                 CAL1_T=25 #to do: fixed or user dependent?
@@ -162,7 +162,7 @@ def readPH_library(voltage, temperature, neutralVoltage, acidVoltage):
 def readTurbidity(reading):
     #from dfrobot wiki page
     #transform reading 0-1023 to voltage 0-5V
-    #reading is 0-3.3V
+    #reading is 0-3.3V but extrapolate to 5V for using this formula
     voltage = reading * 5/1024 # converts reading to 5V value
     #voltage3.3 = reading * 3.3/1024 #maximum pin input is 3.3V
     #voltage5 = voltage3.3 * 5/3.3
@@ -241,7 +241,7 @@ def HandleCalibration(engine, db, value, sensor_index, temperature):
     elif name == "Conductivity1":
         #read cal db\
         print("*******************Handling calibration********************")
-        voltage = value *5000/1024
+        voltage = value *3300/1024
         if db == '1':
             dbname= "calibration_1"
             db_index = 1
@@ -252,7 +252,7 @@ def HandleCalibration(engine, db, value, sensor_index, temperature):
         print ("db value:", voltage)
         rawEC = 1000*voltage/820.0/200.0 
         print("rawEC:", rawEC)
-        if (rawEC>0.9 and rawEC<2): #Buffer Solution:1.413us/cm
+        if (rawEC>0.9 and rawEC<1.9): #original 1.9 Buffer Solution:1.413us/cm
             compECsolution = 1.413*(1.0+0.0185*(temperature-25.0))
             KValueTemp = 820.0*200.0*compECsolution/1000.0/voltage
             round(KValueTemp,2)
@@ -290,13 +290,13 @@ def HandleCalibration(engine, db, value, sensor_index, temperature):
         ECREF = 20.0
         _kvalue2 = 1
         print("*******************Handling calibration********************")
-        voltage = value *5000/1024
+        voltage = value *3300/1024
         if db == '1':
             dbname= "calibration_1"
             db_index = 1
             _ecvalueRaw = 1000*voltage/RES2/ECREF*_kvalue2*10.0
             print (_ecvalueRaw)
-            if (_ecvalueRaw>6) and (_ecvalueRaw<25): #original 18
+            if (_ecvalueRaw>6) and (_ecvalueRaw<18): #original 18
                 print("identified 12.88ms/cm buffer solution")
                 rawECsolution = 12.9*(1.0+0.0185*(temperature-25.0))  #temperature compensation
                 KValueTemp = RES2*ECREF*rawECsolution/1000.0/voltage/10.0  #calibrate the k value
@@ -319,7 +319,7 @@ def HandleCalibration(engine, db, value, sensor_index, temperature):
     #************************************************************************************   
     elif name == "Oxygen":
         #todo: somehow store the temperature value too, or fix it for the user
-        voltage = value *5000/1024 
+        voltage = value *3300/1024 #mkr1000
         if db == '1': #high temp
             update_req_cal_1_table_database(engine, sensor_index, 0) #cal not needed anymore
             update_calibration_1_table_database(engine, sensor_index, voltage) #1 to 10
