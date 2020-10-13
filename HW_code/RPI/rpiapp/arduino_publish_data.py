@@ -8,6 +8,7 @@ from config import ConfigRPI
 from rpiapp.arduino_commands import CmdType, SensorType
 from rpiapp.db_management import get_table_database, update_req_cal_1_table_database, update_req_cal_2_table_database, update_calibration_1_table_database, update_calibration_2_table_database
 
+temperature = 25 #global var, holds the last known temperature value, for where temp compensation is needed  
 isCalibrated = [0,0,0,0,0,0,0,0,0,0] #flag for each sensor
 _kvalue = 1
 DO_Table = [
@@ -23,7 +24,7 @@ def reset_iscalibrated_flags(idx_sensor):
 
 def valid_data(response, sensorType, parameter1):
     if len(response) > 2:
-        print(response)
+        #print(response)
         data = json.loads(response)  # a SenML list
         for item in data:  # normally only one item
             try:
@@ -46,27 +47,13 @@ def valid_data(response, sensorType, parameter1):
         return False
 
 
-def pack_data_onewire(response, client, topic):
-    global tx_lock
-
-    data = json.loads(response)  # a SenML list
-    for item in data:
-        logging.debug("####################### packing data #######################")
-        timestamp = time.time()
-        value = item['pinValue']
-        bn = item['bn']
-        name = "Temperature"
-        unit = "C"
-        payload = [{"bn": "", "n": name, "u": unit, "v": value, "t": timestamp}]
-        print(payload)
-        client.publish(topic, json.dumps(payload))
 
 def publish_data(magnitude,response, client, topic, engine):
-    global tx_lock
+    global temperature
 
     data = json.loads(response)  # a SenML list
     for item in data: #normally there is only one item
-        logging.debug("####################### publishing data to mainflux #######################")
+        logging.debug("#### publishing ####")
         timestamp = time.time()
         # extract read value and hardware name from arduino answer 
         value = item['pinValue']
@@ -75,7 +62,6 @@ def publish_data(magnitude,response, client, topic, engine):
         unit = [i for (i, v) in zip(ConfigRPI.SENSOR_UNITS, ConfigRPI.SENSOR_MAGNITUDES) if v == name][0]
 
         #handle calibration db
-        temperature = 22 #to do, import real value
         sensor_index = get_sensor_index(name) + 1 #index 1 to 10, to extract from calibration table
         if sensor_index < 10:
             idx_sensor_str = 's0' + str(sensor_index)
@@ -84,8 +70,13 @@ def publish_data(magnitude,response, client, topic, engine):
 
         db1_row,_ = get_table_database(engine,"calibration_1")
         db2_row,_ = get_table_database(engine,"calibration_2")
+
         #constructing the payload for mainflux
         #for some sensors, special payload construction is needed, to use the calibration values
+        #********************************************
+        if name == "Temperature": #update global temp value
+            temperature = value
+            #print(temperature)
         #********************************************
         if name == "pH":
             neutralVoltage = getattr(db1_row, idx_sensor_str) 
@@ -109,9 +100,9 @@ def publish_data(magnitude,response, client, topic, engine):
                 print("error in turbidity computation")
         #************************************************
         elif name == "Conductivity1": #add if calibrated flag
-            print("pinvalue: ", value)
+            #print("pinvalue: ", value)
             voltage = value/1024*3300 #max analog input mkr1000
-            print("voltage:", voltage)
+            #print("voltage:", voltage)
             _kvalueLow = getattr(db1_row, idx_sensor_str)
             _kvalueHigh = getattr(db2_row, idx_sensor_str)
             value = readEC(voltage, temperature, _kvalueLow, _kvalueHigh)
@@ -139,15 +130,16 @@ def publish_data(magnitude,response, client, topic, engine):
         #***********************************************
         elif name == 'AirCO2':
             voltage = value/1024*3300 #mV
-            print("voltage:", voltage)
+            #print("voltage:", voltage)
             value = readCO2(voltage)
-            print("CO2: ", value)
+            #print("CO2: ", value)
 
             
 
         payload = [{"bn": "", "n": name, "u": unit, "v": value, "t": timestamp}]
-        print(payload)
+        #print(payload)
         client.publish(topic, json.dumps(payload))
+
 
 
 
@@ -214,7 +206,8 @@ def get_sensor_index(name):
             break
     return i
 
-def HandleCalibration(engine, db, value, sensor_index, temperature):
+def HandleCalibration(engine, db, value, sensor_index):
+    global temperature
     flag1 = 0
     flag2 = 0
 
@@ -225,6 +218,7 @@ def HandleCalibration(engine, db, value, sensor_index, temperature):
     else:
         idx_sensor_str = 's' + str(sensor_index)
     
+    #print ("Last known temperature value: ", temperature)
     #************************************************************************************  
     if name == "pH":
         #todo: somehow store the temperature value too, or fix it for the user
@@ -240,7 +234,7 @@ def HandleCalibration(engine, db, value, sensor_index, temperature):
 
     elif name == "Conductivity1":
         #read cal db\
-        print("*******************Handling calibration********************")
+        print("***Handling calibration****")
         voltage = value *3300/1024
         if db == '1':
             dbname= "calibration_1"
@@ -289,7 +283,7 @@ def HandleCalibration(engine, db, value, sensor_index, temperature):
         RES2 = (7500.0/0.66)
         ECREF = 20.0
         _kvalue2 = 1
-        print("*******************Handling calibration********************")
+        print("****Handling calibration****")
         voltage = value *3300/1024
         if db == '1':
             dbname= "calibration_1"
