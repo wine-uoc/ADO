@@ -217,6 +217,11 @@ def start_calibration():
       message2 = "Perform the same operation on the glass of cold water. Press the button below to record the low temperature value and voltage."
       button2 = "Record low temperature"
 
+    elif sensor_name == 'AirCO2':
+      message1 = "Press the button below to calibrate the Air CO2 sensor. Make sure to be in an open, ventilated environment, or outdoors."
+      button1= "Calibrate CO2"
+      message2 = ""
+      button2 = ""
     else:
       message1= "not implemented"
       message2= "not implemented"

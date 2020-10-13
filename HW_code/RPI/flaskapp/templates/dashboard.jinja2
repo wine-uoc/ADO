@@ -108,6 +108,7 @@
                 <br>
                 <button onclick="startCalibration('s08')">Dissolved Oxygen</button>
                 <br>
+                <button onclick="startCalibration('s10')">Air CO2</button>
 
                 <br>
                 <p style="font-size: 1rem">Last sensor calibration:</p>
@@ -160,6 +161,9 @@
             }
             else if (s_idx == 's08'){
                 window.location.assign("{{ url_for('main_bp.start_calibration', sensor_index='s08') }}");
+            } 
+            else if (s_idx == 's10'){
+                window.location.assign("{{ url_for('main_bp.start_calibration', sensor_index='s10') }}");
             } 
         }
     </script>

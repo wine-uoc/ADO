@@ -119,7 +119,7 @@ def SetCalibrationDBThread(ser, serialcmd, index, engine, db):
     #logging.debug('%s', serialcmd)
     cmdtype, sensorType, parameter1 = arduino_commands.parse_cmd(serialcmd)
     #logging.debug('pinType %s', pinType)
-    logging.debug('parameter1 %s', parameter1)
+    logging.debug('SENT CMD %s', serialcmd)
     # set a timeout for waiting for serial
     # wait until receiving valid answer
     timeout = time.time() + 15

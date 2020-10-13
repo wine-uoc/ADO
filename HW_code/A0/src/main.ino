@@ -9,16 +9,18 @@ String inString, remainingstring;
 String myArray[5];
 String commandWords[2];
 int reading, real;
-int test_pin = 6;
 #define ArrayLength  40    //times of collection for calibration
 int Array[ArrayLength];   //Store the sensor readings for calibration
 float value;
 String SenMLdata;
 DFRobot_SHT20    sht20;
+int CO2_cal_pin = 3;
 
 void setup()
 {
-  pinMode(test_pin, INPUT);
+
+  digitalWrite(CO2_cal_pin, HIGH); // CALIBRATION happens on LOW
+  pinMode(CO2_cal_pin, OUTPUT);
   Serial.begin(9600); //Starting serial communication
   analogReadResolution(10);
   sht20.initSHT20();                                  // Init SHT20 Sensor
@@ -140,8 +142,18 @@ void SplitCommand(String command, String fullArray)
   //sensortype = stype;
   if (ctype == CMD_READ) //read
     ProcessReading(stype, myArray);
-  else if (ctype == CMD_CALIBRATE) //only analog sensors need to be calibrated
-    AverageReading(stype, myArray);
+  else if (ctype == CMD_CALIBRATE){ //only analog sensors need to be calibrated
+    if (String(myArray[1]) == "CO2"){ //calibrate the CO2 sensor
+      digitalWrite(CO2_cal_pin, LOW); // CALIBRATION happens on LOW, min 7 seconds
+      delay(8000);
+      digitalWrite(CO2_cal_pin, HIGH);
+      //PRINT ANYTHING ON THE SERIAL
+      SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"sensorType\":\"" + String(0) + "\",\"parameter1\":" + String(myArray[0]) + ",\"pinValue\":" + String(0) + "}]\n";
+    Serial.print(SenMLdata);
+    }
+    else 
+      AverageReading(stype, myArray);
+  }
 }
 
 float OneWireRead(int one_pin)
