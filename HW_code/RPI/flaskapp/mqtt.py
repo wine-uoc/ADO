@@ -58,7 +58,7 @@ def cal_sensor(client, topic, sensor, db_to_use):
     """Send the control message to RPI to ask arduino for data."""
     print("******Calibrating the " + str(sensor) + " sensor, to be stored in db ", str(db_to_use))
     timestamp = time.time()
-    data = [{"type": "CAL", "n": sensor, "v": db_to_use, "t": timestamp}]
+    data = {"type": "CAL", "n": sensor, "v": db_to_use, "t": timestamp}
     client.publish(topic, json.dumps(data))
 	
 

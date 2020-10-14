@@ -233,43 +233,41 @@ def on_message_0(client, userdata, msg):
     # print("RX1")
     print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
     rx_data = str(msg.payload.decode('UTF-8'))  # message is string now, not json
-    rx_data = json.loads(rx_data) #message to json
-    for message in rx_data:
-        #message = eval(message)
-        print ("***************************************")
-        print(message)
-        if str(message['type']) == 'SET_SR':
-            print("Set Sr message")
+    message = json.loads(rx_data) #message to json
+    print ("***************************************")
+    print(message)
+    if str(message['type']) == 'SET_SR':
+        print("Set Sr message")
             # if message[11:17] == 'SET_SR':  # A naive patch for the issue
             # CAUTION: using message as dict, because messages have different keys, like:
             # [{"bn": "", "n": "Air CO2", "u": "ppm", "v": 30, "t": 1587467662.0718532}]
             # [{"type": "SET_SR", "n": "Conductivity", "v": "1", "u": "s", "t": 1587467316.838788}]
             # message = eval(message)  # transform to dictionary
-            set_sr(client, userdata['engine'], userdata['topic'], message['sensor'], message['v'], message['u'])
+        set_sr(client, userdata['engine'], userdata['topic'], message['sensor'], message['v'], message['u'])
         
 
-        elif str(message['type']) == 'CAL':
-            print("**** CAL the", message['n'], "sensor")
-            sensor = str(message['n'])
-            db_to_use = str(message['v']) #indicates in which calibration db to save the data
-            magnitudes = ConfigRPI.SENSOR_MAGNITUDES
-            for i in range(len(magnitudes)):
-                if magnitudes[i] == sensor:
-                    break
-            # Create command for A0
-            cmd_type = 'calibrate'#'read'  
-            sensor_type = ConfigRPI.SENSOR_TYPES[i]
-            sensor_params = ConfigRPI.SENSOR_PARAMS[i]
-            serialcmd = arduino_commands.create_cmd(cmd_type, sensor_type, sensor_params)
+    elif str(message['type']) == 'CAL':
+        print("**** CAL the", message['n'], "sensor")
+        sensor = str(message['n'])
+        db_to_use = str(message['v']) #indicates in which calibration db to save the data
+        magnitudes = ConfigRPI.SENSOR_MAGNITUDES
+        for i in range(len(magnitudes)):
+            if magnitudes[i] == sensor:
+                break
+        # Create command for A0
+        cmd_type = 'calibrate'#'read'  
+        sensor_type = ConfigRPI.SENSOR_TYPES[i]
+        sensor_params = ConfigRPI.SENSOR_PARAMS[i]
+        serialcmd = arduino_commands.create_cmd(cmd_type, sensor_type, sensor_params)
 
-            #create calibration thread; use join() to wait for this thread to finish
-            r = threading.Timer(1, CalibrationThread, (userdata['serial'], serialcmd, i, userdata['engine'], db_to_use))
-            r.setName('CAL Thread')
-            r.start()
-            r.join()
+        #create calibration thread; use join() to wait for this thread to finish
+        r = threading.Timer(1, CalibrationThread, (userdata['serial'], serialcmd, i, userdata['engine'], db_to_use))
+        r.setName('CAL Thread')
+        r.start()
+        r.join()
             
-        else:
-            print("Received message is not of known type  ")
+    else:
+        print("Received message is not of known type  ")
 
 def main():
     global tx_lock, client, topic, engine
