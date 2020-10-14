@@ -6,11 +6,13 @@ import logging
 import time
 from config import ConfigRPI
 from rpiapp.arduino_commands import CmdType, SensorType
-from rpiapp.db_management import get_table_database, update_req_cal_1_table_database, update_req_cal_2_table_database, update_calibration_1_table_database, update_calibration_2_table_database
+from rpiapp.db_management import get_table_database, update_req_cal_1_table_database, update_req_cal_2_table_database,\
+ update_calibration_1_table_database, update_calibration_2_table_database, update_calibration_1_temp_table_database, update_calibration_2_temp_table_database
 
 temperature = 25 #global var, holds the last known temperature value, for where temp compensation is needed  
 isCalibrated = [0,0,0,0,0,0,0,0,0,0] #flag for each sensor
 _kvalue = 1
+
 DO_Table = [
     14460, 14220, 13820, 13440, 13090, 12740, 12420, 12110, 11810, 11530,
     11260, 11010, 10770, 10530, 10300, 10080, 9860, 9660, 9460, 9270,
@@ -114,19 +116,33 @@ def publish_data(magnitude,response, client, topic, engine):
         #***********************************************
         elif name == "Oxygen":
             voltage = value/1024*3300 #mV
-            calib_mode = 0 #1 point calib, or two point
-            if calib_mode ==0:
-                CAL1_T=25 #to do: fixed or user dependent?
-                CAL1_V=getattr(db1_row, idx_sensor_str)
-                CAL2_T=0
-                CAL2_V=0
-            else:
-                CAL1_T=25 #to do: fixed or user dependent?
-                CAL1_V=getattr(db1_row, idx_sensor_str)
-                CAL2_T=15 #to do: fixed or user dependent?
-                CAL2_V=getattr(db2_row, idx_sensor_str)
+            calib_mode=1
+            if calib_mode == 0: #1 point calib, or two point
+                try:
+                    CAL1_V=getattr(db1_row, idx_sensor_str)
+                    CAL2_V=0
 
-            value = readDO(voltage, temperature, calib_mode, CAL1_T,CAL1_V,CAL2_T,CAL2_V)
+                    db1T_row,_ = get_table_database(engine,"calibration_1_temp")
+                    CAL1_T=getattr(db1T_row, idx_sensor_str)
+                    CAL2_T=0
+
+                    value = readDO(voltage, temperature, calib_mode, CAL1_T, CAL1_V, CAL2_T, CAL2_V)
+                except:
+                    print("math issue")
+            elif calib_mode == 1: #2 point calib
+                try:
+                    CAL1_V=getattr(db1_row, idx_sensor_str)
+                    CAL2_V=getattr(db2_row, idx_sensor_str)
+                    db1T_row,_ = get_table_database(engine,"calibration_1_temp")
+                    db2T_row,_ = get_table_database(engine,"calibration_2_temp")
+
+                    CAL1_T=getattr(db1T_row, idx_sensor_str)
+                    CAL2_T=getattr(db2T_row, idx_sensor_str)
+
+                    value = readDO(voltage, temperature, calib_mode, CAL1_T, CAL1_V, CAL2_T, CAL2_V)
+                except:
+                    print("math issue")
+
         #***********************************************
         elif name == 'AirCO2':
             voltage = value/1024*3300 #mV
@@ -137,7 +153,7 @@ def publish_data(magnitude,response, client, topic, engine):
             
 
         payload = [{"bn": "", "n": name, "u": unit, "v": value, "t": timestamp}]
-        #print(payload)
+        print(payload)
         client.publish(topic, json.dumps(payload))
 
 
@@ -182,8 +198,13 @@ def readEC2(voltage,temperature, _kvalue2):
     value = _ecvalueRaw / (1.0+0.0185*(temperature-25.0)) #temperature compensation
     return value
 
-def readDO(voltage, temperature, calib_mode, CAL1_T, CAL1_V, CAL2_T, CAL2_V):
+def readDO(voltage, temperature_real, calib_mode, CAL1_T, CAL1_V, CAL2_T, CAL2_V):
     global DO_Table
+
+    temperature = int(round(temperature_real)) #to search the DO table
+    print(temperature)
+    print("CAL1T", CAL1_T)
+    print("CAL2T", CAL2_T)
 
     if calib_mode == 0: #one point
         V_saturation = CAL1_V + 35 * temperature - CAL1_T * 35
@@ -235,7 +256,7 @@ def HandleCalibration(engine, db, value, sensor_index):
     elif name == "Conductivity1":
         #read cal db\
         print("***Handling calibration****")
-        voltage = value *3300/1024
+        voltage = value*3300/1024
         if db == '1':
             dbname= "calibration_1"
             db_index = 1
@@ -312,14 +333,24 @@ def HandleCalibration(engine, db, value, sensor_index):
 
     #************************************************************************************   
     elif name == "Oxygen":
-        #todo: somehow store the temperature value too, or fix it for the user
+
+        print("****Handling calibration****")
         voltage = value *3300/1024 #mkr1000
+        print(value)
+        print(voltage)
+        print(temperature)
         if db == '1': #high temp
             update_req_cal_1_table_database(engine, sensor_index, 0) #cal not needed anymore
             update_calibration_1_table_database(engine, sensor_index, voltage) #1 to 10
+            update_calibration_1_temp_table_database(engine, sensor_index, temperature) #1 to 10
+
+            print("****DB1 DONE****")
         elif db == '2':
             update_req_cal_2_table_database(engine, sensor_index, 0) #cal not needed anymore
             update_calibration_2_table_database(engine, sensor_index, voltage) #1 to 10
+            update_calibration_2_temp_table_database(engine, sensor_index, temperature) #1 to 10
+
+            print("****DB2 DONE****")
 
 
 

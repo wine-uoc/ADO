@@ -124,6 +124,8 @@ void AverageReading(int sensortype, String param_list[5]){
 void SplitCommand(String command, String fullArray)
 {
   int ctype, stype, num_param;
+  memset(myArray, 0, sizeof(myArray));
+  
   ctype = command.charAt(0) - '0';     //cmdtype; extarct ASCII for zero
   stype = command.charAt(1) - '0';     //sensortype
   num_param = command.charAt(2) - '0'; //param list size

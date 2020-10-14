@@ -22,6 +22,9 @@ MQTT_SUBSCRIBED = False
 def create_threads(ser):
     serialcmd, periodicity, magnitudes = arduino_commands.get_config()
     size = len(serialcmd)  # number of configs we have
+    for i in range(size):
+        if periodicity[i+1] != 0:
+            periodicity[i+1] = 15 #force SR to 60
     print('The set of commands is ', serialcmd)
     print('NB of threads is '+ str(size))
     print('periodicity of each thread is ', periodicity)
@@ -94,7 +97,7 @@ def ReceiveThread(ser, serialcmd, magnitude):
         print(time.time(), " End RX processing")
         tx_lock.release()
     except:
-        print("#####bad serial data")
+        print("##### bad PROCESSING")
         tx_lock.release()
 
 
@@ -140,7 +143,7 @@ def SetCalibrationDBThread(ser, serialcmd, index, engine, db):
            # logging.debug("manage answer")
             response = ser.readline()
             response = response.decode('utf-8')
-           # logging.debug("%s", str(response))
+            logging.debug("%s", str(response))
             if arduino_publish_data.valid_data(response, sensorType, parameter1):
                 no_answer_pending = True
                 #save data to database, indexed 1 to 10
@@ -234,7 +237,9 @@ def on_message_0(client, userdata, msg):
     for message in rx_data:
         #message = eval(message)
         print ("***************************************")
+        print(message)
         if str(message['type']) == 'SET_SR':
+            print("Set Sr message")
             # if message[11:17] == 'SET_SR':  # A naive patch for the issue
             # CAUTION: using message as dict, because messages have different keys, like:
             # [{"bn": "", "n": "Air CO2", "u": "ppm", "v": 30, "t": 1587467662.0718532}]

@@ -192,6 +192,65 @@ class Calibration_2(UserMixin, db.Model):
         """Get values as a list."""
         return [self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10]
 
+
+class Calibration_1_Temp(UserMixin, db.Model):
+    """1 point calibration.
+    - Each column represents a sensor in the node
+        if 0: sensor will not be used
+        if > 0: sensor will be used with calibration value = Float
+    """
+    __tablename__ = 'calibration_1_temp'
+    __table_args__ = {'extend_existing': True}
+
+    id = db.Column(db.String(40), primary_key=True)     # Associated to email (unique)
+    s01 = db.Column(db.Float, nullable=False, unique=False)
+    s02 = db.Column(db.Float, nullable=False, unique=False)
+    s03 = db.Column(db.Float, nullable=False, unique=False)
+    s04 = db.Column(db.Float, nullable=False, unique=False)
+    s05 = db.Column(db.Float, nullable=False, unique=False)
+    s06 = db.Column(db.Float, nullable=False, unique=False)
+    s07 = db.Column(db.Float, nullable=False, unique=False)
+    s08 = db.Column(db.Float, nullable=False, unique=False)
+    s09 = db.Column(db.Float, nullable=False, unique=False)
+    s10 = db.Column(db.Float, nullable=False, unique=False)
+
+    def set_values(self, a_list):
+        """Set values."""
+        self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10 = a_list
+
+    def get_values(self):
+        """Get values as a list."""
+        return [self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10]
+
+class Calibration_2_Temp(UserMixin, db.Model):
+    """2 point calibration.
+    - Each column represents a sensor in the node
+        if 0: sensor will not be used
+        if > 0: sensor will be used with calibration value = Float
+    """
+    __tablename__ = 'calibration_2_temp'
+    __table_args__ = {'extend_existing': True}
+
+    id = db.Column(db.String(40), primary_key=True)     # Associated to email (unique)
+    s01 = db.Column(db.Float, nullable=False, unique=False)
+    s02 = db.Column(db.Float, nullable=False, unique=False)
+    s03 = db.Column(db.Float, nullable=False, unique=False)
+    s04 = db.Column(db.Float, nullable=False, unique=False)
+    s05 = db.Column(db.Float, nullable=False, unique=False)
+    s06 = db.Column(db.Float, nullable=False, unique=False)
+    s07 = db.Column(db.Float, nullable=False, unique=False)
+    s08 = db.Column(db.Float, nullable=False, unique=False)
+    s09 = db.Column(db.Float, nullable=False, unique=False)
+    s10 = db.Column(db.Float, nullable=False, unique=False)
+
+    def set_values(self, a_list):
+        """Set values."""
+        self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10 = a_list
+
+    def get_values(self):
+        """Get values as a list."""
+        return [self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10]
+
 class Requires_Cal_1(UserMixin, db.Model):
     """True if 1 point calibration is needed.
     - Each column represents a sensor in the node

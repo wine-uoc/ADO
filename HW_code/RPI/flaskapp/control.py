@@ -2,7 +2,7 @@
 from flask import current_app as app
 from flask_login import current_user
 
-from .models import db, User, NodeConfig, Wifi, Tokens, Calibration_1, Calibration_2, Requires_Cal_1, Requires_Cal_2
+from .models import db, User, NodeConfig, Wifi, Tokens, Calibration_1, Calibration_2, Calibration_1_Temp, Calibration_2_Temp, Requires_Cal_1, Requires_Cal_2
 from .utils import create_node_name, delete_entries
 
 
@@ -14,6 +14,8 @@ def delete_tables_entries():
     delete_entries(User.query.all())
     delete_entries(Calibration_1.query.all())
     delete_entries(Calibration_2.query.all())
+    delete_entries(Calibration_1_Temp.query.all())
+    delete_entries(Calibration_2_Temp.query.all())
     delete_entries(Requires_Cal_1.query.all())
     delete_entries(Requires_Cal_2.query.all())
     db.session.commit()
@@ -138,6 +140,12 @@ def sign_up_database(name, org, email, password):
         
         calibration2 = Calibration_2(id=email)              # calibration table associated to email
         calibration2.set_values([1] * app.config['MAX_NUM_SENSORS_IN_NODE'])   # All 2-pt calibration values set to 1 (default)
+
+        calibration1_temp = Calibration_1_Temp(id=email)              # calibration table associated to email
+        calibration1_temp.set_values([25] * app.config['MAX_NUM_SENSORS_IN_NODE'])   # All 1-pt calibration values set to 25deg (default)
+        
+        calibration2_temp = Calibration_2_Temp(id=email)              # calibration table associated to email
+        calibration2_temp.set_values([25] * app.config['MAX_NUM_SENSORS_IN_NODE'])   # All 2-pt calibration values set to 25deg (default)
         
         #loads flags from config file
         #flag = 1 for the sensors that require calibration before using
@@ -153,6 +161,8 @@ def sign_up_database(name, org, email, password):
         db.session.add(tokens)
         db.session.add(calibration1)
         db.session.add(calibration2)
+        db.session.add(calibration1_temp)
+        db.session.add(calibration2_temp)
         db.session.add(req_cal_1)
         db.session.add(req_cal_2)
         db.session.commit()

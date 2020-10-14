@@ -91,7 +91,6 @@ def on_message(client, userdata, msg):
     for message in rx_data:
         print(message)
         #message = eval(message)
-        print ("***************************************")
         print(message['type'])
         if str(message['type']) == 'SET_SR':
             # if message[11:17] == 'SET_SR':  # A naive patch for the issue
