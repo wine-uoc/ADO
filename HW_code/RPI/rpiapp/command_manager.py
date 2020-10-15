@@ -24,7 +24,7 @@ def create_threads(ser):
     size = len(serialcmd)  # number of configs we have
     for i in range(size):
         if periodicity[i+1] != 0:
-            periodicity[i+1] = 30 #force SR to 60
+            periodicity[i+1] = 60 #force SR to 60
     print('The set of commands is ', serialcmd)
     print('NB of threads is '+ str(size))
     print('periodicity of each thread is ', periodicity)
@@ -32,7 +32,8 @@ def create_threads(ser):
     for i in range(1, size + 1):
         # timer is given by expressing a delay
         t = threading.Timer(1, TransmitThread, (ser, serialcmd[i], periodicity[i], magnitudes[i]))  # all sensors send data at startup
-        t.setName(str(i))
+        name = str(arduino_publish_data.get_sensor_index(magnitudes[i]) + 1)
+        t.setName(name)
         t.start()
         t.join()
 
@@ -286,10 +287,31 @@ def on_message_0(client, userdata, msg):
             # if message[11:17] == 'SET_SR':  # A naive patch for the issue
             # CAUTION: using message as dict, because messages have different keys, like:
             # [{"bn": "", "n": "Air CO2", "u": "ppm", "v": 30, "t": 1587467662.0718532}]
-            # [{"type": "SET_SR", "n": "Conductivity", "v": "1", "u": "s", "t": 1587467316.838788}]
+            # [{"type": "SET_SR", "sensor": "Conductivity", "v": "1", "u": "s", "t": 1587467316.838788}]
             # message = eval(message)  # transform to dictionary
-        set_sr(client, userdata['engine'], userdata['topic'], message['sensor'], message['v'], message['u'])
-        
+        magnitude = message['sensor']
+        SR = message['v']
+        new_thread_needed, index = set_sr(client, userdata['engine'], userdata['topic'], magnitude, SR, message['u'])
+        if new_thread_needed == 1:
+            print("creating new thread")
+            #create new TX thread; use join() to wait for this thread to finish
+            cmd_type = 'read'  
+            sensor_type = ConfigRPI.SENSOR_TYPES[index]
+            sensor_params = ConfigRPI.SENSOR_PARAMS[index]
+            serialcmd = arduino_commands.create_cmd(cmd_type, sensor_type, sensor_params)
+            print(serialcmd)
+            print(SR)
+            print(magnitude)
+            t = threading.Timer(1, TransmitThread, (userdata['serial'], serialcmd, SR, magnitude))
+            t.setName(thrname)
+            t.start()
+            t.join()
+
+
+        else:
+            print("threads stay the same")
+
+
 
     elif str(message['type']) == 'CAL':
         print("**** CAL the", message['n'], "sensor")

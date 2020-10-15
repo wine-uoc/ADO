@@ -128,6 +128,7 @@ def on_message(client, userdata, msg):
 
 
 def set_sr(client, engine, topic, sensor, value, unit):
+    new_thread = 0 #not needed
     """Update db and send the control message to Grafana."""
     print("Setting the SR of the " + str(sensor) + " sensor to " + str(value) + str(unit))
     # Find number of sensor
@@ -136,13 +137,23 @@ def set_sr(client, engine, topic, sensor, value, unit):
         if magnitudes[i] == sensor:
             break
 
-    # Update db
-    update_nodeconfig_table_database(engine, i + 1, value)
+    # Get current sampling rates values in db
+    node_config, _ = get_table_database(engine, 'nodeconfig')
+    # Get only sampling rates as list
+    sampling_rates = list(node_config[1:])
+    if sampling_rates[i] != int(value):
+        print("new value is different")
+        # Update db only if current SR is different than the new one
+        update_nodeconfig_table_database(engine, i + 1, value)
+        new_thread = 1 #we need a new TX thread
 
+    else:
+        print("new value is the same as the old one")
     # Send control message with new sampling rates for grafana
     data = [{"bn": "", "n": sensor, "u": unit, "v": int(value), "t": time.time()}]
     client.publish(topic, json.dumps(data))
 
+    return new_thread, i
 
 def send_periodic_control(engine, client, mqtt_topic):
     """Send periodic control messages with sampling rates stored in db."""
