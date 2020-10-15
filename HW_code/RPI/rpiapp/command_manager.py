@@ -24,7 +24,7 @@ def create_threads(ser):
     size = len(serialcmd)  # number of configs we have
     for i in range(size):
         if periodicity[i+1] != 0:
-            periodicity[i+1] = 15 #force SR to 60
+            periodicity[i+1] = 30 #force SR to 60
     print('The set of commands is ', serialcmd)
     print('NB of threads is '+ str(size))
     print('periodicity of each thread is ', periodicity)
@@ -44,56 +44,76 @@ def TransmitThread(ser, serialcmd, periodicity, magnitude):
     # debug messages; get thread name and get the lock
     print("TX trying to acquire lock")
     tx_lock.acquire()
-    # schedule this thread corresponding to its periodicity, with the same name it has now
-    now = time.time()
-    threadname = threading.currentThread().getName()
-    tx = threading.Timer(periodicity, TransmitThread, (ser, serialcmd, periodicity, magnitude))
-    tx.setName(threadname)
-    tx.start()
 
     logging.debug('executing thread %s', threading.currentThread().getName())
-
-
-
     # expect an answer from A0 after sending the serial message
     no_answer_pending = False
-    #logging.debug('%s', serialcmd)
-    ser.write(serialcmd.encode('utf-8'))
-    # create the RX thread; use join() to start right now
-    r = threading.Timer(1, ReceiveThread, (ser, serialcmd, magnitude))
-    r.setName('RX Thread')
-    r.start()
-    r.join()
+    try:
+        ser.write(serialcmd.encode('utf-8'))
+          # schedule this thread corresponding to its periodicity, with the same name it has now
+        now = time.time()
+        threadname = threading.currentThread().getName()
+        tx = threading.Timer(periodicity, TransmitThread, (ser, serialcmd, periodicity, magnitude))
+        tx.setName(threadname)
+        tx.start()
+
+        # create the RX thread; use join() to start right now
+        r = threading.Timer(1, ReceiveThread, (ser, serialcmd, magnitude))
+        r.setName('RX Thread')
+        r.start()
+        r.join()
+
+    except OSError as e:
+        try:
+            new_ser = reestablish_serial(ser)
+            #attempt writing again
+            new_ser.write(serialcmd.encode('utf-8'))
+
+            now = time.time()
+            threadname = threading.currentThread().getName()
+            tx = threading.Timer(periodicity, TransmitThread, (new_ser, serialcmd, periodicity, magnitude))
+            tx.setName(threadname)
+            tx.start()
+
+            # create the RX thread; use join() to start right now
+            r = threading.Timer(1, ReceiveThread, (new_ser, serialcmd, magnitude))
+            r.setName('RX Thread')
+            r.start()
+            r.join()
+
+        except:
+            # reschedule TX and release lock
+            now = time.time()
+            threadname = threading.currentThread().getName()
+            tx = threading.Timer(periodicity, TransmitThread, (ser, serialcmd, periodicity, magnitude))
+            tx.setName(threadname)
+            tx.start()
+            tx_lock.release()
+  
+
+
+
+
 
 def ReceiveThread(ser, serialcmd, magnitude):
     global no_answer_pending, client, topic, engine
 
     try:
-        # debug messages
         logging.debug('executing thread %s', threading.currentThread().getName())
-        #logging.debug('%s', serialcmd)
         cmdtype, sensorType, parameter1 = arduino_commands.parse_cmd(serialcmd)
-        #logging.debug('pinType %s', pinType)
-        #logging.debug('parameter1 %s', parameter1)
         # set a timeout for waiting for serial
         # wait until receiving valid answer
         timeout = time.time() + 15
         while no_answer_pending == False and time.time() < timeout:
             if ser.inWaiting() > 0:
-                # logging.debug("manage answer")
                 response = ser.readline()
                 response = response.decode('utf-8')
-                # logging.debug("%s", str(response))
                 if arduino_publish_data.valid_data(response, sensorType, parameter1):
-                    #issue for i2c 0xhex address if address not known apriori
                     no_answer_pending = True
                     arduino_publish_data.publish_data(magnitude,response, client, topic, engine)
-         #           tx_lock.release()
                 else:
                     logging.debug("RX data does not correspond to the last command sent, checking again the serial")
 
-       # if no_answer_pending == False:  # still no answer received, release lock
-        #    tx_lock.release()
         print(time.time(), " End RX processing")
         tx_lock.release()
     except:
@@ -108,60 +128,85 @@ def CalibrationThread(ser, serialcmd, index, engine, db): #not periodic, index 0
         arduino_publish_data.update_req_cal_1_table_database(engine, index+1, 1) #reset to requires cal
     else:
         arduino_publish_data.update_req_cal_2_table_database(engine, index+1, 1) #reset to requires cal
-    # debug messages; get thread name and get the lock
+
     print("CAL trying to acquire lock")
     tx_lock.acquire()
 
     threadname = threading.currentThread().getName()
     logging.debug('executing thread %s', threadname)
 
-
     # expect an answer from A0 after sending the serial message
     no_answer_pending = False
-    #logging.debug('%s', serialcmd)
-    ser.write(serialcmd.encode('utf-8'))
-    # create the RX thread; use join() to start right now
-    r = threading.Timer(1, SetCalibrationDBThread, (ser, serialcmd, index, engine, db))
-    r.setName('RX CAL Thread')
-    r.start()
-    r.join()
+    try:
+        ser.write(serialcmd.encode('utf-8'))
+        # create the RX thread; use join() to start right now
+        r = threading.Timer(1, SetCalibrationDBThread, (ser, serialcmd, index, engine, db))
+        r.setName('RX CAL Thread')
+        r.start()
+        r.join()
+    except OSError as e: 
+        try:
+            ser = reestablish_serial(ser)
+            #attempt writing again
+            ser.write(serialcmd.encode('utf-8'))
+            r = threading.Timer(1, SetCalibrationDBThread, (ser, serialcmd, index, engine, db))
+            r.setName('RX CAL Thread')
+            r.start()
+            r.join()
+        except:
+            tx_lock.release() #in case serial fails
+     
+
 
 def SetCalibrationDBThread(ser, serialcmd, index, engine, db):
     global no_answer_pending, client, topic
 
-    # debug messages
-    logging.debug('executing thread %s', threading.currentThread().getName())
-    #logging.debug('%s', serialcmd)
-    cmdtype, sensorType, parameter1 = arduino_commands.parse_cmd(serialcmd)
-    #logging.debug('pinType %s', pinType)
-    logging.debug('SENT CMD %s', serialcmd)
-    # set a timeout for waiting for serial
-    # wait until receiving valid answer
-    timeout = time.time() + 15
-    while no_answer_pending == False and time.time() < timeout:
-        if ser.inWaiting() > 0:
-           # logging.debug("manage answer")
-            response = ser.readline()
-            response = response.decode('utf-8')
-            logging.debug("%s", str(response))
-            if arduino_publish_data.valid_data(response, sensorType, parameter1):
-                no_answer_pending = True
-                #save data to database, indexed 1 to 10
-                idx_sensor = index + 1
-                #arduino_publish_data.reset_iscalibrated_flags(index) #reset calibration flags 
-                data = json.loads(response)
-                value = data[0]['pinValue'] #there should be only one item in data
+    try:
+        logging.debug('executing thread %s', threading.currentThread().getName())
+        cmdtype, sensorType, parameter1 = arduino_commands.parse_cmd(serialcmd)
+        logging.debug('SENT CMD %s', serialcmd)
+        # set a timeout for waiting for serial
+        # wait until receiving valid answer
+        timeout = time.time() + 15
+        while no_answer_pending == False and time.time() < timeout:
+            if ser.inWaiting() > 0:
+                response = ser.readline()
+                response = response.decode('utf-8')
+                logging.debug("%s", str(response))
+                if arduino_publish_data.valid_data(response, sensorType, parameter1):
+                    no_answer_pending = True
+                    idx_sensor = index + 1
+                    data = json.loads(response)
+                    value = data[0]['pinValue'] #there should be only one item in data
 
-                arduino_publish_data.HandleCalibration(engine, db, value, idx_sensor)
-             #   tx_lock.release()
-            else:
-                logging.debug("RX data does not correspond to the last command sent, checking again the serial")
+                    arduino_publish_data.HandleCalibration(engine, db, value, idx_sensor)
+                else:
+                    logging.debug("RX data does not correspond to the last command sent, checking again the serial")
 
-  #  if no_answer_pending == False:  # still no answer received, release lock
-  #      tx_lock.release()
-    print(time.time(), " End CAL RX processing")
-    tx_lock.release()
+        print(time.time(), " End CAL RX processing")
+        tx_lock.release()
+    except:
+        print("##### bad PROCESSING")
+        tx_lock.release()        
 
+
+def reestablish_serial(serial_port):
+    flag = 0 
+    if serial_port.isOpen():
+        serial_port.close()
+    try:    
+        ser = serial.Serial(port='/dev/ttyACM0', baudrate=9600)
+        flag = 1
+        print("connected to ACM0")
+    except:
+        try:
+            ser = serial.Serial(port='/dev/ttyACM1', baudrate=9600)
+            flag = 1
+            print("connected to ACM1")
+        except:
+            ser = None
+            print("connected to nothing")
+    return ser
 
 
 ############################# MQTT FUNCTIONS ##################################################

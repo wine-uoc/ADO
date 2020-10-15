@@ -92,7 +92,8 @@ def publish_data(magnitude,response, client, topic, engine):
                 ph =  readPH_library(voltage, temperature, neutralVoltage, acidVoltage)
                 value = ph
             except:#division by zero
-                print("division by zero")
+                print("division by zero") #raw value will be sent
+                break
         #***********************************************
         elif name == "Turbidity": #current formula can only be used with 5V readings
             try:
@@ -100,6 +101,7 @@ def publish_data(magnitude,response, client, topic, engine):
                 value = readTurbidity(value) 
             except:
                 print("error in turbidity computation")
+                break
         #************************************************
         elif name == "Conductivity1": #add if calibrated flag
             #print("pinvalue: ", value)
@@ -107,50 +109,61 @@ def publish_data(magnitude,response, client, topic, engine):
             #print("voltage:", voltage)
             _kvalueLow = getattr(db1_row, idx_sensor_str)
             _kvalueHigh = getattr(db2_row, idx_sensor_str)
-            value = readEC(voltage, temperature, _kvalueLow, _kvalueHigh)
+            try:
+                value = readEC(voltage, temperature, _kvalueLow, _kvalueHigh)
+            except:
+                print("error in Conductivity1 computation")
+                break
         #***********************************************
         elif name == "Conductivity2":
             voltage = value/1024*3300 #mkr1000
             _kvalue2 = getattr(db1_row, idx_sensor_str)
-            value = readEC2(voltage, temperature, _kvalue2)
+            try:
+                value = readEC2(voltage, temperature, _kvalue2)
+            except:
+                print("error in Conductivity2 computation")
+                break
         #***********************************************
         elif name == "Oxygen":
             voltage = value/1024*3300 #mV
             calib_mode=1
             if calib_mode == 0: #1 point calib, or two point
+                
+                CAL1_V=getattr(db1_row, idx_sensor_str)
+                CAL2_V=0
+
+                db1T_row,_ = get_table_database(engine,"calibration_1_temp")
+                CAL1_T=getattr(db1T_row, idx_sensor_str)
+                CAL2_T=0
                 try:
-                    CAL1_V=getattr(db1_row, idx_sensor_str)
-                    CAL2_V=0
-
-                    db1T_row,_ = get_table_database(engine,"calibration_1_temp")
-                    CAL1_T=getattr(db1T_row, idx_sensor_str)
-                    CAL2_T=0
-
                     value = readDO(voltage, temperature, calib_mode, CAL1_T, CAL1_V, CAL2_T, CAL2_V)
                 except:
-                    print("math issue")
+                    print("DO math issue")
+                    break
             elif calib_mode == 1: #2 point calib
+                
+                CAL1_V=getattr(db1_row, idx_sensor_str)
+                CAL2_V=getattr(db2_row, idx_sensor_str)
+                db1T_row,_ = get_table_database(engine,"calibration_1_temp")
+                db2T_row,_ = get_table_database(engine,"calibration_2_temp")
+
+                CAL1_T=getattr(db1T_row, idx_sensor_str)
+                CAL2_T=getattr(db2T_row, idx_sensor_str)
                 try:
-                    CAL1_V=getattr(db1_row, idx_sensor_str)
-                    CAL2_V=getattr(db2_row, idx_sensor_str)
-                    db1T_row,_ = get_table_database(engine,"calibration_1_temp")
-                    db2T_row,_ = get_table_database(engine,"calibration_2_temp")
-
-                    CAL1_T=getattr(db1T_row, idx_sensor_str)
-                    CAL2_T=getattr(db2T_row, idx_sensor_str)
-
                     value = readDO(voltage, temperature, calib_mode, CAL1_T, CAL1_V, CAL2_T, CAL2_V)
                 except:
                     print("math issue")
+                    break
 
         #***********************************************
         elif name == 'AirCO2':
             voltage = value/1024*3300 #mV
             #print("voltage:", voltage)
-            value = readCO2(voltage)
+            try:
+                value = readCO2(voltage)
             #print("CO2: ", value)
-
-            
+            except:
+                break
 
         payload = [{"bn": "", "n": name, "u": unit, "v": value, "t": timestamp}]
         print(payload)
