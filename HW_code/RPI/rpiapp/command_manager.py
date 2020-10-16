@@ -19,7 +19,7 @@ SensorType = arduino_commands.SensorType
 MQTT_CONNECTED = False  # global variable for the state
 MQTT_SUBSCRIBED = False
 latest_thread = ['1','2','3','4', '5', '6', '7', '8', '9', '10'] #the name of the latest created thread. position corresponds to sensor index
-old_name_available=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+old_name_available=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
 def create_threads(ser):
     global latest_thread
@@ -38,6 +38,7 @@ def create_threads(ser):
         position = arduino_publish_data.get_sensor_index(magnitudes[i])
         name = str(position+1)
         latest_thread[position]=name
+        old_name_available[position] = 0 #block this name
         t.setName(name)
         t.start()
         t.join()
@@ -50,7 +51,7 @@ def TransmitThread(ser, serialcmd, periodicity, magnitude):
     global old_name_available
 
     # debug messages; get thread name and get the lock
-    print("TX trying to acquire lock")
+    #print("TX trying to acquire lock")
     tx_lock.acquire()
 
     logging.debug('executing thread %s', threading.currentThread().getName())
@@ -344,8 +345,11 @@ def on_message_0(client, userdata, msg):
             #create thread
             t = threading.Timer(1, TransmitThread, (userdata['serial'], serialcmd, SR, magnitude))
             old_thread = int(latest_thread[index]) #catch the latest thread name for this sensor
-            new_thread = str(old_thread+10) #linear translation to make sure we don't duplicate names
-
+            if old_name_available[index] == 1: #this thread was not created at startup in flaskapp config page
+                new_thread = str(old_thread)
+            else:
+                new_thread = str(old_thread+10) #linear translation to make sure we don't duplicate names
+            print("****** new thread name: ", new_thread)
             #update latest threadname for this sensor    
             latest_thread[index] = new_thread
             t.setName(new_thread)

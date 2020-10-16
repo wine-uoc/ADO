@@ -31,13 +31,13 @@ def valid_data(response, sensorType, parameter1):
         for item in data:  # normally only one item
             try:
                 if int(item["sensorType"]) == int(sensorType) and int(item["parameter1"]) == int(parameter1):
-                    logging.debug('sensorType and parameter checks')
+                    #logging.debug('sensorType and parameter checks')
                     return True
                 else:
                     logging.debug('Received data does not correspond to the last sent command')
             except ValueError:
                 # it was a string, not int
-                logging.debug('parameter is a string')
+                #logging.debug('parameter is a string')
                 if int(item["sensorType"]) == int(sensorType) and str(item["parameter1"]) == str(parameter1):
                     logging.debug('sensorType and parameter checks')
                     return True
@@ -55,7 +55,7 @@ def publish_data(magnitude,response, client, topic, engine):
 
     data = json.loads(response)  # a SenML list
     for item in data: #normally there is only one item
-        logging.debug("#### publishing ####")
+        #logging.debug("#### publishing ####")
         timestamp = time.time()
         # extract read value and hardware name from arduino answer 
         value = item['pinValue']
@@ -166,7 +166,7 @@ def publish_data(magnitude,response, client, topic, engine):
                 break
 
         payload = [{"bn": "", "n": name, "u": unit, "v": value, "t": timestamp}]
-        print(payload)
+        #print(payload)
         client.publish(topic, json.dumps(payload))
 
 
