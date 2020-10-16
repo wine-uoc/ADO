@@ -18,8 +18,11 @@ SensorType = arduino_commands.SensorType
 
 MQTT_CONNECTED = False  # global variable for the state
 MQTT_SUBSCRIBED = False
+latest_thread = ['1','2','3','4', '5', '6', '7', '8', '9', '10'] #the name of the latest created thread. position corresponds to sensor index
+old_name_available=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 def create_threads(ser):
+    global latest_thread
     serialcmd, periodicity, magnitudes = arduino_commands.get_config()
     size = len(serialcmd)  # number of configs we have
     for i in range(size):
@@ -32,7 +35,9 @@ def create_threads(ser):
     for i in range(1, size + 1):
         # timer is given by expressing a delay
         t = threading.Timer(1, TransmitThread, (ser, serialcmd[i], periodicity[i], magnitudes[i]))  # all sensors send data at startup
-        name = str(arduino_publish_data.get_sensor_index(magnitudes[i]) + 1)
+        position = arduino_publish_data.get_sensor_index(magnitudes[i])
+        name = str(position+1)
+        latest_thread[position]=name
         t.setName(name)
         t.start()
         t.join()
@@ -42,6 +47,8 @@ def create_threads(ser):
 def TransmitThread(ser, serialcmd, periodicity, magnitude):
     global no_answer_pending
     global tx_lock
+    global old_name_available
+
     # debug messages; get thread name and get the lock
     print("TX trying to acquire lock")
     tx_lock.acquire()
@@ -49,47 +56,59 @@ def TransmitThread(ser, serialcmd, periodicity, magnitude):
     logging.debug('executing thread %s', threading.currentThread().getName())
     # expect an answer from A0 after sending the serial message
     no_answer_pending = False
-    try:
-        ser.write(serialcmd.encode('utf-8'))
-          # schedule this thread corresponding to its periodicity, with the same name it has now
-        now = time.time()
-        threadname = threading.currentThread().getName()
-        tx = threading.Timer(periodicity, TransmitThread, (ser, serialcmd, periodicity, magnitude))
-        tx.setName(threadname)
-        tx.start()
 
-        # create the RX thread; use join() to start right now
-        r = threading.Timer(1, ReceiveThread, (ser, serialcmd, magnitude))
-        r.setName('RX Thread')
-        r.start()
-        r.join()
+    # schedule this thread corresponding to its periodicity, with the same name it has now
+    now = time.time()
+    threadname = threading.currentThread().getName()
+    index = arduino_publish_data.get_sensor_index(magnitude)
 
-    except OSError as e:
+
+    if keepalive_thread(magnitude, threadname):
         try:
-            new_ser = reestablish_serial(ser)
-            #attempt writing again
-            new_ser.write(serialcmd.encode('utf-8'))
-
-            now = time.time()
-            threadname = threading.currentThread().getName()
-            tx = threading.Timer(periodicity, TransmitThread, (new_ser, serialcmd, periodicity, magnitude))
+            ser.write(serialcmd.encode('utf-8')) 
+        
+            tx = threading.Timer(periodicity, TransmitThread, (ser, serialcmd, periodicity, magnitude))
+            threadname =reset_thread_name(threadname, index)
             tx.setName(threadname)
             tx.start()
-
+        
             # create the RX thread; use join() to start right now
-            r = threading.Timer(1, ReceiveThread, (new_ser, serialcmd, magnitude))
+            r = threading.Timer(1, ReceiveThread, (ser, serialcmd, magnitude))
             r.setName('RX Thread')
             r.start()
             r.join()
+    
+        except OSError as e:
+            try:
+                new_ser = reestablish_serial(ser)
+                #attempt writing again
+                new_ser.write(serialcmd.encode('utf-8'))
 
-        except:
-            # reschedule TX and release lock
-            now = time.time()
-            threadname = threading.currentThread().getName()
-            tx = threading.Timer(periodicity, TransmitThread, (ser, serialcmd, periodicity, magnitude))
-            tx.setName(threadname)
-            tx.start()
-            tx_lock.release()
+                tx = threading.Timer(periodicity, TransmitThread, (new_ser, serialcmd, periodicity, magnitude))
+                threadname =reset_thread_name(threadname, index)
+                tx.setName(threadname)
+                tx.start()
+
+                # create the RX thread; use join() to start right now
+                r = threading.Timer(1, ReceiveThread, (new_ser, serialcmd, magnitude))
+                r.setName('RX Thread')
+                r.start()
+                r.join()
+
+            except:
+                # reschedule TX and release lock
+                tx = threading.Timer(periodicity, TransmitThread, (ser, serialcmd, periodicity, magnitude))
+                threadname =reset_thread_name(threadname, index)
+                tx.setName(threadname)
+                tx.start()
+                tx_lock.release()
+
+    else:
+        print("++++ killing thread: ", threadname) #kill thread and release lock
+        if threadname == str(index+1): #first name will be available again
+            old_name_available[index] = 1   
+        tx_lock.release()
+
   
 
 
@@ -209,6 +228,23 @@ def reestablish_serial(serial_port):
             print("connected to nothing")
     return ser
 
+def keepalive_thread(magnitude, threadname):
+    global latest_thread
+    
+    index = arduino_publish_data.get_sensor_index(magnitude)
+    if threadname == latest_thread[index]: #this is the latest created thread for this sensor
+        return True
+    else:
+        return False #this is an old thread for this sensor
+
+def reset_thread_name(threadname, index):
+    global old_name_available, latest_thread
+    
+    if old_name_available[index] == 1: 
+        threadname = str(index+1)
+        latest_thread[index] = threadname
+        old_name_available[index] = 0
+    return threadname
 
 ############################# MQTT FUNCTIONS ##################################################
 def mqtt_connection_0(tokens, engine, serial):
@@ -274,6 +310,7 @@ def on_subscribe(client, userdata, mid, granted_qos):
 
 
 def on_message_0(client, userdata, msg):
+    global latest_thread
     """Callback for received message."""
     #print(msg.topic)
     # print("RX1")
@@ -290,11 +327,12 @@ def on_message_0(client, userdata, msg):
             # [{"type": "SET_SR", "sensor": "Conductivity", "v": "1", "u": "s", "t": 1587467316.838788}]
             # message = eval(message)  # transform to dictionary
         magnitude = message['sensor']
-        SR = message['v']
+        SR = int(message['v'])
         new_thread_needed, index = set_sr(client, userdata['engine'], userdata['topic'], magnitude, SR, message['u'])
         if new_thread_needed == 1:
             print("creating new thread")
-            #create new TX thread; use join() to wait for this thread to finish
+            
+            #create read command
             cmd_type = 'read'  
             sensor_type = ConfigRPI.SENSOR_TYPES[index]
             sensor_params = ConfigRPI.SENSOR_PARAMS[index]
@@ -302,8 +340,15 @@ def on_message_0(client, userdata, msg):
             print(serialcmd)
             print(SR)
             print(magnitude)
+
+            #create thread
             t = threading.Timer(1, TransmitThread, (userdata['serial'], serialcmd, SR, magnitude))
-            t.setName(thrname)
+            old_thread = int(latest_thread[index]) #catch the latest thread name for this sensor
+            new_thread = str(old_thread+10) #linear translation to make sure we don't duplicate names
+
+            #update latest threadname for this sensor    
+            latest_thread[index] = new_thread
+            t.setName(new_thread)
             t.start()
             t.join()
 
