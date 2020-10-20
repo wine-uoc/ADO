@@ -1,52 +1,47 @@
-
-#include <stdlib.h>
 #include "main.h"
-#include <OneWire.h>
-#include <Wire.h>
-#include "DFRobot_SHT20.h"
 
-String inString, remainingstring;
-String myArray[5];
-String commandWords[2];
-int reading, real;
-#define ArrayLength  40    //times of collection for calibration
-int Array[ArrayLength];   //Store the sensor readings for calibration
-float value;
-String SenMLdata;
-DFRobot_SHT20    sht20;
-int CO2_cal_pin = 3;
+String inString, remainingstring; //incoming command from RPI
+String commandWords[2]; // word1 is command and sensor type; word2 is the array of parameters(max5) 
+String myArray[5]; //holds each of command parameters (max 5)
+
+int Array[ArrayLength];   //Store the sensor readings for calibration; we need multiple in order to average
+int reading; //holds pin reading 
+float value; //holds float value returned by sensor libraries
+String SenMLdata; //data to be printed on serial
+
+
+
 
 void setup()
 {
 
-  digitalWrite(CO2_cal_pin, HIGH); // CALIBRATION happens on LOW
+  digitalWrite(CO2_cal_pin, HIGH); // AirCO2 CALIBRATION happens on LOW
   pinMode(CO2_cal_pin, OUTPUT);
+
   Serial.begin(9600); //Starting serial communication
+  //Serial1.begin(9600); //used for debuging mySerial
+  while (!Serial);
+
+  pinPeripheral(2, PIO_SERCOM);   // Assign pins 2 & 3 SERCOM0 functionality for mySerial
+  pinPeripheral(3, PIO_SERCOM);   
+  
+  mySerial.begin(9600);
+  while (!mySerial);
+
   analogReadResolution(10);
-  sht20.initSHT20();                                  // Init SHT20 Sensor
+  sht20.initSHT20();             // Init SHT20 Sensor
   delay(100);
 }
 
-String obtainArray(String data, char separator, int index)
-{
-  int found = 0;
-  int strIndex[] = {0, -1};
-  int maxIndex = data.length() - 1;
-  for (int i = 0; i <= maxIndex && found <= index; i++)
-  {
-    if (data.charAt(i) == separator || i == maxIndex)
-    {
-      found++;
-      strIndex[0] = strIndex[1] + 1;
-      strIndex[1] = (i == maxIndex) ? i + 1 : i;
-    }
-  }
-  return found > index ? data.substring(strIndex[0], strIndex[1]) : "";
-}
+
+
 
 void ProcessReading(int sensortype, String param_list[5])
 {
   SenMLdata = "\n";
+  reading = 0;
+  value = 0;
+
   if (sensortype == SENSOR_ANALOG)
   {
     int pin = param_list[0].toInt();
@@ -138,78 +133,34 @@ void SplitCommand(String command, String fullArray)
     myArray[i] = obtainArray(fullArray, ',', 0);
     remainingstring = fullArray.substring(myArray[i].length() + 1, fullArray.length()); //skip the comma; old:2
     fullArray = remainingstring;
-    // TODO: Do something with remainingstring (rest of parameters)
-    //Serial.println(myArray[i]);
   }
-  //sensortype = stype;
-  if (ctype == CMD_READ) //read
+
+  //*****process READ/CALIBRATE command****
+  if (ctype == CMD_READ) 
     ProcessReading(stype, myArray);
-  else if (ctype == CMD_CALIBRATE){ //only analog sensors need to be calibrated
-    if (String(myArray[1]) == "CO2"){ //calibrate the CO2 sensor
-      digitalWrite(CO2_cal_pin, LOW); // CALIBRATION happens on LOW, min 7 seconds
-      delay(8000);
-      digitalWrite(CO2_cal_pin, HIGH);
-      //PRINT ANYTHING ON THE SERIAL
-      SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"sensorType\":\"" + String(0) + "\",\"parameter1\":" + String(myArray[0]) + ",\"pinValue\":" + String(0) + "}]\n";
-    Serial.print(SenMLdata);
-    }
+  else if (ctype == CMD_CALIBRATE)
+  { 
+    if (String(myArray[1]) == "CO2")
+      CalibrateCO2(myArray[0]); //myArray[0] holds pin nb
     else 
       AverageReading(stype, myArray);
   }
+
 }
 
-float OneWireRead(int one_pin)
-{
-  OneWire ds(one_pin);
-  byte data[12];
-  byte addr[8];
 
-  if (!ds.search(addr))
-  {
-    //no more sensors on chain, reset search
-    ds.reset_search();
-    return -1000;
-  }
-
-  if (OneWire::crc8(addr, 7) != addr[7])
-  {
-    //Serial.println("CRC is not valid!");
-    return -1000;
-  }
-
-  if (addr[0] != 0x10 && addr[0] != 0x28)
-  {
-    //Serial.print("Device is not recognized");
-    return -1000;
-  }
-
-  ds.reset();
-  ds.select(addr);
-  ds.write(0x44, 1); // start conversion, with parasite power on at the end
-
-  byte present = ds.reset();
-  ds.select(addr);
-  ds.write(0xBE); // Read Scratchpad
-
-  for (int i = 0; i < 9; i++)
-  { // we need 9 bytes
-    data[i] = ds.read();
-  }
-
-  ds.reset_search();
-
-  byte MSB = data[1];
-  byte LSB = data[0];
-
-  float Read = ((MSB << 8) | LSB); //using two's compliment
-  float Sum = Read / 16;
-
-  return Sum;
-}
 
 void loop()
 {
+  //testing mySerial, Serial1 and Serial
+  /*Serial.println("Starting");
+  CalibrateCO2("A5"); 
+  while (Serial1.available()) {
+    Serial.print(char(Serial1.read()));
+  }
+  Serial.println("");*/
 
+  //original code following:
   if (Serial.available() > 0)
   {
     while (Serial.available() > 0)
@@ -221,7 +172,7 @@ void loop()
     commandWords[0] = obtainArray(inString, ' ', 0);                //get first word containing CmdType, SensorType, Num_param
     remainingstring = inString.substring(5, inString.length() - 1); //index 0 to length-1
     commandWords[1] = obtainArray(remainingstring, ']', 0);         //extract the remaining string containing the list of parameters
-    SplitCommand(commandWords[0], commandWords[1]);
+    SplitCommand(commandWords[0], commandWords[1]);                 //analyze command and parameters
   }
   delay(100);
 }
