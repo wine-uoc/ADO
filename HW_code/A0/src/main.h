@@ -10,7 +10,7 @@
 
 //debug flag. Set to 1 to print debug traces
 #define DEBUG 1 
-#define CO2_cal_pin  (5ul)
+#define CO2_cal_pin  (4ul)
 // Serial pin and pad definitions (in Arduino files Variant.h & Variant.cpp)
 #define PIN_SERIAL_RX       (3ul)                // Pin description number for PIO_SERCOM on D3
 #define PIN_SERIAL_TX       (2ul)                // Pin description number for PIO_SERCOM on D2
