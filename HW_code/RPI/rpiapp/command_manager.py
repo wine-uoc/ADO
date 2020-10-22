@@ -64,7 +64,7 @@ def TransmitThread(ser, serialcmd, periodicity, magnitude):
     index = arduino_publish_data.get_sensor_index(magnitude)
 
 
-    if keepalive_thread(magnitude, threadname):
+    if keepalive_thread(magnitude, threadname, periodicity):
         try:
             ser.write(serialcmd.encode('utf-8')) 
         
@@ -229,11 +229,11 @@ def reestablish_serial(serial_port):
             print("connected to nothing")
     return ser
 
-def keepalive_thread(magnitude, threadname):
+def keepalive_thread(magnitude, threadname, periodicity):
     global latest_thread
     
     index = arduino_publish_data.get_sensor_index(magnitude)
-    if threadname == latest_thread[index]: #this is the latest created thread for this sensor
+    if threadname == latest_thread[index] and periodicity != 0: #this is the latest created thread for this sensor and SR!=0
         return True
     else:
         return False #this is an old thread for this sensor

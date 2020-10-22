@@ -93,7 +93,7 @@ def publish_data(magnitude,response, client, topic, engine):
                 value = ph
             except:#division by zero
                 print("division by zero") #raw value will be sent
-                break
+    
         #***********************************************
         elif name == "Turbidity": #current formula can only be used with 5V readings
             try:
@@ -101,7 +101,7 @@ def publish_data(magnitude,response, client, topic, engine):
                 value = readTurbidity(value) 
             except:
                 print("error in turbidity computation")
-                break
+                
         #************************************************
         elif name == "Conductivity1": #add if calibrated flag
             #print("pinvalue: ", value)
@@ -113,7 +113,7 @@ def publish_data(magnitude,response, client, topic, engine):
                 value = readEC(voltage, temperature, _kvalueLow, _kvalueHigh)
             except:
                 print("error in Conductivity1 computation")
-                break
+                
         #***********************************************
         elif name == "Conductivity2":
             voltage = value/1024*3300 #mkr1000
@@ -122,7 +122,7 @@ def publish_data(magnitude,response, client, topic, engine):
                 value = readEC2(voltage, temperature, _kvalue2)
             except:
                 print("error in Conductivity2 computation")
-                break
+                
         #***********************************************
         elif name == "Oxygen":
             voltage = value/1024*3300 #mV
@@ -139,7 +139,7 @@ def publish_data(magnitude,response, client, topic, engine):
                     value = readDO(voltage, temperature, calib_mode, CAL1_T, CAL1_V, CAL2_T, CAL2_V)
                 except:
                     print("DO math issue")
-                    break
+                   
             elif calib_mode == 1: #2 point calib
                 
                 CAL1_V=getattr(db1_row, idx_sensor_str)
@@ -153,7 +153,7 @@ def publish_data(magnitude,response, client, topic, engine):
                     value = readDO(voltage, temperature, calib_mode, CAL1_T, CAL1_V, CAL2_T, CAL2_V)
                 except:
                     print("math issue")
-                    break
+                    
 
         #***********************************************
         elif name == 'AirCO2':
@@ -161,10 +161,9 @@ def publish_data(magnitude,response, client, topic, engine):
             #print("voltage:", voltage)
             try:
                 value = readCO2(voltage)
-            #print("CO2: ", value)
             except:
-                break
-
+                print("some CO2 error")
+        
         payload = [{"bn": "", "n": name, "u": unit, "v": value, "t": timestamp}]
         #print(payload)
         client.publish(topic, json.dumps(payload))
