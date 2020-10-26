@@ -319,14 +319,10 @@ def on_message_0(client, userdata, msg):
     rx_data = str(msg.payload.decode('UTF-8'))  # message is string now, not json
     message = json.loads(rx_data) #message to json
     print ("***************************************")
-    print(message)
+    print ("********", str(message['type']))
     if str(message['type']) == 'SET_SR':
         print("Set Sr message")
-            # if message[11:17] == 'SET_SR':  # A naive patch for the issue
-            # CAUTION: using message as dict, because messages have different keys, like:
-            # [{"bn": "", "n": "Air CO2", "u": "ppm", "v": 30, "t": 1587467662.0718532}]
-            # [{"type": "SET_SR", "sensor": "Conductivity", "v": "1", "u": "s", "t": 1587467316.838788}]
-            # message = eval(message)  # transform to dictionary
+        # message = eval(message)  # transform to dictionary
         magnitude = message['sensor']
         SR = int(message['v'])
         new_thread_needed, index = set_sr(client, userdata['engine'], userdata['topic'], magnitude, SR, message['u'])
@@ -355,16 +351,12 @@ def on_message_0(client, userdata, msg):
             t.setName(new_thread)
             t.start()
             t.join()
-
-
         else:
             print("threads stay the same")
 
-
-
     elif str(message['type']) == 'CAL':
-        print("**** CAL the", message['n'], "sensor")
-        sensor = str(message['n'])
+        print("**** CAL the", message['sensor'], "sensor")
+        sensor = str(message['sensor'])
         db_to_use = str(message['v']) #indicates in which calibration db to save the data
         magnitudes = ConfigRPI.SENSOR_MAGNITUDES
         for i in range(len(magnitudes)):
