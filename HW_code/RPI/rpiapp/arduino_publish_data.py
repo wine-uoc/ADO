@@ -239,7 +239,7 @@ def get_sensor_index(name):
             break
     return i
 
-def HandleCalibration(engine, db, value, sensor_index):
+def HandleCalibration(engine, db, value, sensor_index, topic_cal):
     global temperature
     flag1 = 0
     flag2 = 0
@@ -259,9 +259,11 @@ def HandleCalibration(engine, db, value, sensor_index):
         if db == '1': #high temp
             update_req_cal_1_table_database(engine, sensor_index, 0) #cal not needed anymore
             update_calibration_1_table_database(engine, sensor_index, voltage) #1 to 10
+            flag1 = 1
         elif db == '2':
             update_req_cal_2_table_database(engine, sensor_index, 0) #cal not needed anymore
             update_calibration_2_table_database(engine, sensor_index, voltage) #1 to 10
+            flag2 = 1
 
     #************************************************************************************  
 
@@ -332,6 +334,7 @@ def HandleCalibration(engine, db, value, sensor_index):
                     _kvalue2 =  KValueTemp
                     update_req_cal_1_table_database(engine, sensor_index, 0) #cal not needed anymore
                     update_calibration_1_table_database(engine, sensor_index, _kvalue2) #1 to 10
+                    flag1 = 1
                 else:
                     print("calibration failed")
                     update_req_cal_1_table_database(engine, sensor_index, 1) #cal needed 
@@ -355,12 +358,14 @@ def HandleCalibration(engine, db, value, sensor_index):
             update_req_cal_1_table_database(engine, sensor_index, 0) #cal not needed anymore
             update_calibration_1_table_database(engine, sensor_index, voltage) #1 to 10
             update_calibration_1_temp_table_database(engine, sensor_index, temperature) #1 to 10
+            flag1 = 1
 
             print("****DB1 DONE****")
         elif db == '2':
             update_req_cal_2_table_database(engine, sensor_index, 0) #cal not needed anymore
             update_calibration_2_table_database(engine, sensor_index, voltage) #1 to 10
             update_calibration_2_temp_table_database(engine, sensor_index, temperature) #1 to 10
+            flag2 = 1
 
             print("****DB2 DONE****")
 
@@ -370,6 +375,17 @@ def HandleCalibration(engine, db, value, sensor_index):
     else: #other sensor 
         if db == '1':
             update_calibration_1_table_database(engine, sensor_index, value) #1 to 10
+            flag1 = 1
         else:
             update_calibration_2_table_database(engine, sensor_index, value)
+            flag2 = 1
         
+    name1 = name+"db1"
+    name2 = name+"db2"
+    # Send control message confirming CAL to grafana
+    if db == 1: #we were suposed to update db1
+        data = [{"bn": "", "n": name1, "u": "DB-ACK", "v": flag1, "t": time.time()}]
+        client.publish(topic_cal, json.dumps(data))
+    elif db == 2:
+        data = [{"bn": "", "n": name2, "u": "DB-ACK", "v": flag2, "t": time.time()}]
+        client.publish(topic_cal, json.dumps(data))

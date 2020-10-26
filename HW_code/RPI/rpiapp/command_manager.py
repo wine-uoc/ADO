@@ -180,7 +180,7 @@ def CalibrationThread(ser, serialcmd, index, engine, db): #not periodic, index 0
 
 
 def SetCalibrationDBThread(ser, serialcmd, index, engine, db):
-    global no_answer_pending, client, topic
+    global no_answer_pending, client, subtopic_cal
 
     try:
         logging.debug('executing thread %s', threading.currentThread().getName())
@@ -200,7 +200,7 @@ def SetCalibrationDBThread(ser, serialcmd, index, engine, db):
                     data = json.loads(response)
                     value = data[0]['pinValue'] #there should be only one item in data
 
-                    arduino_publish_data.HandleCalibration(engine, db, value, idx_sensor)
+                    arduino_publish_data.HandleCalibration(engine, db, value, idx_sensor, subtopic_cal)
                 else:
                     logging.debug("RX data does not correspond to the last command sent, checking again the serial")
 
@@ -249,6 +249,7 @@ def reset_thread_name(threadname, index):
 
 ############################# MQTT FUNCTIONS ##################################################
 def mqtt_connection_0(tokens, engine, serial):
+    global subtopic_sr, subtopic_cal
     """Connect to broker and subscribe to topic."""
     mqtt_topic = 'channels/' + str(tokens.channel_id)
     client_userdata = {'topic': mqtt_topic + '/control',
@@ -266,6 +267,9 @@ def mqtt_connection_0(tokens, engine, serial):
     client.on_subscribe = on_subscribe
     client.on_diconnect = on_disconnect
     client.on_log = on_log
+    subtopic_cal = mqtt_topic + '/control/CAL/' + str(tokens.thing_id) #cal is specific for this node
+    subtopic_sr = mqtt_topic + '/control/SR/' + str(tokens.thing_id) #SR command is now specific to this device
+
 
     client.connect_async(host=ConfigRPI.SHORT_SERVER_URL, port=ConfigRPI.SERVER_PORT_MQTT, keepalive=60)
     client.loop_start()
@@ -280,6 +284,7 @@ def mqtt_connection_0(tokens, engine, serial):
 
 
 def on_connect(client, userdata, flags, rc):
+    global subtopic_sr, subtopic_cal
     """The callback for when the client receives a CONNACK response from the server."""
     # The value of rc indicates success or not:
     # 0: Connection successful 1: Connection refused - incorrect protocol version 2: Connection refused - invalid
@@ -292,7 +297,12 @@ def on_connect(client, userdata, flags, rc):
         MQTT_CONNECTED = True
         # Subscribing in on_connect() means that if we lose the connection and
         # reconnect then subscriptions will be renewed.
-        client.subscribe(userdata['topic'])
+        #client.subscribe(userdata['topic']) #this is the control topic, arriving SR commands valid for all nodes
+        print(subtopic_cal)
+        print(subtopic_sr)
+        client.subscribe(subtopic_sr)
+        client.subscribe(subtopic_cal)
+
 
 def on_disconnect(client, userdata, rc):
     if rc != 0:
@@ -305,13 +315,13 @@ def on_log(client, userdata, level, buf):
 
 def on_subscribe(client, userdata, mid, granted_qos):
     """Callback for subscribed message."""
-    print('Subscribed to %s.' % userdata['topic'])
+    #print('Subscribed to %s.' % userdata['topic'])
     global MQTT_SUBSCRIBED
     MQTT_SUBSCRIBED = True
 
 
 def on_message_0(client, userdata, msg):
-    global latest_thread
+    global latest_thread, subtopic_cal, subtopic_sr
     """Callback for received message."""
     #print(msg.topic)
     # print("RX1")
@@ -325,7 +335,7 @@ def on_message_0(client, userdata, msg):
         # message = eval(message)  # transform to dictionary
         magnitude = message['sensor']
         SR = int(message['v'])
-        new_thread_needed, index = set_sr(client, userdata['engine'], userdata['topic'], magnitude, SR, message['u'])
+        new_thread_needed, index = set_sr(client, userdata['engine'], subtopic_sr, magnitude, SR, message['u'])
         if new_thread_needed == 1:
             print("creating new thread")
             
