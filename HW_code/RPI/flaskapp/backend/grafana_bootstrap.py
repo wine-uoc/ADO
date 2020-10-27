@@ -37,11 +37,12 @@ def bootstrap(name, organization, email, password, channel_id):
     # Grafana data
     # TODO load all files in folder to list
     noti_json = load_json('flaskapp/backend/alert_channels/slack.json')
-    num_dashs = 4
+    num_dashs = 5
     dash_pr_json = load_json('flaskapp/backend/dashboards/principal.json')
     dash_ag_json = load_json('flaskapp/backend/dashboards/agregat.json')
     dash_es_json = load_json('flaskapp/backend/dashboards/estat.json')
     dash_al_json = load_json('flaskapp/backend/dashboards/alertes.json')
+    dash_ca_json = load_json('flaskapp/backend/dashboards/calibration.json')
 
     # --- Provisioning
 
@@ -63,6 +64,7 @@ def bootstrap(name, organization, email, password, channel_id):
         dash_ids.append(gr._create_dashboard(dash_ag_json))
         dash_ids.append(gr._create_dashboard(dash_es_json))
         dash_ids.append(gr._create_dashboard(dash_al_json))
+        dash_ids.append(gr._create_dashboard(dash_ca_json))
 
         # Load preferences
         gr.update_preferences_org(dash_ids[0])

@@ -239,7 +239,7 @@ def get_sensor_index(name):
             break
     return i
 
-def HandleCalibration(engine, db, value, sensor_index, topic_cal):
+def HandleCalibration(engine, db, value, sensor_index, topic_cal, client):
     global temperature
     flag1 = 0
     flag2 = 0
@@ -379,13 +379,14 @@ def HandleCalibration(engine, db, value, sensor_index, topic_cal):
         else:
             update_calibration_2_table_database(engine, sensor_index, value)
             flag2 = 1
-        
-    name1 = name+"db1"
-    name2 = name+"db2"
+
+    
+    name1 = name+"-db1"
+    name2 = name+"-db2"
     # Send control message confirming CAL to grafana
-    if db == 1: #we were suposed to update db1
-        data = [{"bn": "", "n": name1, "u": "DB-ACK", "v": flag1, "t": time.time()}]
+    if db == '1': #we were suposed to update db1
+        data = [{"bn": "", "n": name1, "u": "", "v": flag1, "t": time.time()}]
         client.publish(topic_cal, json.dumps(data))
-    elif db == 2:
-        data = [{"bn": "", "n": name2, "u": "DB-ACK", "v": flag2, "t": time.time()}]
+    elif db == '2':
+        data = [{"bn": "", "n": name2, "u": "", "v": flag2, "t": time.time()}]
         client.publish(topic_cal, json.dumps(data))

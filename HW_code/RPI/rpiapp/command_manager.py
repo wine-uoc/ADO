@@ -200,7 +200,7 @@ def SetCalibrationDBThread(ser, serialcmd, index, engine, db):
                     data = json.loads(response)
                     value = data[0]['pinValue'] #there should be only one item in data
 
-                    arduino_publish_data.HandleCalibration(engine, db, value, idx_sensor, subtopic_cal)
+                    arduino_publish_data.HandleCalibration(engine, db, value, idx_sensor, subtopic_cal, client)
                 else:
                     logging.debug("RX data does not correspond to the last command sent, checking again the serial")
 
