@@ -1,6 +1,14 @@
 {
   "__inputs": [
     {
+      "name": "DS_6EFD7B39-7EFC-45E0-BEFB-2DBDBB474D2B",
+      "label": "6efd7b39-7efc-45e0-befb-2dbdbb474d2b",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "influxdb",
+      "pluginName": "InfluxDB"
+    },
+    {
       "name": "VAR_TIME_OFF_SEC",
       "type": "constant",
       "label": "time_off_sec",
@@ -13,7 +21,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "7.0.3"
+      "version": "7.1.5"
     },
     {
       "type": "panel",
@@ -43,7 +51,7 @@
       "type": "panel",
       "id": "text",
       "name": "Text",
-      "version": ""
+      "version": "7.1.0"
     }
   ],
   "annotations": {
@@ -63,7 +71,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1592500337180,
+  "iteration": 1603962657782,
   "links": [
     {
       "asDropdown": true,
@@ -76,7 +84,7 @@
   "panels": [
     {
       "content": "----\n## Aqüicultura Digital Oberta\n----\n\n\n",
-      "datasource": null,
+      "datasource": "${DS_6EFD7B39-7EFC-45E0-BEFB-2DBDBB474D2B}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -92,6 +100,11 @@
       },
       "id": 276,
       "mode": "markdown",
+      "options": {
+        "content": "----\n## Aqüicultura Digital Oberta\n----\n\n\n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "7.1.0",
       "timeFrom": null,
       "timeShift": null,
       "title": "",
@@ -100,7 +113,7 @@
     },
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": "${DS_6EFD7B39-7EFC-45E0-BEFB-2DBDBB474D2B}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -158,7 +171,7 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 2.4,
+        "w": 3.4285714285714284,
         "x": 0,
         "y": 4
       },
@@ -178,9 +191,10 @@
           ],
           "fields": "",
           "values": false
-        }
+        },
+        "textMode": "auto"
       },
-      "pluginVersion": "7.0.3",
+      "pluginVersion": "7.1.5",
       "repeat": "Sensors",
       "repeatDirection": "h",
       "targets": [
@@ -264,7 +278,7 @@
     },
     {
       "collapsed": true,
-      "datasource": null,
+      "datasource": "${DS_6EFD7B39-7EFC-45E0-BEFB-2DBDBB474D2B}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1657,7 +1671,7 @@
     },
     {
       "collapsed": true,
-      "datasource": null,
+      "datasource": "${DS_6EFD7B39-7EFC-45E0-BEFB-2DBDBB474D2B}",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -3848,7 +3862,7 @@
     }
   ],
   "refresh": "5s",
-  "schemaVersion": 25,
+  "schemaVersion": 26,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -3857,14 +3871,14 @@
         "allValue": null,
         "current": {},
         "datasource": "$DB",
-        "definition": "SHOW TAG VALUES WITH  KEY = \"name\"",
+        "definition": "SHOW TAG VALUES FROM messages WITH  KEY = \"name\"",
         "hide": 0,
-        "includeAll": true,
+        "includeAll": false,
         "label": null,
         "multi": true,
         "name": "Sensors",
         "options": [],
-        "query": "SHOW TAG VALUES WITH  KEY = \"name\"",
+        "query": "SHOW TAG VALUES FROM messages WITH  KEY = \"name\"",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -3922,8 +3936,8 @@
       {
         "current": {
           "selected": false,
-          "text": "3f2f817c-e0cd-4154-871d-783f878d2dba",
-          "value": "3f2f817c-e0cd-4154-871d-783f878d2dba"
+          "text": "6efd7b39-7efc-45e0-befb-2dbdbb474d2b",
+          "value": "6efd7b39-7efc-45e0-befb-2dbdbb474d2b"
         },
         "hide": 2,
         "includeAll": false,
@@ -3941,7 +3955,8 @@
       {
         "current": {
           "value": "${VAR_TIME_OFF_SEC}",
-          "text": "${VAR_TIME_OFF_SEC}"
+          "text": "${VAR_TIME_OFF_SEC}",
+          "selected": false
         },
         "hide": 2,
         "label": null,
@@ -3949,7 +3964,8 @@
         "options": [
           {
             "value": "${VAR_TIME_OFF_SEC}",
-            "text": "${VAR_TIME_OFF_SEC}"
+            "text": "${VAR_TIME_OFF_SEC}",
+            "selected": false
           }
         ],
         "query": "${VAR_TIME_OFF_SEC}",
@@ -3978,5 +3994,5 @@
   "timezone": "",
   "title": "Estat sensors",
   "uid": "zLj7W6iMk",
-  "version": 4
+  "version": 3
 }
