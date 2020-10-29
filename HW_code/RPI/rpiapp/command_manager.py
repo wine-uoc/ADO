@@ -25,9 +25,7 @@ def create_threads(ser):
     global latest_thread
     serialcmd, periodicity, magnitudes = arduino_commands.get_config()
     size = len(serialcmd)  # number of configs we have
-    for i in range(size):
-        if periodicity[i+1] != 0:
-            periodicity[i+1] = 60 #force SR to 60
+
     print('The set of commands is ', serialcmd)
     print('NB of threads is '+ str(size))
     print('periodicity of each thread is ', periodicity)
@@ -259,7 +257,7 @@ def mqtt_connection_0(tokens, engine, serial):
     mqtt.Client._call_socket_register_write = lambda _self: None
     mqtt.Client._call_socket_unregister_write = lambda _self, _sock=None: None
    
-    client = mqtt.Client(client_id=str(tokens.node_id), userdata=client_userdata)
+    client = mqtt.Client(client_id="piscina1", userdata=client_userdata) #here we may put device name
 
     client.username_pw_set(tokens.thing_id, tokens.thing_key)
     client.on_connect = on_connect

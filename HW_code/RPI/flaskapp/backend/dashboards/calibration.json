@@ -1,14 +1,5 @@
 {
-  "__inputs": [
-    {
-      "name": "DS_F839DEFE-EAFF-4F7D-9FC1-CECE496685B5",
-      "label": "f839defe-eaff-4f7d-9fc1-cece496685b5",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "influxdb",
-      "pluginName": "InfluxDB"
-    }
-  ],
+  "__inputs": [],
   "__requires": [
     {
       "type": "grafana",
@@ -58,12 +49,12 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1603806795421,
+  "iteration": 1603990707754,
   "links": [],
   "panels": [
     {
       "collapsed": false,
-      "datasource": "${DS_F839DEFE-EAFF-4F7D-9FC1-CECE496685B5}",
+      "datasource": "$DB",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -267,7 +258,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_F839DEFE-EAFF-4F7D-9FC1-CECE496685B5}",
+      "datasource": "$DB",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -810,7 +801,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_F839DEFE-EAFF-4F7D-9FC1-CECE496685B5}",
+      "datasource": "$DB",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1121,7 +1112,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_F839DEFE-EAFF-4F7D-9FC1-CECE496685B5}",
+      "datasource": "$DB",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1539,7 +1530,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_F839DEFE-EAFF-4F7D-9FC1-CECE496685B5}",
+      "datasource": "$DB",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1552,7 +1543,7 @@
       "type": "row"
     },
     {
-      "datasource": "${DS_F839DEFE-EAFF-4F7D-9FC1-CECE496685B5}",
+      "datasource": "$DB",
       "fieldConfig": {
         "defaults": {
           "custom": {}
@@ -1969,8 +1960,8 @@
       {
         "current": {
           "selected": false,
-          "text": "f839defe-eaff-4f7d-9fc1-cece496685b5",
-          "value": "f839defe-eaff-4f7d-9fc1-cece496685b5"
+          "text": "22e073e5-f4f5-4b81-9074-84e529c564c9",
+          "value": "22e073e5-f4f5-4b81-9074-84e529c564c9"
         },
         "hide": 2,
         "includeAll": false,
@@ -2010,14 +2001,36 @@
         "allValue": null,
         "current": {},
         "datasource": "$DB",
-        "definition": "SHOW TAG VALUES WITH KEY=\"publisher\"",
-        "hide": 0,
+        "definition": "SHOW TAG VALUES FROM messages WITH KEY=\"publisher\" WHERE \"devname\" =~ /^$Device$/",
+        "hide": 2,
         "includeAll": false,
         "label": null,
         "multi": false,
         "name": "Publisher",
         "options": [],
-        "query": "SHOW TAG VALUES WITH KEY=\"publisher\"",
+        "query": "SHOW TAG VALUES FROM messages WITH KEY=\"publisher\" WHERE \"devname\" =~ /^$Device$/",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "$DB",
+        "definition": "SHOW TAG VALUES FROM messages WITH KEY=\"devname\"",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Device",
+        "multi": false,
+        "name": "Device",
+        "options": [],
+        "query": "SHOW TAG VALUES FROM messages WITH KEY=\"devname\"",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -2031,7 +2044,7 @@
     ]
   },
   "time": {
-    "from": "now-5m",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {
@@ -2051,5 +2064,5 @@
   "timezone": "",
   "title": "Calibration",
   "uid": "lTtlUdpMk",
-  "version": 46
+  "version": 3
 }

@@ -1,4 +1,37 @@
 {
+  "__inputs": [],
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "bargauge",
+      "name": "Bar gauge",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "7.1.5"
+    },
+    {
+      "type": "panel",
+      "id": "graph",
+      "name": "Graph",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "influxdb",
+      "name": "InfluxDB",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "text",
+      "name": "Text",
+      "version": "7.1.0"
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -16,7 +49,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1593020645983,
+  "iteration": 1603991332644,
   "links": [
     {
       "asDropdown": true,
@@ -29,7 +62,7 @@
   "panels": [
     {
       "content": "----\n## Aqüicultura Digital Oberta\n----\nEs mostra un gràfic per cada sensor. A cada gràfic es representen superposades les mostres de tots els dispositius actius. Cada mostra representa la mitjana dels últims 10 segons.\n\n",
-      "datasource": null,
+      "datasource": "$DB",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -45,6 +78,11 @@
       },
       "id": 4,
       "mode": "markdown",
+      "options": {
+        "content": "----\n## Aqüicultura Digital Oberta\n----\nEs mostra un gràfic per cada sensor. A cada gràfic es representen superposades les mostres de tots els dispositius actius. Cada mostra representa la mitjana dels últims 10 segons.\n\n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "7.1.0",
       "timeFrom": null,
       "timeShift": null,
       "title": "",
@@ -52,7 +90,7 @@
       "type": "text"
     },
     {
-      "datasource": null,
+      "datasource": "$DB",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -110,7 +148,7 @@
         },
         "showUnfilled": true
       },
-      "pluginVersion": "7.0.3",
+      "pluginVersion": "7.1.5",
       "targets": [
         {
           "groupBy": [
@@ -176,7 +214,8 @@
       "description": "",
       "fieldConfig": {
         "defaults": {
-          "custom": {}
+          "custom": {},
+          "links": []
         },
         "overrides": []
       },
@@ -207,22 +246,13 @@
       "linewidth": 1,
       "maxPerRow": 2,
       "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
       "percentage": false,
+      "pluginVersion": "7.1.5",
       "pointradius": 1,
       "points": true,
       "renderer": "flot",
       "repeat": "Sensors",
       "repeatDirection": "v",
-      "scopedVars": {
-        "Sensors": {
-          "selected": true,
-          "text": "Temperature",
-          "value": "Temperature"
-        }
-      },
       "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
@@ -326,7 +356,7 @@
     }
   ],
   "refresh": "5s",
-  "schemaVersion": 25,
+  "schemaVersion": 26,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -334,8 +364,8 @@
       {
         "current": {
           "selected": false,
-          "text": "0f6b849a-d469-47eb-87dd-c05e8a1ae276",
-          "value": "0f6b849a-d469-47eb-87dd-c05e8a1ae276"
+          "text": "22e073e5-f4f5-4b81-9074-84e529c564c9",
+          "value": "22e073e5-f4f5-4b81-9074-84e529c564c9"
         },
         "hide": 2,
         "includeAll": false,
@@ -351,22 +381,16 @@
       },
       {
         "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "All",
-          "value": [
-            "$__all"
-          ]
-        },
+        "current": {},
         "datasource": "$DB",
-        "definition": "SHOW TAG VALUES WITH KEY = \"publisher\"",
+        "definition": "SHOW TAG VALUES FROM messages WITH KEY = \"publisher\"",
         "hide": 2,
         "includeAll": true,
         "label": null,
         "multi": true,
         "name": "Publisher",
         "options": [],
-        "query": "SHOW TAG VALUES WITH KEY = \"publisher\"",
+        "query": "SHOW TAG VALUES FROM messages WITH KEY = \"publisher\"",
         "refresh": 1,
         "regex": "/.*-([^-]*).*/",
         "skipUrlSync": false,
@@ -379,20 +403,16 @@
       },
       {
         "allValue": null,
-        "current": {
-          "selected": true,
-          "text": "Temperature",
-          "value": "Temperature"
-        },
+        "current": {},
         "datasource": "$DB",
-        "definition": "SHOW TAG VALUES WITH  KEY = \"name\"",
+        "definition": "SHOW TAG VALUES FROM messages WITH  KEY = \"name\"",
         "hide": 0,
         "includeAll": false,
         "label": "Sensor",
         "multi": false,
         "name": "Sensors",
         "options": [],
-        "query": "SHOW TAG VALUES WITH  KEY = \"name\"",
+        "query": "SHOW TAG VALUES FROM messages WITH  KEY = \"name\"",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -406,7 +426,7 @@
     ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {
@@ -425,5 +445,5 @@
   "timezone": "",
   "title": "Agregat dispositius",
   "uid": "YT20LzWMk",
-  "version": 10
+  "version": 4
 }

@@ -1,14 +1,6 @@
 {
   "__inputs": [
     {
-      "name": "DS_6EFD7B39-7EFC-45E0-BEFB-2DBDBB474D2B",
-      "label": "6efd7b39-7efc-45e0-befb-2dbdbb474d2b",
-      "description": "",
-      "type": "datasource",
-      "pluginId": "influxdb",
-      "pluginName": "InfluxDB"
-    },
-    {
       "name": "VAR_TIME_OFF_SEC",
       "type": "constant",
       "label": "time_off_sec",
@@ -71,7 +63,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1603962657782,
+  "iteration": 1603990295572,
   "links": [
     {
       "asDropdown": true,
@@ -84,7 +76,7 @@
   "panels": [
     {
       "content": "----\n## Aqüicultura Digital Oberta\n----\n\n\n",
-      "datasource": "${DS_6EFD7B39-7EFC-45E0-BEFB-2DBDBB474D2B}",
+      "datasource": "$DB",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -113,7 +105,7 @@
     },
     {
       "collapsed": false,
-      "datasource": "${DS_6EFD7B39-7EFC-45E0-BEFB-2DBDBB474D2B}",
+      "datasource": "$DB",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -171,7 +163,7 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 3.4285714285714284,
+        "w": 24,
         "x": 0,
         "y": 4
       },
@@ -277,8 +269,8 @@
       "type": "stat"
     },
     {
-      "collapsed": true,
-      "datasource": "${DS_6EFD7B39-7EFC-45E0-BEFB-2DBDBB474D2B}",
+      "collapsed": false,
+      "datasource": "$DB",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -286,3579 +278,352 @@
         "y": 7
       },
       "id": 43,
-      "panels": [
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$DB",
-          "decimals": null,
-          "description": "Mostra els valors del sensor en temps",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 2,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 9,
-            "w": 24,
-            "x": 0,
-            "y": 8
-          },
-          "hiddenSeries": false,
-          "id": 6,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "hideZero": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "sideWidth": null,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "dataLinks": []
-          },
-          "percentage": false,
-          "pointradius": 1,
-          "points": true,
-          "renderer": "flot",
-          "repeat": "Sensors",
-          "repeatDirection": "v",
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "AirCO2",
-              "value": "AirCO2"
-            }
-          },
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "$Publisher",
-              "groupBy": [],
-              "measurement": "messages",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "name",
-                  "operator": "=~",
-                  "value": "/^$Sensors$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "publisher",
-                  "operator": "=~",
-                  "value": "/^$Publisher$/"
-                }
-              ]
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "$Sensors",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": "",
-              "logBase": 1,
-              "max": null,
-              "min": "0",
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$DB",
-          "decimals": null,
-          "description": "Mostra els valors del sensor en temps",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 2,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 9,
-            "w": 24,
-            "x": 0,
-            "y": 17
-          },
-          "hiddenSeries": false,
-          "id": 385,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "hideZero": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "sideWidth": null,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "dataLinks": []
-          },
-          "percentage": false,
-          "pointradius": 1,
-          "points": true,
-          "renderer": "flot",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 6,
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "AtmosphericTemp",
-              "value": "AtmosphericTemp"
-            }
-          },
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "$Publisher",
-              "groupBy": [],
-              "measurement": "messages",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "name",
-                  "operator": "=~",
-                  "value": "/^$Sensors$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "publisher",
-                  "operator": "=~",
-                  "value": "/^$Publisher$/"
-                }
-              ]
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "$Sensors",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": "",
-              "logBase": 1,
-              "max": null,
-              "min": "0",
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$DB",
-          "decimals": null,
-          "description": "Mostra els valors del sensor en temps",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 2,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 9,
-            "w": 24,
-            "x": 0,
-            "y": 26
-          },
-          "hiddenSeries": false,
-          "id": 386,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "hideZero": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "sideWidth": null,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "dataLinks": []
-          },
-          "percentage": false,
-          "pointradius": 1,
-          "points": true,
-          "renderer": "flot",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 6,
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "Conductivity",
-              "value": "Conductivity"
-            }
-          },
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "$Publisher",
-              "groupBy": [],
-              "measurement": "messages",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "name",
-                  "operator": "=~",
-                  "value": "/^$Sensors$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "publisher",
-                  "operator": "=~",
-                  "value": "/^$Publisher$/"
-                }
-              ]
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "$Sensors",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": "",
-              "logBase": 1,
-              "max": null,
-              "min": "0",
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$DB",
-          "decimals": null,
-          "description": "Mostra els valors del sensor en temps",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 2,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 9,
-            "w": 24,
-            "x": 0,
-            "y": 35
-          },
-          "hiddenSeries": false,
-          "id": 387,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "hideZero": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "sideWidth": null,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "dataLinks": []
-          },
-          "percentage": false,
-          "pointradius": 1,
-          "points": true,
-          "renderer": "flot",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 6,
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "Flow",
-              "value": "Flow"
-            }
-          },
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "$Publisher",
-              "groupBy": [],
-              "measurement": "messages",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "name",
-                  "operator": "=~",
-                  "value": "/^$Sensors$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "publisher",
-                  "operator": "=~",
-                  "value": "/^$Publisher$/"
-                }
-              ]
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "$Sensors",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": "",
-              "logBase": 1,
-              "max": null,
-              "min": "0",
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$DB",
-          "decimals": null,
-          "description": "Mostra els valors del sensor en temps",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 2,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 9,
-            "w": 24,
-            "x": 0,
-            "y": 44
-          },
-          "hiddenSeries": false,
-          "id": 388,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "hideZero": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "sideWidth": null,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "dataLinks": []
-          },
-          "percentage": false,
-          "pointradius": 1,
-          "points": true,
-          "renderer": "flot",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 6,
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "Light",
-              "value": "Light"
-            }
-          },
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "$Publisher",
-              "groupBy": [],
-              "measurement": "messages",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "name",
-                  "operator": "=~",
-                  "value": "/^$Sensors$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "publisher",
-                  "operator": "=~",
-                  "value": "/^$Publisher$/"
-                }
-              ]
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "$Sensors",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": "",
-              "logBase": 1,
-              "max": null,
-              "min": "0",
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$DB",
-          "decimals": null,
-          "description": "Mostra els valors del sensor en temps",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 2,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 9,
-            "w": 24,
-            "x": 0,
-            "y": 53
-          },
-          "hiddenSeries": false,
-          "id": 389,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "hideZero": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "sideWidth": null,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "dataLinks": []
-          },
-          "percentage": false,
-          "pointradius": 1,
-          "points": true,
-          "renderer": "flot",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 6,
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "Oxygen",
-              "value": "Oxygen"
-            }
-          },
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "$Publisher",
-              "groupBy": [],
-              "measurement": "messages",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "name",
-                  "operator": "=~",
-                  "value": "/^$Sensors$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "publisher",
-                  "operator": "=~",
-                  "value": "/^$Publisher$/"
-                }
-              ]
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "$Sensors",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": "",
-              "logBase": 1,
-              "max": null,
-              "min": "0",
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$DB",
-          "decimals": null,
-          "description": "Mostra els valors del sensor en temps",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 2,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 9,
-            "w": 24,
-            "x": 0,
-            "y": 62
-          },
-          "hiddenSeries": false,
-          "id": 390,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "hideZero": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "sideWidth": null,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "dataLinks": []
-          },
-          "percentage": false,
-          "pointradius": 1,
-          "points": true,
-          "renderer": "flot",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 6,
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "Temperature",
-              "value": "Temperature"
-            }
-          },
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "$Publisher",
-              "groupBy": [],
-              "measurement": "messages",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "name",
-                  "operator": "=~",
-                  "value": "/^$Sensors$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "publisher",
-                  "operator": "=~",
-                  "value": "/^$Publisher$/"
-                }
-              ]
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "$Sensors",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": "",
-              "logBase": 1,
-              "max": null,
-              "min": "0",
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$DB",
-          "decimals": null,
-          "description": "Mostra els valors del sensor en temps",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 2,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 9,
-            "w": 24,
-            "x": 0,
-            "y": 71
-          },
-          "hiddenSeries": false,
-          "id": 391,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "hideZero": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "sideWidth": null,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "dataLinks": []
-          },
-          "percentage": false,
-          "pointradius": 1,
-          "points": true,
-          "renderer": "flot",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 6,
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "Turbidity",
-              "value": "Turbidity"
-            }
-          },
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "$Publisher",
-              "groupBy": [],
-              "measurement": "messages",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "name",
-                  "operator": "=~",
-                  "value": "/^$Sensors$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "publisher",
-                  "operator": "=~",
-                  "value": "/^$Publisher$/"
-                }
-              ]
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "$Sensors",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": "",
-              "logBase": 1,
-              "max": null,
-              "min": "0",
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$DB",
-          "decimals": null,
-          "description": "Mostra els valors del sensor en temps",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 2,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 9,
-            "w": 24,
-            "x": 0,
-            "y": 80
-          },
-          "hiddenSeries": false,
-          "id": 392,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "hideZero": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "sideWidth": null,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "dataLinks": []
-          },
-          "percentage": false,
-          "pointradius": 1,
-          "points": true,
-          "renderer": "flot",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 6,
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "WaterLevel",
-              "value": "WaterLevel"
-            }
-          },
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "$Publisher",
-              "groupBy": [],
-              "measurement": "messages",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "name",
-                  "operator": "=~",
-                  "value": "/^$Sensors$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "publisher",
-                  "operator": "=~",
-                  "value": "/^$Publisher$/"
-                }
-              ]
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "$Sensors",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": "",
-              "logBase": 1,
-              "max": null,
-              "min": "0",
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        },
-        {
-          "aliasColors": {},
-          "bars": false,
-          "dashLength": 10,
-          "dashes": false,
-          "datasource": "$DB",
-          "decimals": null,
-          "description": "Mostra els valors del sensor en temps",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "fill": 2,
-          "fillGradient": 0,
-          "gridPos": {
-            "h": 9,
-            "w": 24,
-            "x": 0,
-            "y": 89
-          },
-          "hiddenSeries": false,
-          "id": 393,
-          "legend": {
-            "alignAsTable": true,
-            "avg": true,
-            "current": true,
-            "hideEmpty": true,
-            "hideZero": true,
-            "max": true,
-            "min": true,
-            "rightSide": false,
-            "show": true,
-            "sideWidth": null,
-            "total": false,
-            "values": true
-          },
-          "lines": true,
-          "linewidth": 1,
-          "nullPointMode": "null",
-          "options": {
-            "dataLinks": []
-          },
-          "percentage": false,
-          "pointradius": 1,
-          "points": true,
-          "renderer": "flot",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 6,
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "pH",
-              "value": "pH"
-            }
-          },
-          "seriesOverrides": [],
-          "spaceLength": 10,
-          "stack": false,
-          "steppedLine": false,
-          "targets": [
-            {
-              "alias": "$Publisher",
-              "groupBy": [],
-              "measurement": "messages",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "name",
-                  "operator": "=~",
-                  "value": "/^$Sensors$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "publisher",
-                  "operator": "=~",
-                  "value": "/^$Publisher$/"
-                }
-              ]
-            }
-          ],
-          "thresholds": [],
-          "timeFrom": null,
-          "timeRegions": [],
-          "timeShift": null,
-          "title": "$Sensors",
-          "tooltip": {
-            "shared": true,
-            "sort": 0,
-            "value_type": "individual"
-          },
-          "type": "graph",
-          "xaxis": {
-            "buckets": null,
-            "mode": "time",
-            "name": null,
-            "show": true,
-            "values": []
-          },
-          "yaxes": [
-            {
-              "format": "short",
-              "label": "",
-              "logBase": 1,
-              "max": null,
-              "min": "0",
-              "show": true
-            },
-            {
-              "format": "short",
-              "label": null,
-              "logBase": 1,
-              "max": null,
-              "min": null,
-              "show": false
-            }
-          ],
-          "yaxis": {
-            "align": false,
-            "alignLevel": null
-          }
-        }
-      ],
+      "panels": [],
       "title": "Timeseries data",
       "type": "row"
     },
     {
-      "collapsed": true,
-      "datasource": "${DS_6EFD7B39-7EFC-45E0-BEFB-2DBDBB474D2B}",
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$DB",
+      "decimals": null,
+      "description": "Mostra els valors del sensor en temps",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 2,
+      "fillGradient": 0,
       "gridPos": {
-        "h": 1,
+        "h": 9,
         "w": 24,
         "x": 0,
         "y": 8
       },
-      "id": 101,
-      "panels": [
+      "hiddenSeries": false,
+      "id": 6,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": true,
+        "min": true,
+        "rightSide": false,
+        "show": true,
+        "sideWidth": null,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.1.5",
+      "pointradius": 1,
+      "points": true,
+      "renderer": "flot",
+      "repeat": "Sensors",
+      "repeatDirection": "v",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
         {
-          "cacheTimeout": null,
-          "datasource": "$DB",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [
-                {
-                  "id": 0,
-                  "op": "=",
-                  "text": "OFF",
-                  "type": 1,
-                  "value": "0"
-                },
-                {
-                  "from": "",
-                  "id": 1,
-                  "operator": "",
-                  "text": "",
-                  "to": "",
-                  "type": 1
-                }
-              ],
-              "noValue": "OFF",
-              "nullValueMode": "connected",
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "red",
-                    "value": null
-                  },
-                  {
-                    "color": "yellow",
-                    "value": 1
-                  },
-                  {
-                    "color": "blue",
-                    "value": 5
-                  },
-                  {
-                    "color": "green",
-                    "value": 30
-                  }
-                ]
-              },
-              "unit": "s"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 6,
-            "x": 0,
-            "y": 9
-          },
-          "id": 14,
-          "interval": null,
-          "links": [],
-          "maxDataPoints": 100,
-          "options": {
-            "colorMode": "value",
-            "fieldOptions": {
-              "calcs": [
-                "lastNotNull"
-              ]
-            },
-            "graphMode": "none",
-            "justifyMode": "center",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "last"
-              ],
-              "fields": "",
-              "values": false
-            }
-          },
-          "pluginVersion": "7.0.3",
-          "repeat": "Sensors",
-          "repeatDirection": "v",
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "AirCO2",
-              "value": "AirCO2"
-            }
-          },
-          "targets": [
-            {
-              "groupBy": [],
-              "measurement": "control",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT last(\"value\") FROM \"control\" WHERE (\"name\" =~ /^$Sensors$/ AND \"publisher\" =~ /^$Publisher$/) ",
-              "rawQuery": true,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "name",
-                  "operator": "=~",
-                  "value": "/^$Sensors$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "publisher",
-                  "operator": "=~",
-                  "value": "/^$Publisher$/"
-                }
-              ]
-            }
+          "alias": "$Publisher",
+          "groupBy": [],
+          "measurement": "messages",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              }
+            ]
           ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Current sampling rate of $Sensors",
-          "type": "stat"
-        },
-        {
-          "datasource": "$DB",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 4,
-            "x": 6,
-            "y": 9
-          },
-          "header_js": "{}",
-          "id": 8,
-          "method": "iframe",
-          "mode": "html",
-          "params_js": "{\n from:ctrl.range.from.format('x'),  // x is unix ms timestamp\n to:ctrl.range.to.format('x'), \n height:ctrl.height,\n now:Date.now(),\n interval: ctrl.template('$__interval'),\n sample: 'Not escaped: $__interval',\n since:ctrl.lastRequestTime\n}",
-          "repeat": "Sensors",
-          "repeatDirection": "v",
-          "request": "http",
-          "responseType": "text",
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "AirCO2",
-              "value": "AirCO2"
-            }
-          },
-          "showErrors": true,
-          "showTime": false,
-          "showTimeFormat": "LTS",
-          "showTimePrefix": null,
-          "showTimeValue": "request",
-          "skipSameURL": true,
-          "targets": [
+          "tags": [
             {
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "templateResponse": true,
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Sampling Rate",
-          "type": "ryantxu-ajax-panel",
-          "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors",
-          "withCredentials": false
-        },
-        {
-          "cacheTimeout": null,
-          "datasource": "$DB",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [
-                {
-                  "id": 0,
-                  "op": "=",
-                  "text": "OFF",
-                  "type": 1,
-                  "value": "0"
-                },
-                {
-                  "from": "",
-                  "id": 1,
-                  "operator": "",
-                  "text": "",
-                  "to": "",
-                  "type": 1
-                }
-              ],
-              "noValue": "OFF",
-              "nullValueMode": "connected",
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "red",
-                    "value": null
-                  },
-                  {
-                    "color": "yellow",
-                    "value": 1
-                  },
-                  {
-                    "color": "blue",
-                    "value": 5
-                  },
-                  {
-                    "color": "green",
-                    "value": 30
-                  }
-                ]
-              },
-              "unit": "s"
+              "key": "name",
+              "operator": "=~",
+              "value": "/^$Sensors$/"
             },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 6,
-            "x": 0,
-            "y": 12
-          },
-          "id": 430,
-          "interval": null,
-          "links": [],
-          "maxDataPoints": 100,
-          "options": {
-            "colorMode": "value",
-            "fieldOptions": {
-              "calcs": [
-                "lastNotNull"
-              ]
-            },
-            "graphMode": "none",
-            "justifyMode": "center",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "last"
-              ],
-              "fields": "",
-              "values": false
-            }
-          },
-          "pluginVersion": "7.0.3",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 14,
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "AtmosphericTemp",
-              "value": "AtmosphericTemp"
-            }
-          },
-          "targets": [
             {
-              "groupBy": [],
-              "measurement": "control",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT last(\"value\") FROM \"control\" WHERE (\"name\" =~ /^$Sensors$/ AND \"publisher\" =~ /^$Publisher$/)",
-              "rawQuery": true,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "name",
-                  "operator": "=~",
-                  "value": "/^$Sensors$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "publisher",
-                  "operator": "=~",
-                  "value": "/^$Publisher$/"
-                }
-              ]
+              "condition": "AND",
+              "key": "publisher",
+              "operator": "=~",
+              "value": "/^$Publisher$/"
             }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Current sampling rate of $Sensors",
-          "type": "stat"
-        },
-        {
-          "datasource": "$DB",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 4,
-            "x": 6,
-            "y": 12
-          },
-          "header_js": "{}",
-          "id": 439,
-          "method": "iframe",
-          "mode": "html",
-          "params_js": "{\n from:ctrl.range.from.format('x'),  // x is unix ms timestamp\n to:ctrl.range.to.format('x'), \n height:ctrl.height,\n now:Date.now(),\n interval: ctrl.template('$__interval'),\n sample: 'Not escaped: $__interval',\n since:ctrl.lastRequestTime\n}",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 8,
-          "request": "http",
-          "responseType": "text",
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "AtmosphericTemp",
-              "value": "AtmosphericTemp"
-            }
-          },
-          "showErrors": true,
-          "showTime": false,
-          "showTimeFormat": "LTS",
-          "showTimePrefix": null,
-          "showTimeValue": "request",
-          "skipSameURL": true,
-          "targets": [
-            {
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "templateResponse": true,
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Sampling Rate",
-          "type": "ryantxu-ajax-panel",
-          "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors",
-          "withCredentials": false
-        },
-        {
-          "cacheTimeout": null,
-          "datasource": "$DB",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [
-                {
-                  "id": 0,
-                  "op": "=",
-                  "text": "OFF",
-                  "type": 1,
-                  "value": "0"
-                },
-                {
-                  "from": "",
-                  "id": 1,
-                  "operator": "",
-                  "text": "",
-                  "to": "",
-                  "type": 1
-                }
-              ],
-              "noValue": "OFF",
-              "nullValueMode": "connected",
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "red",
-                    "value": null
-                  },
-                  {
-                    "color": "yellow",
-                    "value": 1
-                  },
-                  {
-                    "color": "blue",
-                    "value": 5
-                  },
-                  {
-                    "color": "green",
-                    "value": 30
-                  }
-                ]
-              },
-              "unit": "s"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 6,
-            "x": 0,
-            "y": 15
-          },
-          "id": 431,
-          "interval": null,
-          "links": [],
-          "maxDataPoints": 100,
-          "options": {
-            "colorMode": "value",
-            "fieldOptions": {
-              "calcs": [
-                "lastNotNull"
-              ]
-            },
-            "graphMode": "none",
-            "justifyMode": "center",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "last"
-              ],
-              "fields": "",
-              "values": false
-            }
-          },
-          "pluginVersion": "7.0.3",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 14,
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "Conductivity",
-              "value": "Conductivity"
-            }
-          },
-          "targets": [
-            {
-              "groupBy": [],
-              "measurement": "control",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT last(\"value\") FROM \"control\" WHERE (\"name\" =~ /^$Sensors$/ AND \"publisher\" =~ /^$Publisher$/)",
-              "rawQuery": true,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "name",
-                  "operator": "=~",
-                  "value": "/^$Sensors$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "publisher",
-                  "operator": "=~",
-                  "value": "/^$Publisher$/"
-                }
-              ]
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Current sampling rate of $Sensors",
-          "type": "stat"
-        },
-        {
-          "datasource": "$DB",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 4,
-            "x": 6,
-            "y": 15
-          },
-          "header_js": "{}",
-          "id": 440,
-          "method": "iframe",
-          "mode": "html",
-          "params_js": "{\n from:ctrl.range.from.format('x'),  // x is unix ms timestamp\n to:ctrl.range.to.format('x'), \n height:ctrl.height,\n now:Date.now(),\n interval: ctrl.template('$__interval'),\n sample: 'Not escaped: $__interval',\n since:ctrl.lastRequestTime\n}",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 8,
-          "request": "http",
-          "responseType": "text",
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "Conductivity",
-              "value": "Conductivity"
-            }
-          },
-          "showErrors": true,
-          "showTime": false,
-          "showTimeFormat": "LTS",
-          "showTimePrefix": null,
-          "showTimeValue": "request",
-          "skipSameURL": true,
-          "targets": [
-            {
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "templateResponse": true,
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Sampling Rate",
-          "type": "ryantxu-ajax-panel",
-          "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors",
-          "withCredentials": false
-        },
-        {
-          "cacheTimeout": null,
-          "datasource": "$DB",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [
-                {
-                  "id": 0,
-                  "op": "=",
-                  "text": "OFF",
-                  "type": 1,
-                  "value": "0"
-                },
-                {
-                  "from": "",
-                  "id": 1,
-                  "operator": "",
-                  "text": "",
-                  "to": "",
-                  "type": 1
-                }
-              ],
-              "noValue": "OFF",
-              "nullValueMode": "connected",
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "red",
-                    "value": null
-                  },
-                  {
-                    "color": "yellow",
-                    "value": 1
-                  },
-                  {
-                    "color": "blue",
-                    "value": 5
-                  },
-                  {
-                    "color": "green",
-                    "value": 30
-                  }
-                ]
-              },
-              "unit": "s"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 6,
-            "x": 0,
-            "y": 18
-          },
-          "id": 432,
-          "interval": null,
-          "links": [],
-          "maxDataPoints": 100,
-          "options": {
-            "colorMode": "value",
-            "fieldOptions": {
-              "calcs": [
-                "lastNotNull"
-              ]
-            },
-            "graphMode": "none",
-            "justifyMode": "center",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "last"
-              ],
-              "fields": "",
-              "values": false
-            }
-          },
-          "pluginVersion": "7.0.3",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 14,
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "Flow",
-              "value": "Flow"
-            }
-          },
-          "targets": [
-            {
-              "groupBy": [],
-              "measurement": "control",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT last(\"value\") FROM \"control\" WHERE (\"name\" =~ /^$Sensors$/ AND \"publisher\" =~ /^$Publisher$/) ",
-              "rawQuery": true,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "name",
-                  "operator": "=~",
-                  "value": "/^$Sensors$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "publisher",
-                  "operator": "=~",
-                  "value": "/^$Publisher$/"
-                }
-              ]
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Current sampling rate of $Sensors",
-          "type": "stat"
-        },
-        {
-          "datasource": "$DB",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 4,
-            "x": 6,
-            "y": 18
-          },
-          "header_js": "{}",
-          "id": 441,
-          "method": "iframe",
-          "mode": "html",
-          "params_js": "{\n from:ctrl.range.from.format('x'),  // x is unix ms timestamp\n to:ctrl.range.to.format('x'), \n height:ctrl.height,\n now:Date.now(),\n interval: ctrl.template('$__interval'),\n sample: 'Not escaped: $__interval',\n since:ctrl.lastRequestTime\n}",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 8,
-          "request": "http",
-          "responseType": "text",
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "Flow",
-              "value": "Flow"
-            }
-          },
-          "showErrors": true,
-          "showTime": false,
-          "showTimeFormat": "LTS",
-          "showTimePrefix": null,
-          "showTimeValue": "request",
-          "skipSameURL": true,
-          "targets": [
-            {
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "templateResponse": true,
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Sampling Rate",
-          "type": "ryantxu-ajax-panel",
-          "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors",
-          "withCredentials": false
-        },
-        {
-          "cacheTimeout": null,
-          "datasource": "$DB",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [
-                {
-                  "id": 0,
-                  "op": "=",
-                  "text": "OFF",
-                  "type": 1,
-                  "value": "0"
-                },
-                {
-                  "from": "",
-                  "id": 1,
-                  "operator": "",
-                  "text": "",
-                  "to": "",
-                  "type": 1
-                }
-              ],
-              "noValue": "OFF",
-              "nullValueMode": "connected",
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "red",
-                    "value": null
-                  },
-                  {
-                    "color": "yellow",
-                    "value": 1
-                  },
-                  {
-                    "color": "blue",
-                    "value": 5
-                  },
-                  {
-                    "color": "green",
-                    "value": 30
-                  }
-                ]
-              },
-              "unit": "s"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 6,
-            "x": 0,
-            "y": 21
-          },
-          "id": 433,
-          "interval": null,
-          "links": [],
-          "maxDataPoints": 100,
-          "options": {
-            "colorMode": "value",
-            "fieldOptions": {
-              "calcs": [
-                "lastNotNull"
-              ]
-            },
-            "graphMode": "none",
-            "justifyMode": "center",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "last"
-              ],
-              "fields": "",
-              "values": false
-            }
-          },
-          "pluginVersion": "7.0.3",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 14,
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "Light",
-              "value": "Light"
-            }
-          },
-          "targets": [
-            {
-              "groupBy": [],
-              "measurement": "control",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT last(\"value\") FROM \"control\" WHERE (\"name\" =~ /^$Sensors$/ AND \"publisher\" =~ /^$Publisher$/) ",
-              "rawQuery": true,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "name",
-                  "operator": "=~",
-                  "value": "/^$Sensors$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "publisher",
-                  "operator": "=~",
-                  "value": "/^$Publisher$/"
-                }
-              ]
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Current sampling rate of $Sensors",
-          "type": "stat"
-        },
-        {
-          "datasource": "$DB",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 4,
-            "x": 6,
-            "y": 21
-          },
-          "header_js": "{}",
-          "id": 442,
-          "method": "iframe",
-          "mode": "html",
-          "params_js": "{\n from:ctrl.range.from.format('x'),  // x is unix ms timestamp\n to:ctrl.range.to.format('x'), \n height:ctrl.height,\n now:Date.now(),\n interval: ctrl.template('$__interval'),\n sample: 'Not escaped: $__interval',\n since:ctrl.lastRequestTime\n}",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 8,
-          "request": "http",
-          "responseType": "text",
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "Light",
-              "value": "Light"
-            }
-          },
-          "showErrors": true,
-          "showTime": false,
-          "showTimeFormat": "LTS",
-          "showTimePrefix": null,
-          "showTimeValue": "request",
-          "skipSameURL": true,
-          "targets": [
-            {
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "templateResponse": true,
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Sampling Rate",
-          "type": "ryantxu-ajax-panel",
-          "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors",
-          "withCredentials": false
-        },
-        {
-          "cacheTimeout": null,
-          "datasource": "$DB",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [
-                {
-                  "id": 0,
-                  "op": "=",
-                  "text": "OFF",
-                  "type": 1,
-                  "value": "0"
-                },
-                {
-                  "from": "",
-                  "id": 1,
-                  "operator": "",
-                  "text": "",
-                  "to": "",
-                  "type": 1
-                }
-              ],
-              "noValue": "OFF",
-              "nullValueMode": "connected",
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "red",
-                    "value": null
-                  },
-                  {
-                    "color": "yellow",
-                    "value": 1
-                  },
-                  {
-                    "color": "blue",
-                    "value": 5
-                  },
-                  {
-                    "color": "green",
-                    "value": 30
-                  }
-                ]
-              },
-              "unit": "s"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 6,
-            "x": 0,
-            "y": 24
-          },
-          "id": 434,
-          "interval": null,
-          "links": [],
-          "maxDataPoints": 100,
-          "options": {
-            "colorMode": "value",
-            "fieldOptions": {
-              "calcs": [
-                "lastNotNull"
-              ]
-            },
-            "graphMode": "none",
-            "justifyMode": "center",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "last"
-              ],
-              "fields": "",
-              "values": false
-            }
-          },
-          "pluginVersion": "7.0.3",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 14,
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "Oxygen",
-              "value": "Oxygen"
-            }
-          },
-          "targets": [
-            {
-              "groupBy": [],
-              "measurement": "control",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT last(\"value\") FROM \"control\" WHERE (\"name\" =~ /^$Sensors$/ AND \"publisher\" =~ /^$Publisher$/)",
-              "rawQuery": true,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "name",
-                  "operator": "=~",
-                  "value": "/^$Sensors$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "publisher",
-                  "operator": "=~",
-                  "value": "/^$Publisher$/"
-                }
-              ]
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Current sampling rate of $Sensors",
-          "type": "stat"
-        },
-        {
-          "datasource": "$DB",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 4,
-            "x": 6,
-            "y": 24
-          },
-          "header_js": "{}",
-          "id": 443,
-          "method": "iframe",
-          "mode": "html",
-          "params_js": "{\n from:ctrl.range.from.format('x'),  // x is unix ms timestamp\n to:ctrl.range.to.format('x'), \n height:ctrl.height,\n now:Date.now(),\n interval: ctrl.template('$__interval'),\n sample: 'Not escaped: $__interval',\n since:ctrl.lastRequestTime\n}",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 8,
-          "request": "http",
-          "responseType": "text",
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "Oxygen",
-              "value": "Oxygen"
-            }
-          },
-          "showErrors": true,
-          "showTime": false,
-          "showTimeFormat": "LTS",
-          "showTimePrefix": null,
-          "showTimeValue": "request",
-          "skipSameURL": true,
-          "targets": [
-            {
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "templateResponse": true,
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Sampling Rate",
-          "type": "ryantxu-ajax-panel",
-          "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors",
-          "withCredentials": false
-        },
-        {
-          "cacheTimeout": null,
-          "datasource": "$DB",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [
-                {
-                  "id": 0,
-                  "op": "=",
-                  "text": "OFF",
-                  "type": 1,
-                  "value": "0"
-                },
-                {
-                  "from": "",
-                  "id": 1,
-                  "operator": "",
-                  "text": "",
-                  "to": "",
-                  "type": 1
-                }
-              ],
-              "noValue": "OFF",
-              "nullValueMode": "connected",
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "red",
-                    "value": null
-                  },
-                  {
-                    "color": "yellow",
-                    "value": 1
-                  },
-                  {
-                    "color": "blue",
-                    "value": 5
-                  },
-                  {
-                    "color": "green",
-                    "value": 30
-                  }
-                ]
-              },
-              "unit": "s"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 6,
-            "x": 0,
-            "y": 27
-          },
-          "id": 435,
-          "interval": null,
-          "links": [],
-          "maxDataPoints": 100,
-          "options": {
-            "colorMode": "value",
-            "fieldOptions": {
-              "calcs": [
-                "lastNotNull"
-              ]
-            },
-            "graphMode": "none",
-            "justifyMode": "center",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "last"
-              ],
-              "fields": "",
-              "values": false
-            }
-          },
-          "pluginVersion": "7.0.3",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 14,
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "Temperature",
-              "value": "Temperature"
-            }
-          },
-          "targets": [
-            {
-              "groupBy": [],
-              "measurement": "control",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT last(\"value\") FROM \"control\" WHERE (\"name\" =~ /^$Sensors$/ AND \"publisher\" =~ /^$Publisher$/)",
-              "rawQuery": true,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "name",
-                  "operator": "=~",
-                  "value": "/^$Sensors$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "publisher",
-                  "operator": "=~",
-                  "value": "/^$Publisher$/"
-                }
-              ]
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Current sampling rate of $Sensors",
-          "type": "stat"
-        },
-        {
-          "datasource": "$DB",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 4,
-            "x": 6,
-            "y": 27
-          },
-          "header_js": "{}",
-          "id": 444,
-          "method": "iframe",
-          "mode": "html",
-          "params_js": "{\n from:ctrl.range.from.format('x'),  // x is unix ms timestamp\n to:ctrl.range.to.format('x'), \n height:ctrl.height,\n now:Date.now(),\n interval: ctrl.template('$__interval'),\n sample: 'Not escaped: $__interval',\n since:ctrl.lastRequestTime\n}",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 8,
-          "request": "http",
-          "responseType": "text",
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "Temperature",
-              "value": "Temperature"
-            }
-          },
-          "showErrors": true,
-          "showTime": false,
-          "showTimeFormat": "LTS",
-          "showTimePrefix": null,
-          "showTimeValue": "request",
-          "skipSameURL": true,
-          "targets": [
-            {
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "templateResponse": true,
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Sampling Rate",
-          "type": "ryantxu-ajax-panel",
-          "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors",
-          "withCredentials": false
-        },
-        {
-          "cacheTimeout": null,
-          "datasource": "$DB",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [
-                {
-                  "id": 0,
-                  "op": "=",
-                  "text": "OFF",
-                  "type": 1,
-                  "value": "0"
-                },
-                {
-                  "from": "",
-                  "id": 1,
-                  "operator": "",
-                  "text": "",
-                  "to": "",
-                  "type": 1
-                }
-              ],
-              "noValue": "OFF",
-              "nullValueMode": "connected",
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "red",
-                    "value": null
-                  },
-                  {
-                    "color": "yellow",
-                    "value": 1
-                  },
-                  {
-                    "color": "blue",
-                    "value": 5
-                  },
-                  {
-                    "color": "green",
-                    "value": 30
-                  }
-                ]
-              },
-              "unit": "s"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 6,
-            "x": 0,
-            "y": 30
-          },
-          "id": 436,
-          "interval": null,
-          "links": [],
-          "maxDataPoints": 100,
-          "options": {
-            "colorMode": "value",
-            "fieldOptions": {
-              "calcs": [
-                "lastNotNull"
-              ]
-            },
-            "graphMode": "none",
-            "justifyMode": "center",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "last"
-              ],
-              "fields": "",
-              "values": false
-            }
-          },
-          "pluginVersion": "7.0.3",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 14,
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "Turbidity",
-              "value": "Turbidity"
-            }
-          },
-          "targets": [
-            {
-              "groupBy": [],
-              "measurement": "control",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT last(\"value\") FROM \"control\" WHERE (\"name\" =~ /^$Sensors$/ AND \"publisher\" =~ /^$Publisher$/)",
-              "rawQuery": true,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "name",
-                  "operator": "=~",
-                  "value": "/^$Sensors$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "publisher",
-                  "operator": "=~",
-                  "value": "/^$Publisher$/"
-                }
-              ]
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Current sampling rate of $Sensors",
-          "type": "stat"
-        },
-        {
-          "datasource": "$DB",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 4,
-            "x": 6,
-            "y": 30
-          },
-          "header_js": "{}",
-          "id": 445,
-          "method": "iframe",
-          "mode": "html",
-          "params_js": "{\n from:ctrl.range.from.format('x'),  // x is unix ms timestamp\n to:ctrl.range.to.format('x'), \n height:ctrl.height,\n now:Date.now(),\n interval: ctrl.template('$__interval'),\n sample: 'Not escaped: $__interval',\n since:ctrl.lastRequestTime\n}",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 8,
-          "request": "http",
-          "responseType": "text",
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "Turbidity",
-              "value": "Turbidity"
-            }
-          },
-          "showErrors": true,
-          "showTime": false,
-          "showTimeFormat": "LTS",
-          "showTimePrefix": null,
-          "showTimeValue": "request",
-          "skipSameURL": true,
-          "targets": [
-            {
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "templateResponse": true,
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Sampling Rate",
-          "type": "ryantxu-ajax-panel",
-          "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors",
-          "withCredentials": false
-        },
-        {
-          "cacheTimeout": null,
-          "datasource": "$DB",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [
-                {
-                  "id": 0,
-                  "op": "=",
-                  "text": "OFF",
-                  "type": 1,
-                  "value": "0"
-                },
-                {
-                  "from": "",
-                  "id": 1,
-                  "operator": "",
-                  "text": "",
-                  "to": "",
-                  "type": 1
-                }
-              ],
-              "noValue": "OFF",
-              "nullValueMode": "connected",
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "red",
-                    "value": null
-                  },
-                  {
-                    "color": "yellow",
-                    "value": 1
-                  },
-                  {
-                    "color": "blue",
-                    "value": 5
-                  },
-                  {
-                    "color": "green",
-                    "value": 30
-                  }
-                ]
-              },
-              "unit": "s"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 6,
-            "x": 0,
-            "y": 33
-          },
-          "id": 437,
-          "interval": null,
-          "links": [],
-          "maxDataPoints": 100,
-          "options": {
-            "colorMode": "value",
-            "fieldOptions": {
-              "calcs": [
-                "lastNotNull"
-              ]
-            },
-            "graphMode": "none",
-            "justifyMode": "center",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "last"
-              ],
-              "fields": "",
-              "values": false
-            }
-          },
-          "pluginVersion": "7.0.3",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 14,
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "WaterLevel",
-              "value": "WaterLevel"
-            }
-          },
-          "targets": [
-            {
-              "groupBy": [],
-              "measurement": "control",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT last(\"value\") FROM \"control\" WHERE (\"name\" =~ /^$Sensors$/ AND \"publisher\" =~ /^$Publisher$/) ",
-              "rawQuery": true,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "name",
-                  "operator": "=~",
-                  "value": "/^$Sensors$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "publisher",
-                  "operator": "=~",
-                  "value": "/^$Publisher$/"
-                }
-              ]
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Current sampling rate of $Sensors",
-          "type": "stat"
-        },
-        {
-          "datasource": "$DB",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 4,
-            "x": 6,
-            "y": 33
-          },
-          "header_js": "{}",
-          "id": 446,
-          "method": "iframe",
-          "mode": "html",
-          "params_js": "{\n from:ctrl.range.from.format('x'),  // x is unix ms timestamp\n to:ctrl.range.to.format('x'), \n height:ctrl.height,\n now:Date.now(),\n interval: ctrl.template('$__interval'),\n sample: 'Not escaped: $__interval',\n since:ctrl.lastRequestTime\n}",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 8,
-          "request": "http",
-          "responseType": "text",
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "WaterLevel",
-              "value": "WaterLevel"
-            }
-          },
-          "showErrors": true,
-          "showTime": false,
-          "showTimeFormat": "LTS",
-          "showTimePrefix": null,
-          "showTimeValue": "request",
-          "skipSameURL": true,
-          "targets": [
-            {
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "templateResponse": true,
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Sampling Rate",
-          "type": "ryantxu-ajax-panel",
-          "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors",
-          "withCredentials": false
-        },
-        {
-          "cacheTimeout": null,
-          "datasource": "$DB",
-          "description": "",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {},
-              "mappings": [
-                {
-                  "id": 0,
-                  "op": "=",
-                  "text": "OFF",
-                  "type": 1,
-                  "value": "0"
-                },
-                {
-                  "from": "",
-                  "id": 1,
-                  "operator": "",
-                  "text": "",
-                  "to": "",
-                  "type": 1
-                }
-              ],
-              "noValue": "OFF",
-              "nullValueMode": "connected",
-              "thresholds": {
-                "mode": "absolute",
-                "steps": [
-                  {
-                    "color": "red",
-                    "value": null
-                  },
-                  {
-                    "color": "yellow",
-                    "value": 1
-                  },
-                  {
-                    "color": "blue",
-                    "value": 5
-                  },
-                  {
-                    "color": "green",
-                    "value": 30
-                  }
-                ]
-              },
-              "unit": "s"
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 6,
-            "x": 0,
-            "y": 36
-          },
-          "id": 438,
-          "interval": null,
-          "links": [],
-          "maxDataPoints": 100,
-          "options": {
-            "colorMode": "value",
-            "fieldOptions": {
-              "calcs": [
-                "lastNotNull"
-              ]
-            },
-            "graphMode": "none",
-            "justifyMode": "center",
-            "orientation": "horizontal",
-            "reduceOptions": {
-              "calcs": [
-                "last"
-              ],
-              "fields": "",
-              "values": false
-            }
-          },
-          "pluginVersion": "7.0.3",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 14,
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "pH",
-              "value": "pH"
-            }
-          },
-          "targets": [
-            {
-              "groupBy": [],
-              "measurement": "control",
-              "orderByTime": "ASC",
-              "policy": "default",
-              "query": "SELECT last(\"value\") FROM \"control\" WHERE (\"name\" =~ /^$Sensors$/ AND \"publisher\" =~ /^$Publisher$/) ",
-              "rawQuery": true,
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "last"
-                  }
-                ]
-              ],
-              "tags": [
-                {
-                  "key": "name",
-                  "operator": "=~",
-                  "value": "/^$Sensors$/"
-                },
-                {
-                  "condition": "AND",
-                  "key": "publisher",
-                  "operator": "=~",
-                  "value": "/^$Publisher$/"
-                }
-              ]
-            }
-          ],
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Current sampling rate of $Sensors",
-          "type": "stat"
-        },
-        {
-          "datasource": "$DB",
-          "fieldConfig": {
-            "defaults": {
-              "custom": {}
-            },
-            "overrides": []
-          },
-          "gridPos": {
-            "h": 3,
-            "w": 4,
-            "x": 6,
-            "y": 36
-          },
-          "header_js": "{}",
-          "id": 447,
-          "method": "iframe",
-          "mode": "html",
-          "params_js": "{\n from:ctrl.range.from.format('x'),  // x is unix ms timestamp\n to:ctrl.range.to.format('x'), \n height:ctrl.height,\n now:Date.now(),\n interval: ctrl.template('$__interval'),\n sample: 'Not escaped: $__interval',\n since:ctrl.lastRequestTime\n}",
-          "repeat": null,
-          "repeatDirection": "v",
-          "repeatIteration": 1592500337179,
-          "repeatPanelId": 8,
-          "request": "http",
-          "responseType": "text",
-          "scopedVars": {
-            "Sensors": {
-              "selected": false,
-              "text": "pH",
-              "value": "pH"
-            }
-          },
-          "showErrors": true,
-          "showTime": false,
-          "showTimeFormat": "LTS",
-          "showTimePrefix": null,
-          "showTimeValue": "request",
-          "skipSameURL": true,
-          "targets": [
-            {
-              "groupBy": [
-                {
-                  "params": [
-                    "$__interval"
-                  ],
-                  "type": "time"
-                },
-                {
-                  "params": [
-                    "null"
-                  ],
-                  "type": "fill"
-                }
-              ],
-              "orderByTime": "ASC",
-              "policy": "default",
-              "refId": "A",
-              "resultFormat": "time_series",
-              "select": [
-                [
-                  {
-                    "params": [
-                      "value"
-                    ],
-                    "type": "field"
-                  },
-                  {
-                    "params": [],
-                    "type": "mean"
-                  }
-                ]
-              ],
-              "tags": []
-            }
-          ],
-          "templateResponse": true,
-          "timeFrom": null,
-          "timeShift": null,
-          "title": "Sampling Rate",
-          "type": "ryantxu-ajax-panel",
-          "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors",
-          "withCredentials": false
+          ]
         }
       ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "$Sensors",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": "",
+          "logBase": 1,
+          "max": null,
+          "min": "0",
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": false
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "collapsed": false,
+      "datasource": "$DB",
+      "gridPos": {
+        "h": 1,
+        "w": 24,
+        "x": 0,
+        "y": 17
+      },
+      "id": 101,
+      "panels": [],
       "title": "Configuration",
       "type": "row"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "$DB",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {},
+          "mappings": [
+            {
+              "id": 0,
+              "op": "=",
+              "text": "OFF",
+              "type": 1,
+              "value": "0"
+            },
+            {
+              "from": "",
+              "id": 1,
+              "operator": "",
+              "text": "",
+              "to": "",
+              "type": 1
+            }
+          ],
+          "noValue": "OFF",
+          "nullValueMode": "connected",
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "red",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "blue",
+                "value": 5
+              },
+              {
+                "color": "green",
+                "value": 30
+              }
+            ]
+          },
+          "unit": "s"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 6,
+        "x": 0,
+        "y": 18
+      },
+      "id": 14,
+      "interval": null,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "colorMode": "value",
+        "fieldOptions": {
+          "calcs": [
+            "lastNotNull"
+          ]
+        },
+        "graphMode": "none",
+        "justifyMode": "center",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "pluginVersion": "7.1.5",
+      "repeat": "Sensors",
+      "repeatDirection": "v",
+      "targets": [
+        {
+          "groupBy": [],
+          "measurement": "control",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT last(\"value\") FROM \"control\" WHERE (\"name\" =~ /^$Sensors$/ AND \"publisher\" =~ /^$Publisher$/) ",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "last"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "name",
+              "operator": "=~",
+              "value": "/^$Sensors$/"
+            },
+            {
+              "condition": "AND",
+              "key": "publisher",
+              "operator": "=~",
+              "value": "/^$Publisher$/"
+            }
+          ]
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Current sampling rate of $Sensors",
+      "type": "stat"
+    },
+    {
+      "datasource": "$DB",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 3,
+        "w": 4,
+        "x": 6,
+        "y": 18
+      },
+      "header_js": "{}",
+      "id": 8,
+      "method": "iframe",
+      "mode": "html",
+      "params_js": "{\n from:ctrl.range.from.format('x'),  // x is unix ms timestamp\n to:ctrl.range.to.format('x'), \n height:ctrl.height,\n now:Date.now(),\n interval: ctrl.template('$__interval'),\n sample: 'Not escaped: $__interval',\n since:ctrl.lastRequestTime\n}",
+      "repeat": "Sensors",
+      "repeatDirection": "v",
+      "request": "http",
+      "responseType": "text",
+      "showErrors": true,
+      "showTime": false,
+      "showTimeFormat": "LTS",
+      "showTimePrefix": null,
+      "showTimeValue": "request",
+      "skipSameURL": true,
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "templateResponse": true,
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Sampling Rate",
+      "type": "ryantxu-ajax-panel",
+      "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors",
+      "withCredentials": false
     }
   ],
   "refresh": "5s",
@@ -3915,14 +680,14 @@
         "allValue": null,
         "current": {},
         "datasource": "$DB",
-        "definition": "SHOW TAG VALUES WITH KEY = \"publisher\"",
-        "hide": 0,
+        "definition": "SHOW TAG VALUES FROM messages WITH KEY = \"publisher\" WHERE \"devname\" =~ /^$Device$/",
+        "hide": 2,
         "includeAll": false,
-        "label": "Dispositius",
+        "label": "",
         "multi": false,
         "name": "Publisher",
         "options": [],
-        "query": "SHOW TAG VALUES WITH KEY = \"publisher\"",
+        "query": "SHOW TAG VALUES FROM messages WITH KEY = \"publisher\" WHERE \"devname\" =~ /^$Device$/",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
@@ -3936,8 +701,8 @@
       {
         "current": {
           "selected": false,
-          "text": "6efd7b39-7efc-45e0-befb-2dbdbb474d2b",
-          "value": "6efd7b39-7efc-45e0-befb-2dbdbb474d2b"
+          "text": "22e073e5-f4f5-4b81-9074-84e529c564c9",
+          "value": "22e073e5-f4f5-4b81-9074-84e529c564c9"
         },
         "hide": 2,
         "includeAll": false,
@@ -3971,6 +736,28 @@
         "query": "${VAR_TIME_OFF_SEC}",
         "skipUrlSync": false,
         "type": "constant"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "$DB",
+        "definition": "SHOW TAG VALUES FROM messages WITH KEY = \"devname\" ",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Dispositius",
+        "multi": false,
+        "name": "Device",
+        "options": [],
+        "query": "SHOW TAG VALUES FROM messages WITH KEY = \"devname\" ",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 5,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       }
     ]
   },
@@ -3994,5 +781,5 @@
   "timezone": "",
   "title": "Estat sensors",
   "uid": "zLj7W6iMk",
-  "version": 3
+  "version": 4
 }
