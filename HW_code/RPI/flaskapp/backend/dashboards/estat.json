@@ -63,7 +63,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1603990295572,
+  "iteration": 1604053797402,
   "links": [
     {
       "asDropdown": true,
@@ -163,7 +163,7 @@
       },
       "gridPos": {
         "h": 3,
-        "w": 24,
+        "w": 12,
         "x": 0,
         "y": 4
       },
@@ -293,7 +293,8 @@
       "fieldConfig": {
         "defaults": {
           "custom": {},
-          "links": []
+          "links": [],
+          "unit": "none"
         },
         "overrides": []
       },
@@ -337,7 +338,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "$Publisher",
+          "alias": "$Device",
           "groupBy": [],
           "measurement": "messages",
           "orderByTime": "ASC",
@@ -389,7 +390,7 @@
       },
       "yaxes": [
         {
-          "format": "short",
+          "format": "none",
           "label": "",
           "logBase": 1,
           "max": null,
@@ -417,7 +418,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 17
+        "y": 26
       },
       "id": 101,
       "panels": [],
@@ -479,7 +480,7 @@
         "h": 3,
         "w": 6,
         "x": 0,
-        "y": 18
+        "y": 27
       },
       "id": 14,
       "interval": null,
@@ -563,7 +564,7 @@
         "h": 3,
         "w": 4,
         "x": 6,
-        "y": 18
+        "y": 27
       },
       "header_js": "{}",
       "id": 8,
@@ -638,7 +639,7 @@
         "datasource": "$DB",
         "definition": "SHOW TAG VALUES FROM messages WITH  KEY = \"name\"",
         "hide": 0,
-        "includeAll": false,
+        "includeAll": true,
         "label": null,
         "multi": true,
         "name": "Sensors",
@@ -781,5 +782,5 @@
   "timezone": "",
   "title": "Estat sensors",
   "uid": "zLj7W6iMk",
-  "version": 4
+  "version": 7
 }

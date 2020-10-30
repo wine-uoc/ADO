@@ -1,4 +1,37 @@
 {
+  "__inputs": [],
+  "__requires": [
+    {
+      "type": "panel",
+      "id": "alertlist",
+      "name": "Alert list",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "dashlist",
+      "name": "Dashboard list",
+      "version": ""
+    },
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "7.1.5"
+    },
+    {
+      "type": "datasource",
+      "id": "influxdb",
+      "name": "InfluxDB",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "text",
+      "name": "Text",
+      "version": "7.1.0"
+    }
+  ],
   "annotations": {
     "list": [
       {
@@ -16,11 +49,12 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
+  "iteration": 1604053704626,
   "links": [],
   "panels": [
     {
       "content": "----\n## Aqüicultura Digital Oberta\n----\n\n\n",
-      "datasource": null,
+      "datasource": "$DB",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -36,6 +70,11 @@
       },
       "id": 4,
       "mode": "markdown",
+      "options": {
+        "content": "----\n## Aqüicultura Digital Oberta\n----\n\n\n",
+        "mode": "markdown"
+      },
+      "pluginVersion": "7.1.0",
       "timeFrom": null,
       "timeShift": null,
       "title": "",
@@ -43,7 +82,7 @@
       "type": "text"
     },
     {
-      "datasource": null,
+      "datasource": "$DB",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -75,7 +114,7 @@
     {
       "dashboardFilter": "",
       "dashboardTags": [],
-      "datasource": null,
+      "datasource": "$DB",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -141,11 +180,30 @@
       "type": "alertlist"
     }
   ],
-  "schemaVersion": 25,
+  "schemaVersion": 26,
   "style": "dark",
   "tags": [],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "22e073e5-f4f5-4b81-9074-84e529c564c9",
+          "value": "22e073e5-f4f5-4b81-9074-84e529c564c9"
+        },
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "DB",
+        "options": [],
+        "query": "influxdb",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "type": "datasource"
+      }
+    ]
   },
   "time": {
     "from": "now-24h",
@@ -168,5 +226,5 @@
   "timezone": "",
   "title": "Principal",
   "uid": "0Q1rv4WGk",
-  "version": 6
+  "version": 4
 }

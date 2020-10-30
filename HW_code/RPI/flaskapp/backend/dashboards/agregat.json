@@ -49,7 +49,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1603991332644,
+  "iteration": 1604057695944,
   "links": [
     {
       "asDropdown": true,
@@ -259,7 +259,7 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "Piscina1",
+          "alias": "$Sensors",
           "groupBy": [
             {
               "params": [
@@ -445,5 +445,5 @@
   "timezone": "",
   "title": "Agregat dispositius",
   "uid": "YT20LzWMk",
-  "version": 4
+  "version": 5
 }

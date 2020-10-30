@@ -49,7 +49,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1603990707754,
+  "iteration": 1604057248697,
   "links": [],
   "panels": [
     {
@@ -75,8 +75,8 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 14,
-        "w": 11,
+        "h": 10,
+        "w": 9,
         "x": 0,
         "y": 1
       },
@@ -154,21 +154,24 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 14,
+        "h": 10,
         "w": 12,
-        "x": 11,
+        "x": 9,
         "y": 1
       },
       "hiddenSeries": false,
       "id": 32,
       "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": true,
+        "min": true,
         "show": true,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
       "linewidth": 1,
@@ -178,12 +181,14 @@
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
+      "repeat": null,
       "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
       "targets": [
         {
+          "alias": "$Device",
           "groupBy": [],
           "measurement": "messages",
           "orderByTime": "ASC",
@@ -215,7 +220,15 @@
           ]
         }
       ],
-      "thresholds": [],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "fill": true,
+          "line": true,
+          "op": "gt",
+          "yaxis": "left"
+        }
+      ],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
@@ -263,7 +276,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 15
+        "y": 11
       },
       "id": 27,
       "panels": [],
@@ -279,10 +292,10 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 16,
-        "w": 10,
+        "h": 20,
+        "w": 9,
         "x": 0,
-        "y": 16
+        "y": 12
       },
       "header_js": "{}",
       "id": 23,
@@ -358,21 +371,24 @@
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
-        "w": 7,
-        "x": 10,
-        "y": 16
+        "h": 9,
+        "w": 12,
+        "x": 9,
+        "y": 12
       },
       "hiddenSeries": false,
       "id": 6,
       "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": true,
+        "min": true,
         "show": true,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
       "linewidth": 1,
@@ -388,6 +404,7 @@
       "steppedLine": false,
       "targets": [
         {
+          "alias": "$Device",
           "groupBy": [],
           "measurement": "messages",
           "orderByTime": "ASC",
@@ -424,6 +441,127 @@
       "timeRegions": [],
       "timeShift": null,
       "title": "Dissolved Oxygen",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "$DB",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {}
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 9,
+        "y": 21
+      },
+      "hiddenSeries": false,
+      "id": 33,
+      "legend": {
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": true,
+        "min": true,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "percentage": false,
+      "pluginVersion": "7.1.5",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "alias": "$Device",
+          "groupBy": [],
+          "measurement": "messages",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "publisher",
+              "operator": "=~",
+              "value": "/^$Publisher$/"
+            },
+            {
+              "condition": "AND",
+              "key": "name",
+              "operator": "=",
+              "value": "Temperature"
+            }
+          ]
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Temperature",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -508,8 +646,8 @@
       "gridPos": {
         "h": 3,
         "w": 6,
-        "x": 17,
-        "y": 16
+        "x": 9,
+        "y": 29
       },
       "id": 28,
       "options": {
@@ -619,8 +757,8 @@
       "gridPos": {
         "h": 3,
         "w": 6,
-        "x": 17,
-        "y": 19
+        "x": 15,
+        "y": 29
       },
       "id": 25,
       "options": {
@@ -681,123 +819,6 @@
       "timeShift": null,
       "title": "High temperature",
       "type": "stat"
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": "$DB",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 8,
-        "w": 7,
-        "x": 10,
-        "y": 24
-      },
-      "hiddenSeries": false,
-      "id": 33,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "percentage": false,
-      "pluginVersion": "7.1.5",
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "groupBy": [],
-          "measurement": "messages",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "publisher",
-              "operator": "=~",
-              "value": "/^$Publisher$/"
-            },
-            {
-              "condition": "AND",
-              "key": "name",
-              "operator": "=",
-              "value": "Temperature"
-            }
-          ]
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Temperature",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
     },
     {
       "collapsed": false,
@@ -909,13 +930,16 @@
       "hiddenSeries": false,
       "id": 24,
       "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": true,
+        "min": true,
         "show": true,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
       "linewidth": 1,
@@ -931,6 +955,7 @@
       "steppedLine": false,
       "targets": [
         {
+          "alias": "$Device",
           "groupBy": [],
           "measurement": "messages",
           "orderByTime": "ASC",
@@ -1220,13 +1245,16 @@
       "hiddenSeries": false,
       "id": 19,
       "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": true,
+        "min": true,
         "show": true,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
       "linewidth": 1,
@@ -1242,6 +1270,7 @@
       "steppedLine": false,
       "targets": [
         {
+          "alias": "$Device",
           "groupBy": [],
           "measurement": "messages",
           "orderByTime": "ASC",
@@ -1638,13 +1667,16 @@
       "hiddenSeries": false,
       "id": 13,
       "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
+        "alignAsTable": true,
+        "avg": true,
+        "current": true,
+        "hideEmpty": true,
+        "hideZero": true,
+        "max": true,
+        "min": true,
         "show": true,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
       "linewidth": 1,
@@ -1660,6 +1692,7 @@
       "steppedLine": false,
       "targets": [
         {
+          "alias": "$Device",
           "groupBy": [],
           "measurement": "messages",
           "orderByTime": "ASC",
@@ -2044,7 +2077,7 @@
     ]
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {
@@ -2064,5 +2097,5 @@
   "timezone": "",
   "title": "Calibration",
   "uid": "lTtlUdpMk",
-  "version": 3
+  "version": 7
 }
