@@ -22,7 +22,7 @@ latest_thread = ['1','2','3','4', '5', '6', '7', '8', '9', '10'] #the name of th
 old_name_available=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 
 def create_threads(ser):
-    global latest_thread
+    global latest_thread, client, subtopic_sr
     serialcmd, periodicity, magnitudes = arduino_commands.get_config()
     size = len(serialcmd)  # number of configs we have
 
@@ -31,6 +31,10 @@ def create_threads(ser):
     print('periodicity of each thread is ', periodicity)
     print('name of each sensor is ', magnitudes)
     for i in range(1, size + 1):
+        #send control message with SR at startup
+        data = [{"bn": "", "n": magnitudes[i], "u": "s", "v": int(periodicity[i]), "t": time.time()}]
+        client.publish(subtopic_sr, json.dumps(data))
+
         # timer is given by expressing a delay
         t = threading.Timer(1, TransmitThread, (ser, serialcmd[i], periodicity[i], magnitudes[i]))  # all sensors send data at startup
         position = arduino_publish_data.get_sensor_index(magnitudes[i])
@@ -257,7 +261,7 @@ def mqtt_connection_0(tokens, engine, serial):
     mqtt.Client._call_socket_register_write = lambda _self: None
     mqtt.Client._call_socket_unregister_write = lambda _self, _sock=None: None
    
-    client = mqtt.Client(client_id="piscina1", userdata=client_userdata) #here we may put device name
+    client = mqtt.Client(client_id=tokens.node_id, userdata=client_userdata) #here we may put device name
 
     client.username_pw_set(tokens.thing_id, tokens.thing_key)
     client.on_connect = on_connect

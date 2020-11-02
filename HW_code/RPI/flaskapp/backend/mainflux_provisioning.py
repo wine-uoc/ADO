@@ -189,7 +189,7 @@ def register_node_backend(name, organization, email, password, node_id):
     # password = user.password
 
     error_msg = False
-    node_name = str(node_id) + '_device'
+    node_name = str(node_id) #+ '_device'
     channel_name = 'comm_channel'  # unique for each organization
 
     # Triple check: account exists, email and pw OK
@@ -201,28 +201,24 @@ def register_node_backend(name, organization, email, password, node_id):
 
     if not response_c1.ok and response_c2.ok:
         # print('Backend account exists, registering node.')
-        # token exists, thus account too
+        # token exists, thus account too, and we have to make sure node name is unique
         token = get_account_token(email, password).json()['token']
 
-        # register node to account (create thing)
-        _ = create_thing(token, node_name, "device")
-        thing_id = return_thing_id(token, node_name)
-        thing_key = return_thing_key(token, node_name)
+        # register node to account (create thing), if node name is unique
+        if (return_thing_id(token, node_name)==0):
+            _ = create_thing(token, node_name, "device")
+            thing_id = return_thing_id(token, node_name)
+            thing_key = return_thing_key(token, node_name)
 
-        # connect to the existing channel
-        channel_id = return_channel_id(token, channel_name)
-        _ = connect_to_channel(token, channel_id, thing_id)
+            # connect to the existing channel
+            channel_id = return_channel_id(token, channel_name)
+            _ = connect_to_channel(token, channel_id, thing_id)
 
-        # register flaskapp to account (create thing)
-        _ = create_thing(token, node_name, "flaskapp")
-        flask_id = return_thing_id(token, node_name)
-        flask_key = return_thing_key(token, node_name)
+            # store backend credentials to rpi database
+            update_tokens_values(token, thing_id, thing_key, channel_id)
 
-        # connect to the existing channel
-        _ = connect_to_channel(token, channel_id, flask_id)
-
-        # store backend credentials to rpi database
-        update_tokens_values(token, thing_id, thing_key, flask_id, flask_key,channel_id)
+        else:
+            error_msg = 'Device name already exists for this account. Please choose a different name.'
 
     if response_c1.ok and response_c2.ok:
         # print('Backend account DOES NOT exist, creating account, channel, registering node.')
@@ -242,19 +238,11 @@ def register_node_backend(name, organization, email, password, node_id):
         channel_id = return_channel_id(token, channel_name)
         _ = connect_to_channel(token, channel_id, thing_id)
 
-         # register flaskapp to account (create thing)
-        _ = create_thing(token, node_name, "flaskapp")
-        flask_id = return_thing_id(token, node_name)
-        flask_key = return_thing_key(token, node_name)
-
-        # connect to the existing channel
-        _ = connect_to_channel(token, channel_id, flask_id)
-
         # boostrap grafana
         grafana.bootstrap(name, organization, email, password, channel_id)
 
         # store backend credentials to rpi database
-        update_tokens_values(token, thing_id, thing_key, flask_id, flask_key,channel_id)
+        update_tokens_values(token, thing_id, thing_key,channel_id)
 
     if not response_c1.ok and not response_c2.ok:
         # Account exists in ADO, but password does not match.

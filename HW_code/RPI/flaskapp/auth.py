@@ -38,7 +38,8 @@ def signup():
         error_msg, user, node_id = sign_up_database(signup_form.name.data,
                                                     signup_form.org.data,
                                                     signup_form.email.data,
-                                                    signup_form.password.data)
+                                                    signup_form.password.data,
+                                                    signup_form.device.data)
         if not error_msg:
             login_user(user)  # Log in as newly created user (first, to allow queries using current_user)
             # User data provisioning to backend
@@ -50,7 +51,6 @@ def signup():
             if not error_msg:
                 # Registration OK, app log in and proceed
                 return redirect(url_for('main_bp.dashboard'))
-            # If error in backend provisioning, delete stored data in tables of RPI db
             logout_user()
             delete_tables_entries()
 

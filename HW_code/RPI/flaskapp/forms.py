@@ -2,6 +2,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Email, EqualTo, Length
+from .backend.mainflux_provisioning import get_account_token, return_thing_id
+import json
 
 
 class SignupForm(FlaskForm):
@@ -20,7 +22,24 @@ class SignupForm(FlaskForm):
     confirm = PasswordField('Confirm Your Password',
                             validators=[DataRequired(),
                                         EqualTo('password', message='Passwords must match.')])
+    device = StringField('Device Name',
+                        validators=[Length(min=3),
+                                    DataRequired()])
     submit = SubmitField('Register')
+
+    def validate(self):
+      if not super(SignupForm, self).validate():
+        return False
+      response_c2 = get_account_token(self.email.data, self.password.data)
+      if response_c2.ok: #an account exists
+        token = get_account_token(self.email.data, self.password.data).json()['token']
+        # check if node name is unique
+        if (return_thing_id(token, self.device.data)!=0):
+          msg = "This device name [" + str(self.device.data) + "] has already been used by this user. Please insert a new one."
+          self.device.errors.append(msg)
+          return False
+      return True
+
 
 
 class LoginForm(FlaskForm):

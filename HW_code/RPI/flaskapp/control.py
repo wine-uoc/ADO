@@ -43,14 +43,12 @@ def update_wifi_data(ssid=None, password=None, activate=None):
     db.session.commit()
 
 
-def update_tokens_values(account_token, thing_id, thing_key, flask_id, flask_key, channel_id):
+def update_tokens_values(account_token, thing_id, thing_key, channel_id):
     """Add values to table.'"""
     tokens = get_tokens_obj()
     tokens.account_token = account_token
     tokens.thing_id = thing_id
     tokens.thing_key = thing_key
-    tokens.flask_id = flask_id
-    tokens.flask_key = flask_key
     tokens.channel_id = channel_id
     db.session.commit()
 
@@ -108,7 +106,7 @@ def validate_user(email, password):
         return None
 
 
-def sign_up_database(name, org, email, password):
+def sign_up_database(name, org, email, password, device_name):
     """
     Given user input in sign up form, initializes all tables of the database
     NOTE: WiFi password is currently stored in plain text (needed for Raspbian)
@@ -117,6 +115,7 @@ def sign_up_database(name, org, email, password):
     :param org:
     :param email:
     :param password:
+    :param device_name: has to be unique for this mainflux user
     :return: error msg, object of class User if new user else None
     """
     # Check if user does not exists and the node has not been registered yet to another account
@@ -133,7 +132,7 @@ def sign_up_database(name, org, email, password):
         wifi.set_password(password, hash_it=False)      # Store-hashed option off
         wifi.deactivate()  # Use ethernet by default
 
-        tokens = Tokens(id=email, node_id=create_node_name())   # tokens table associated to email
+        tokens = Tokens(id=email, node_id=device_name) #tokens = Tokens(id=email, node_id=create_node_name())   # tokens table associated to email
 
         calibration1 = Calibration_1(id=email)              # calibration table associated to email
         calibration1.set_values([1] * app.config['MAX_NUM_SENSORS_IN_NODE'])   # All 1-pt calibration values set to 1 (default)

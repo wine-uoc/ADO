@@ -66,6 +66,16 @@
                 {% endif %}
             </fieldset>
 
+            <fieldset class="device">
+                {{ form.device.label }}
+                {{ form.device }}
+                {% if form.device.errors %}
+                    <ul class="errors">
+                        {% for error in form.device.errors %}<li>{{ error }}</li>{% endfor %}
+                    </ul>
+                {% endif %}
+            </fieldset>
+
             <div class="submitbutton">
                 <input id="submit" type="submit" value="Create Account">
             </div>

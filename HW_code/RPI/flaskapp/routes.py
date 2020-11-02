@@ -30,11 +30,6 @@ def dashboard():
     Show active sensors from database, allow enable/disable sensors, show menu options.
     """
     global tokens, client, mqtt_topic, MQTT_CONNECTED, MQTT_SUBSCRIBED
-    tokens = get_tokens_obj()
-
-    while not MQTT_CONNECTED:
-      MQTT_CONNECTED, client, mqtt_topic = mqtt_connection(tokens)
-      mqtt_topic = mqtt_topic + '/control'
 
     str_current_config = ['checked' if sensor_sr != 0 else '' for sensor_sr in get_config_obj().get_values()]
     # str list of 'checked' if sensor sampling rate is not 0 else '' (checked is passed to html checkbox)
