@@ -2,13 +2,15 @@
 TODO
 """
 import json
-import logging
+from rpiapp.logging_filter import logger
 import time
 from config import ConfigRPI
 from rpiapp.arduino_commands import CmdType, SensorType
 from rpiapp.db_management import get_table_database, update_req_cal_1_table_database, update_req_cal_2_table_database,\
  update_calibration_1_table_database, update_calibration_2_table_database, update_calibration_1_temp_table_database, update_calibration_2_temp_table_database
 
+
+logging = logger
 temperature = 25 #global var, holds the last known temperature value, for where temp compensation is needed  
 isCalibrated = [0,0,0,0,0,0,0,0,0,0] #flag for each sensor
 _kvalue = 1
@@ -34,7 +36,7 @@ def valid_data(response, sensorType, parameter1):
                     #logging.debug('sensorType and parameter checks')
                     return True
                 else:
-                    logging.debug('Received data does not correspond to the last sent command')
+                    logging.warning('Received data does not correspond to the last sent command')
             except ValueError:
                 # it was a string, not int
                 #logging.debug('parameter is a string')
@@ -42,10 +44,10 @@ def valid_data(response, sensorType, parameter1):
                     logging.debug('sensorType and parameter checks')
                     return True
                 else:
-                    logging.debug('Received data does not correspond to the last sent command')
+                    logging.warning('Received data does not correspond to the last sent command')
 
     else:
-        logging.debug('Data length is too small')
+        logging.error('Data length is too small')
         return False
 
 
@@ -85,14 +87,14 @@ def publish_data(magnitude,response, client, topic, engine):
             acidVoltage = getattr(db2_row, idx_sensor_str)
             voltage = value * 3300/1024 #mkr1000  max 3.3V input
 
-            print ("neutral, ", neutralVoltage)
-            print("acid, ", acidVoltage)
-            print("current, ", voltage)  
+            logging.info("neutral, %s", neutralVoltage)
+            logging.info("acid, %s", acidVoltage)
+            logging.info("current, %s", voltage)  
             try:
                 ph =  readPH_library(voltage, temperature, neutralVoltage, acidVoltage)
                 value = ph
             except:#division by zero
-                print("division by zero") #raw value will be sent
+                logging.error("division by zero") #raw value will be sent
     
         #***********************************************
         elif name == "Turbidity": #current formula can only be used with 5V readings
@@ -100,7 +102,7 @@ def publish_data(magnitude,response, client, topic, engine):
                 #attention! voltage reading is artificially shifted to 5V from 3.3V
                 value = readTurbidity(value) 
             except:
-                print("error in turbidity computation")
+                logging.error("error in turbidity computation")
                 
         #************************************************
         elif name == "Conductivity1": #add if calibrated flag
@@ -112,7 +114,7 @@ def publish_data(magnitude,response, client, topic, engine):
             try:
                 value = readEC(voltage, temperature, _kvalueLow, _kvalueHigh)
             except:
-                print("error in Conductivity1 computation")
+                logging.error("error in Conductivity1 computation")
                 
         #***********************************************
         elif name == "Conductivity2":
@@ -121,7 +123,7 @@ def publish_data(magnitude,response, client, topic, engine):
             try:
                 value = readEC2(voltage, temperature, _kvalue2)
             except:
-                print("error in Conductivity2 computation")
+                logging.error("error in Conductivity2 computation")
                 
         #***********************************************
         elif name == "Oxygen":
@@ -138,7 +140,7 @@ def publish_data(magnitude,response, client, topic, engine):
                 try:
                     value = readDO(voltage, temperature, calib_mode, CAL1_T, CAL1_V, CAL2_T, CAL2_V)
                 except:
-                    print("DO math issue")
+                    logging.error("DO math issue")
                    
             elif calib_mode == 1: #2 point calib
                 
@@ -152,7 +154,7 @@ def publish_data(magnitude,response, client, topic, engine):
                 try:
                     value = readDO(voltage, temperature, calib_mode, CAL1_T, CAL1_V, CAL2_T, CAL2_V)
                 except:
-                    print("math issue")
+                    logging.error(" DO math issue")
                     
 
         #***********************************************
@@ -162,7 +164,7 @@ def publish_data(magnitude,response, client, topic, engine):
             try:
                 value = readCO2(voltage)
             except:
-                print("some CO2 error")
+                logging.error("some CO2 error")
         
         payload = [{"bn": "", "n": name, "u": unit, "v": value, "t": timestamp}]
         #print(payload)
@@ -199,8 +201,6 @@ def readEC(voltage,temperature, _kvalueLow, _kvalueHigh):
         _kvalue = _kvalueLow
     value = rawEC * _kvalue
     value = value / (1.0+0.0185*(temperature-25.0))
-    print("Voltage:", voltage)
-    print("EC:",value)
     return value
 
 def readEC2(voltage,temperature, _kvalue2):
@@ -214,10 +214,6 @@ def readDO(voltage, temperature_real, calib_mode, CAL1_T, CAL1_V, CAL2_T, CAL2_V
     global DO_Table
 
     temperature = int(round(temperature_real)) #to search the DO table
-    print(temperature)
-    print("CAL1T", CAL1_T)
-    print("CAL2T", CAL2_T)
-
     if calib_mode == 0: #one point
         V_saturation = CAL1_V + 35 * temperature - CAL1_T * 35
         return voltage * DO_Table[temperature] / V_saturation
@@ -246,6 +242,7 @@ def HandleCalibration(engine, db, value, sensor_index, topic_cal, client):
 
 
     name = ConfigRPI.SENSOR_MAGNITUDES[sensor_index-1]
+    logging.info("Handling %s sensor calibration", name)
     if sensor_index < 10:
         idx_sensor_str = 's0' + str(sensor_index)
     else:
@@ -269,7 +266,6 @@ def HandleCalibration(engine, db, value, sensor_index, topic_cal, client):
 
     elif name == "Conductivity1":
         #read cal db\
-        print("***Handling calibration****")
         voltage = value*3300/1024
         if db == '1':
             dbname= "calibration_1"
@@ -278,15 +274,15 @@ def HandleCalibration(engine, db, value, sensor_index, topic_cal, client):
             dbname= "calibration_2"
             db_index = 2
 
-        print ("db value:", voltage)
+        logging.debug ("db value: %s", voltage)
         rawEC = 1000*voltage/820.0/200.0 
-        print("rawEC:", rawEC)
+        logging.debug("rawEC: %s", rawEC)
         if (rawEC>0.9 and rawEC<1.9): #original 1.9 Buffer Solution:1.413us/cm
             compECsolution = 1.413*(1.0+0.0185*(temperature-25.0))
             KValueTemp = 820.0*200.0*compECsolution/1000.0/voltage
             round(KValueTemp,2)
             _kvalueLow = KValueTemp 
-            print ("kLOW:",_kvalueLow)
+            logging.debug ("kLOW: %s",_kvalueLow)
             update_req_cal_1_table_database(engine, sensor_index, 0) #cal not needed anymore
             update_calibration_1_table_database(engine, sensor_index, _kvalueLow) #1 to 10
             flag1 = 1
@@ -294,7 +290,7 @@ def HandleCalibration(engine, db, value, sensor_index, topic_cal, client):
             compECsolution = 12.88*(1.0+0.0185*(temperature-25.0))
             KValueTemp = 820.0*200.0*compECsolution/1000.0/voltage
             _kvalueHigh = KValueTemp
-            print("kHIGH:",_kvalueHigh)
+            logging.debug("kHIGH: %s",_kvalueHigh)
             update_req_cal_2_table_database(engine, sensor_index, 0)
             update_calibration_2_table_database(engine, sensor_index, _kvalueHigh) #1 to 10
             flag2 = 1
@@ -303,13 +299,13 @@ def HandleCalibration(engine, db, value, sensor_index, topic_cal, client):
                 update_req_cal_1_table_database(engine, sensor_index, 1)
             elif db_index == 2:
                 update_req_cal_2_table_database(engine, sensor_index, 1)
-            print ("error with calibration values, setting db:", db_index ,"flag to retake measurement")
+            logging.error("error with Conductivity1 calibration values, setting db: %s", db_index ,"flag to retake measurement")
                 #to do: flag a database for check_cal fc in flaskapp
 
         if flag1 == 1 or flag2 == 1: #this function will be called once for a db, and once again for the other
-            print ("value is updated")
+            logging.debug("value is updated")
         else:
-            print ("_kvalueLow and _kvalueHigh were not updated correctly")
+            logging.error("_kvalueLow and _kvalueHigh were not updated correctly")
             #here we should set a flag for flaskapp
 
 
@@ -318,56 +314,53 @@ def HandleCalibration(engine, db, value, sensor_index, topic_cal, client):
         RES2 = (7500.0/0.66)
         ECREF = 20.0
         _kvalue2 = 1
-        print("****Handling calibration****")
         voltage = value *3300/1024
         if db == '1':
             dbname= "calibration_1"
             db_index = 1
             _ecvalueRaw = 1000*voltage/RES2/ECREF*_kvalue2*10.0
-            print (_ecvalueRaw)
+            logging.debug ("ecvalueRaw %s",_ecvalueRaw)
             if (_ecvalueRaw>6) and (_ecvalueRaw<18): #original 18
-                print("identified 12.88ms/cm buffer solution")
+                logging.debug("identified 12.88ms/cm buffer solution")
                 rawECsolution = 12.9*(1.0+0.0185*(temperature-25.0))  #temperature compensation
                 KValueTemp = RES2*ECREF*rawECsolution/1000.0/voltage/10.0  #calibrate the k value
                 if((KValueTemp>0.5) and (KValueTemp<1.5)):
-                    print("successful calibration")
+                    logging.debug("successful calibration")
                     _kvalue2 =  KValueTemp
                     update_req_cal_1_table_database(engine, sensor_index, 0) #cal not needed anymore
                     update_calibration_1_table_database(engine, sensor_index, _kvalue2) #1 to 10
                     flag1 = 1
                 else:
-                    print("calibration failed")
+                    logging.error("Conductivity2 calibration failed")
                     update_req_cal_1_table_database(engine, sensor_index, 1) #cal needed 
             else:
-                print ("buffer solution error")
+                logging.error("Conductivity2 buffer solution error")
                 update_req_cal_1_table_database(engine, sensor_index, 1) #cal needed 
         else:
-            print("this is not an option for this sensor")
+            logging.error("this DB is not an option for the Conductivity2 sensor")
 
 
 
     #************************************************************************************   
     elif name == "Oxygen":
-
-        print("****Handling calibration****")
         voltage = value *3300/1024 #mkr1000
-        print(value)
-        print(voltage)
-        print(temperature)
+        logging.debug("pin value %s", str(value))
+        logging.debug("voltage %s", str(voltage))
+        logging.debug("temp %s", str(temperature))
         if db == '1': #high temp
             update_req_cal_1_table_database(engine, sensor_index, 0) #cal not needed anymore
             update_calibration_1_table_database(engine, sensor_index, voltage) #1 to 10
             update_calibration_1_temp_table_database(engine, sensor_index, temperature) #1 to 10
             flag1 = 1
 
-            print("****DB1 DONE****")
+            logging.info("****DB1 DONE****")
         elif db == '2':
             update_req_cal_2_table_database(engine, sensor_index, 0) #cal not needed anymore
             update_calibration_2_table_database(engine, sensor_index, voltage) #1 to 10
             update_calibration_2_temp_table_database(engine, sensor_index, temperature) #1 to 10
             flag2 = 1
 
-            print("****DB2 DONE****")
+            logging.info("****DB2 DONE****")
 
 
 

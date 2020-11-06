@@ -1,10 +1,12 @@
+#not used by rpi_A0.py, only bu rpi.py
 import time
-
+from rpiapp.logging_filter import logger
 import paho.mqtt.client as mqttClient
 
 from config import ConfigRPI
 from rpiapp.db_management import get_table_database
 
+logging = logger
 
 def initialize_client():
     global Connected
@@ -39,8 +41,8 @@ def initialize_client():
 
 def on_connect(client, userdata, flags, rc):
     if rc == 0:
-        print("Connected to broker")
+        logging.info("Connected to broker")
         global Connected  # Use global variable
         Connected = True  # Signal connection
     else:
-        print("Connection failed")
+        logging.warning("Connection failed")

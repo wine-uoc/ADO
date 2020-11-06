@@ -1,18 +1,18 @@
 # this is sending data over ubuntu serial to arduino main serial (not gpio to gpio)
-import logging
+import sys
 import os
 import threading
 import time
 import json
-
+import paho.mqtt.client as mqtt
 import serial
 from rpiapp import arduino_publish_data, arduino_commands, ini_client
 from rpiapp.db_management import check_table_database, get_table_database, update_calibration_1_table_database, update_calibration_2_table_database
 from rpiapp.periodic_control_sensors import set_sr
-import paho.mqtt.client as mqtt
+from rpiapp.logging_filter import logger
 from config import ConfigRPI
 
-
+logging = logger
 CmdType = arduino_commands.CmdType
 SensorType = arduino_commands.SensorType
 
@@ -26,10 +26,10 @@ def create_threads(ser):
     serialcmd, periodicity, magnitudes = arduino_commands.get_config()
     size = len(serialcmd)  # number of configs we have
 
-    print('The set of commands is ', serialcmd)
-    print('NB of threads is '+ str(size))
-    print('periodicity of each thread is ', periodicity)
-    print('name of each sensor is ', magnitudes)
+    logging.info('The set of commands is %s', serialcmd)
+    logging.info('NB of threads is %s', str(size))
+    logging.info('periodicity of each thread is %s', periodicity)
+    logging.info('name of each sensor is %s', magnitudes)
     for i in range(1, size + 1):
         #send control message with SR at startup
         data = [{"bn": "", "n": magnitudes[i], "u": "s", "v": int(periodicity[i]), "t": time.time()}]
@@ -56,7 +56,7 @@ def TransmitThread(ser, serialcmd, periodicity, magnitude):
     #print("TX trying to acquire lock")
     tx_lock.acquire()
 
-    logging.debug('executing thread %s', threading.currentThread().getName())
+    logging.info('executing thread %s', threading.currentThread().getName())
     # expect an answer from A0 after sending the serial message
     no_answer_pending = False
 
@@ -107,7 +107,7 @@ def TransmitThread(ser, serialcmd, periodicity, magnitude):
                 tx_lock.release()
 
     else:
-        print("++++ killing thread: ", threadname) #kill thread and release lock
+        logging.info("++++ killing thread: %s", threadname) #kill thread and release lock
         if threadname == str(index+1): #first name will be available again
             old_name_available[index] = 1   
         tx_lock.release()
@@ -122,7 +122,7 @@ def ReceiveThread(ser, serialcmd, magnitude):
     global no_answer_pending, client, topic, engine
 
     try:
-        logging.debug('executing thread %s', threading.currentThread().getName())
+        logging.info('executing thread %s', threading.currentThread().getName())
         cmdtype, sensorType, parameter1 = arduino_commands.parse_cmd(serialcmd)
         # set a timeout for waiting for serial
         # wait until receiving valid answer
@@ -137,10 +137,10 @@ def ReceiveThread(ser, serialcmd, magnitude):
                 else:
                     logging.debug("RX data does not correspond to the last command sent, checking again the serial")
 
-        print(time.time(), " End RX processing")
+        logging.info("End RX processing %s", time.time())
         tx_lock.release()
     except:
-        print("##### bad PROCESSING")
+        logging.warning("##### BAD PROCESSING in ReceiveThread")
         tx_lock.release()
 
 
@@ -152,11 +152,11 @@ def CalibrationThread(ser, serialcmd, index, engine, db): #not periodic, index 0
     else:
         arduino_publish_data.update_req_cal_2_table_database(engine, index+1, 1) #reset to requires cal
 
-    print("CAL trying to acquire lock")
+    logging.info("CAL trying to acquire lock")
     tx_lock.acquire()
 
     threadname = threading.currentThread().getName()
-    logging.debug('executing thread %s', threadname)
+    logging.info('executing thread %s', threadname)
 
     # expect an answer from A0 after sending the serial message
     no_answer_pending = False
@@ -185,9 +185,9 @@ def SetCalibrationDBThread(ser, serialcmd, index, engine, db):
     global no_answer_pending, client, subtopic_cal
 
     try:
-        logging.debug('executing thread %s', threading.currentThread().getName())
+        logging.info('executing thread %s', threading.currentThread().getName())
         cmdtype, sensorType, parameter1 = arduino_commands.parse_cmd(serialcmd)
-        logging.debug('SENT CMD %s', serialcmd)
+        logging.info('SENT CMD %s', serialcmd)
         # set a timeout for waiting for serial
         # wait until receiving valid answer
         timeout = time.time() + 15
@@ -195,7 +195,7 @@ def SetCalibrationDBThread(ser, serialcmd, index, engine, db):
             if ser.inWaiting() > 0:
                 response = ser.readline()
                 response = response.decode('utf-8')
-                logging.debug("%s", str(response))
+                logging.info("%s", str(response))
                 if arduino_publish_data.valid_data(response, sensorType, parameter1):
                     no_answer_pending = True
                     idx_sensor = index + 1
@@ -206,10 +206,10 @@ def SetCalibrationDBThread(ser, serialcmd, index, engine, db):
                 else:
                     logging.debug("RX data does not correspond to the last command sent, checking again the serial")
 
-        print(time.time(), " End CAL RX processing")
+        logging.info("End CAL RX processing %s", time.time())
         tx_lock.release()
     except:
-        print("##### bad PROCESSING")
+        logging.warning("##### BAD PROCESSING in SetCalibrationDBThread")
         tx_lock.release()        
 
 
@@ -220,15 +220,15 @@ def reestablish_serial(serial_port):
     try:    
         ser = serial.Serial(port='/dev/ttyACM0', baudrate=9600)
         flag = 1
-        print("connected to ACM0")
+        logging.warning("connected to ACM0")
     except:
         try:
             ser = serial.Serial(port='/dev/ttyACM1', baudrate=9600)
             flag = 1
-            print("connected to ACM1")
+            logging.warning("connected to ACM1")
         except:
             ser = None
-            print("connected to nothing")
+            logging.warning("connected to nothing")
     return ser
 
 def keepalive_thread(magnitude, threadname, periodicity):
@@ -292,27 +292,27 @@ def on_connect(client, userdata, flags, rc):
     # 0: Connection successful 1: Connection refused - incorrect protocol version 2: Connection refused - invalid
     # client identifier 3: Connection refused - server unavailable 4: Connection refused - bad username or password
     # 5: Connection refused - not authorised 6-255: Currently unused.
-    print("Trying to connect to broker. Result code: " + str(rc))
+    logging.info("Trying to connect to broker. Result code: %s" , str(rc))
     if rc == 0:
-        print("Connected.")
+        logging.info("Connected.")
         global MQTT_CONNECTED
         MQTT_CONNECTED = True
         # Subscribing in on_connect() means that if we lose the connection and
         # reconnect then subscriptions will be renewed.
         #client.subscribe(userdata['topic']) #this is the control topic, arriving SR commands valid for all nodes
-        print(subtopic_cal)
-        print(subtopic_sr)
+        logging.info(subtopic_cal)
+        logging.info(subtopic_sr)
         client.subscribe(subtopic_sr)
         client.subscribe(subtopic_cal)
 
 
 def on_disconnect(client, userdata, rc):
     if rc != 0:
-        print("Unexpected disconnection.")
+        logging.warning("Unexpected disconnection.")
 
 def on_log(client, userdata, level, buf):
     if level == MQTT_LOG_WARNING or level == MQTT_LOG_ERR:
-        print(buf)
+        logging.warning(buf)
 
 
 def on_subscribe(client, userdata, mid, granted_qos):
@@ -327,28 +327,28 @@ def on_message_0(client, userdata, msg):
     """Callback for received message."""
     #print(msg.topic)
     # print("RX1")
-    print(msg.topic + " " + str(msg.qos) + " " + str(msg.payload))
+    logging.info(msg.topic + " " + str(msg.qos) +" " + str(msg.payload))
     rx_data = str(msg.payload.decode('UTF-8'))  # message is string now, not json
     message = json.loads(rx_data) #message to json
-    print ("***************************************")
-    print ("********", str(message['type']))
+    logging.info ("***************************************")
+    logging.info ("******** %s", str(message['type']))
     if str(message['type']) == 'SET_SR':
-        print("Set Sr message")
+        logging.info("Set Sr message")
         # message = eval(message)  # transform to dictionary
         magnitude = message['sensor']
         SR = int(message['v'])
         new_thread_needed, index = set_sr(client, userdata['engine'], subtopic_sr, magnitude, SR, message['u'])
         if new_thread_needed == 1:
-            print("creating new thread")
+            logging.info("creating new thread")
             
             #create read command
             cmd_type = 'read'  
             sensor_type = ConfigRPI.SENSOR_TYPES[index]
             sensor_params = ConfigRPI.SENSOR_PARAMS[index]
             serialcmd = arduino_commands.create_cmd(cmd_type, sensor_type, sensor_params)
-            print(serialcmd)
-            print(SR)
-            print(magnitude)
+            logging.info(serialcmd)
+            logging.info(SR)
+            logging.info(magnitude)
 
             #create thread
             t = threading.Timer(1, TransmitThread, (userdata['serial'], serialcmd, SR, magnitude))
@@ -357,17 +357,17 @@ def on_message_0(client, userdata, msg):
                 new_thread = str(old_thread)
             else:
                 new_thread = str(old_thread+10) #linear translation to make sure we don't duplicate names
-            print("****** new thread name: ", new_thread)
+            logging.info("****** new thread name: %s", new_thread)
             #update latest threadname for this sensor    
             latest_thread[index] = new_thread
             t.setName(new_thread)
             t.start()
             t.join()
         else:
-            print("threads stay the same")
+            logging.warning("threads stay the same")
 
     elif str(message['type']) == 'CAL':
-        print("**** CAL the", message['sensor'], "sensor")
+        logging.info("**** CAL the %s sensor", str(message['sensor']))
         sensor = str(message['sensor'])
         db_to_use = str(message['v']) #indicates in which calibration db to save the data
         magnitudes = ConfigRPI.SENSOR_MAGNITUDES
@@ -387,17 +387,22 @@ def on_message_0(client, userdata, msg):
         r.join()
             
     else:
-        print("Received message is not of known type  ")
+        logging.warning("Received message is not of known type  ")
 
 def main():
     global tx_lock, client, topic, engine
-    format = "%(asctime)s: %(message)s"
-    logging.basicConfig(format=format, level=logging.DEBUG, datefmt="%H:%M:%S")
 
+    #demonstrate the logging levels
+    logging.debug('DEBUG')
+    logging.info('INFO')
+    logging.warning('WARNING')
+    logging.error('ERROR')
+    logging.critical('CRITICAL')
+    
     # Check for a db
     engine, exists = None, False
     while not exists:
-        print('Waiting for a database.')
+        logging.info('Waiting for a database.')
         engine, exists = check_table_database(engine)
         time.sleep(2)
 
@@ -407,9 +412,9 @@ def main():
         tokens, _ = get_table_database(engine, 'tokens')
         if tokens:
             tokens_key = tokens.thing_key
-            print('Waiting for MQTT credentials.')
+            logging.info('Waiting for MQTT credentials.')
         else:
-            print('Waiting for node signup.')
+            logging.info('Waiting for node signup.')
         time.sleep(2)
 
     #initialize serial
@@ -427,7 +432,7 @@ def main():
     #logging.debug("####################### Initializing mqtt broker for client #######################")
     #client, topic = ini_client.initialize_client()
 
-    logging.debug("####################### Creating TX_lock #######################")
+    logging.info("####################### Creating TX_lock #######################")
     tx_lock = threading.Lock()
 
     # Wait until table exists in db
@@ -437,10 +442,10 @@ def main():
     #     engine, exists = check_table_database(engine)
     #    time.sleep(1)  # seconds
 
-    logging.debug('####################### Creating Command Threads #######################')
+    logging.info('####################### Creating Command Threads #######################')
     create_threads(ser)
 
-    logging.debug("####################### Running periodic threads #######################")
+    logging.info("####################### Running periodic threads #######################")
 
     # TODO:
     #  	que pasa si el usuario anade otro sensor mas adelante, se cancelan todos los threads (this)
@@ -457,7 +462,7 @@ def main():
     try:  # This is here to simulate application activity (which keeps the main thread alive).
         while True:
             time.sleep(2)
-            logging.debug('loop')
+            logging.info('loop')
     except (KeyboardInterrupt, SystemExit):
         # Not strictly necessary if daemonic mode is enabled but should be done if possible
         # scheduler.shutdown()

@@ -1,7 +1,7 @@
 """Receive sampling rates trough control messages, write to db, periodic read of sampling rates from db,
 send control message to MainFlux """
 import json
-import logging
+from rpiapp.logging_filter import logger
 import random
 import time
 
@@ -18,7 +18,7 @@ MQTT_SUBSCRIBED = False
 LAST_SR_LIST = []
 LAST_TIME = time.time()
 
-
+logging = logger
 def do_every(period, f, *args):
     """Periodic scheduling, does not drift in time"""
     def g_tick():
@@ -64,9 +64,9 @@ def on_connect(client, userdata, flags, rc):
     # 0: Connection successful 1: Connection refused - incorrect protocol version 2: Connection refused - invalid
     # client identifier 3: Connection refused - server unavailable 4: Connection refused - bad username or password
     # 5: Connection refused - not authorised 6-255: Currently unused.
-    print("Trying to connect to broker. Result code: " + str(rc))
+    logging.info("Trying to connect to broker. Result code: %s" , str(rc))
     if rc == 0:
-        print("Connected.")
+        logging.info("Connected.")
         global MQTT_CONNECTED
         MQTT_CONNECTED = True
         # Subscribing in on_connect() means that if we lose the connection and
@@ -76,7 +76,7 @@ def on_connect(client, userdata, flags, rc):
 
 def on_subscribe(client, userdata, mid, granted_qos):
     """Callback for subscribed message."""
-    print('Subscribed to %s.' % userdata['topic'])
+    logging.info('Subscribed to %s', userdata['topic'])
     global MQTT_SUBSCRIBED
     MQTT_SUBSCRIBED = True
 
@@ -89,10 +89,11 @@ def on_message(client, userdata, msg):
     rx_data = str(msg.payload.decode('UTF-8'))  # message is string now, not json
     rx_data = json.loads(rx_data) #message to json
     for message in rx_data:
-        print(message)
+        logging.debug("%s", message)
         #message = eval(message)
-        print(message['type'])
+        logging.debug("%s", message['type'])
         if str(message['type']) == 'SET_SR':
+            logging.info("***********Received message is SR type, for the %s", message['n'], "sensor")
             # if message[11:17] == 'SET_SR':  # A naive patch for the issue
             # CAUTION: using message as dict, because messages have different keys, like:
             # [{"bn": "", "n": "Air CO2", "u": "ppm", "v": 30, "t": 1587467662.0718532}]
@@ -102,7 +103,7 @@ def on_message(client, userdata, msg):
         
 
         elif str(message['type']) == 'CAL':
-            print("***********Received message is CAL type, for the", message['n'], "sensor")
+            logging.info("***********Received message is CAL type, for the %s", message['n'], "sensor")
             sensor = str(message['n'])
             magnitudes = ConfigRPI.SENSOR_MAGNITUDES
             for i in range(len(magnitudes)):
@@ -115,22 +116,21 @@ def on_message(client, userdata, msg):
             serialcmd = create_cmd(cmd_type, sensor_type, sensor_params)
 
             #create calibration thread; use join() to wait for this thread to finish
-            print("creating cal thread")
+            logging.debug("creating cal thread")
             r = threading.Timer(1, CalibrationThread, (userdata['serial'], serialcmd, i, userdata['engine']))
-            print("after cal thread")
             r.setName('CAL Thread')
             r.start()
             r.join()
-            print("after join")
+
 
         else:
-            print("Received message is not of known type  ")
+            logging.warning("Received message is not of known type  ")
 
 
 def set_sr(client, engine, topic, sensor, value, unit):
     new_thread = 0 #not needed
     """Update db and send the control message to Grafana."""
-    print("Setting the SR of the " + str(sensor) + " sensor to " + str(value) + str(unit))
+    logging.info("Setting the SR of the %s sensor to %s %s", str(sensor), str(value), str(unit))
     # Find number of sensor
     magnitudes = ConfigRPI.SENSOR_MAGNITUDES
     for i in range(len(magnitudes)):
@@ -142,13 +142,13 @@ def set_sr(client, engine, topic, sensor, value, unit):
     # Get only sampling rates as list
     sampling_rates = list(node_config[1:])
     if sampling_rates[i] != int(value):
-        print("new value is different")
+        logging.debug("new value is different")
         # Update db only if current SR is different than the new one
         update_nodeconfig_table_database(engine, i + 1, value)
         new_thread = 1 #we need a new TX thread
 
     else:
-        print("new value is the same as the old one")
+        logging.warning("new value is the same as the old one")
     # Send control message with new sampling rates for grafana
     data = [{"bn": "", "n": sensor, "u": unit, "v": int(value), "t": time.time()}]
     client.publish(topic, json.dumps(data))
@@ -189,7 +189,7 @@ def send_periodic_control(engine, client, mqtt_topic):
     if sampling_rates != LAST_SR_LIST or passed_time >= 30.:
         # TODO: now using 30s, define value as variable: default_sr
         # If values have changed, send new
-        print(sampling_rates)
+        logging.info("%s", sampling_rates)
         for sensor in range(len(sampling_rates)):
             data = [{"bn": "", "n": magnitudes[sensor], "u": units[sensor], "v": list(node_config[1:])[sensor],
                      "t": time_stamp}]
@@ -198,7 +198,7 @@ def send_periodic_control(engine, client, mqtt_topic):
         LAST_TIME = time_stamp
     else:
         # Do not send
-        print(f'Not sending CONTROL, sampling_rates are the same {sampling_rates} and passed time {passed_time} is less than 30s')
+        logging.info('Not sending CONTROL')
     # Unsort them
     LAST_SR_LIST = list(node_config[1:]).copy()
 
@@ -210,7 +210,7 @@ def main_control_sensors():
     # Check for a db
     engine, exists = None, False
     while not exists:
-        print('Waiting for a database.')
+        logging.info('Waiting for a database.')
         engine, exists = check_table_database(engine)
         time.sleep(2)
 
@@ -220,9 +220,9 @@ def main_control_sensors():
         tokens, _ = get_table_database(engine, 'tokens')
         if tokens:
             tokens_key = tokens.thing_key
-            print('Waiting for MQTT credentials.')
+            logging.info('Waiting for MQTT credentials.')
         else:
-            print('Waiting for node signup.')
+            logging.info('Waiting for node signup.')
         time.sleep(2)
 
     # If any error (should be solved) try the following:
@@ -241,6 +241,4 @@ def main_control_sensors():
 
 if __name__ == "__main__":
     # ASSUMPTION: the script can be called before user registers in flaskapp
-    logging.basicConfig(format="%(asctime)s: %(message)s", level=logging.INFO,
-                        datefmt="%H:%M:%S")
     main_control_sensors()
