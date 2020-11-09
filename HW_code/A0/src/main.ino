@@ -66,6 +66,7 @@ void ProcessReading(int sensortype, String param_list[5])
   }
   else if (sensortype == SENSOR_ONEWIRE)
   {
+    value = 5;
     value = OneWireRead(param_list[0].toInt());
     SenMLdata = "[{\"bn\":\"ArduinoMKR1000\",\"sensorType\":\"" + String(sensortype) + "\",\"parameter1\":" + String(param_list[0]) + ",\"pinValue\":" + String(value) + "}]\n";
     Serial.print(SenMLdata); //IMPORTANT! DO NOT PUT PRINTLN, AS THE STRING ALREADY CONTAINS \n
@@ -147,7 +148,6 @@ void SplitCommand(String command, String fullArray)
   }
 
 }
-
 
 
 void loop()
