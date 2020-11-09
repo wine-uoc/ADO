@@ -9,11 +9,9 @@ from .control import get_node_id, get_config_obj, delete_tables_entries, update_
 from .forms import WifiForm
 import flaskapp.backend.grafana_interactions as gr
 from flaskapp.backend.grafana_bootstrap import load_json
-from .mqtt import mqtt_connection, cal_sensor
 from config import ConfigFlaskApp, ConfigRPI
 
-MQTT_CONNECTED = False  # global variable for handling mqtt connection
-MQTT_SUBSCRIBED = False
+
 
 # Blueprint Configuration
 main_bp = Blueprint('main_bp', __name__,
@@ -157,115 +155,3 @@ def dashboard_upgrade():
       flash('Something went wrong, Try again later')
     return redirect(url_for('auth_bp.login'))
     
-
-@main_bp.route('/calibration', methods=['GET'])
-@login_required
-def start_calibration():
-    """it should proceed with calibrating the specific sensor"""
-    str_sensor_idx = str(request.args.get('sensor_index'))
-    print(str_sensor_idx)
-    sensor_idx = int(str_sensor_idx[-2:]) - 1 #name goes from 1 to 10, but index from 0 to 9
-    sensor_name = ConfigRPI.SENSOR_MAGNITUDES[sensor_idx]
-    text1 = " Wash the probe with distilled water,\
-               then absorb the residual water-drops with paper.\
-               Insert the probe into the standard buffer solution of"
-    text2 = ", stir gently, for a few seconds. Then press the button below."
-    if sensor_name == 'pH':
-      ph7 = " 7.0"
-      ph4 = " 4.0"
-      message1 = "1) "+ text1 + str(ph7) + text2
-      message2 = "2) "+ text1 + str(ph4) + text2
-      button1 = "Record pH 7.0"
-      button2 = "Record pH 4.0"
-    elif sensor_name == 'Conductivity1':
-      cd1 = " 1413us/cm"
-      cd2 = " 12.88ms/cm"
-      message1 = "1) "+ text1 + str(cd1) + text2
-      message2 = "2) "+ text1 + str(cd2) + text2
-      button1 = "Record" + str(cd1)
-      button2 = "Record" + str(cd2)
-    elif sensor_name == 'Conductivity2':
-      cd1 = " 12.88ms/cm"
-      message1 = text1 + cd1
-      button1 = "Record" + cd1
-      message2 = ""
-      button2 = ""
-    elif sensor_name == 'Oxygen':
-      message1 = "Before using the dissolved oxygen probe, 0.5 mol/L NaOH solution should be added\
-                 into the membrane cap as the filling solution of the probe. As NaOH solution has strong corrosivity,\
-                protective gloves should be put on before handling the solution. If the solution accidentally drops onto the skin,\
-                wash your skin with plenty of water immediately.\
-                The oxygen permeable membrane in the membrane cap is sensitive and vulnerable. Use caution when handling with it.\
-                Fingernail and other sharp objects should be avoided.\
-                During the measuring process, the oxygen probe will consume a little oxygen. You need to gently stir the water and let\
-                the oxygen to be distributed evenly in water. On the other hand, do not stirring violently to prevent the oxygen in the air\
-                from quickly entering into the water.Two-point calibration\
-                1 .Prepare two cups of purified water, put one cup in the refrigerator, and one cup to warm up (Do not exceed 40°C, otherwise the probe may be damaged.)\
-                Use one of the following methods to make saturated oxygen water:\
-                A: Use a stirrer or an eggbeater to continuously stir for 10 minutes to saturate the dissolved oxygen.\
-                B: Use an air pump to continuously inflate the water for 10 minutes to saturate the dissolved oxygen.\
-                Stop stirring or pumping, and put the probe after the bubbles disappear.\
-                After placing the probe, keep stirring slowly while avoiding any bubbles.\
-                After the output voltage stable, please press the button below to record the high temperature value and voltage."
-      button1 = "Record high temperature"
-
-      message2 = "Perform the same operation on the glass of cold water. Press the button below to record the low temperature value and voltage."
-      button2 = "Record low temperature"
-
-    elif sensor_name == 'AirCO2':
-      message1 = "Press the button below to calibrate the Air CO2 sensor. Make sure to be in an open, ventilated environment, or outdoors."
-      button1= "Calibrate CO2"
-      message2 = ""
-      button2 = ""
-    else:
-      message1= "not implemented"
-      message2= "not implemented"
-      button1= "not implemented"
-      button2= "not implemented"
-
-  #render template with variables: sensor name, sensor message, button text
-    return render_template('calibration.jinja2', title= "ADO- Sensor Calibration",
-                             sensor_name= sensor_name, message1=message1, message2=message2,
-                              button1=button1, button2=button2, template='dashboard-template')
-
-
-@main_bp.route('/sendcontrol', methods=['POST'])
-@login_required
-def cal_sendcontrol():
-    """sends message in control topic, to ask arduino to acquire data"""
-    #create control message
-    sensor = str(request.form['sensor']) 
-    print(sensor)
-    db_to_use = str(request.form['db_to_use'])
-    print(db_to_use)
-    cal_sensor(client, mqtt_topic, sensor, db_to_use)
-    return sensor
-
-
-@main_bp.route('/calcheck', methods=['POST'])
-@login_required
-def cal_check():
-    """checks if calibration databases are full"""
-    sensor = str(request.form['sensor']) 
-    db1_values = get_req_calib_1_obj().get_values()
-    db2_values = get_req_calib_2_obj().get_values()
-    print(db1_values)
-    print(db2_values)
-    #find sensor index i
-    magnitudes = ConfigRPI.SENSOR_MAGNITUDES
-    for i in range(len(magnitudes)):  #starts with 0
-      if magnitudes[i] == sensor:
-        break
-
-    if db1_values[i] == 0 and db2_values[i] == 0 : #calib not required anymore
-      message = "calibration database is correctly updated"
-      return message
-    elif db1_values[i] ==1 and  db2_values[i] == 0:
-      message = "Please retake the first measurement"
-      return message
-    elif db1_values[i] ==0 and  db2_values[i] == 1:
-      message = "Please retake the second measurement"
-      return message
-    else:
-      message = "Please retake both measurements"
-      return message
