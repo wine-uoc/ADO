@@ -131,6 +131,7 @@ def ReceiveThread(ser, serialcmd, magnitude):
             if ser.inWaiting() > 0:
                 response = ser.readline()
                 response = response.decode('utf-8')
+                #logging.debug("%s", response)
                 if arduino_publish_data.valid_data(response, sensorType, parameter1):
                     no_answer_pending = True
                     arduino_publish_data.publish_data(magnitude,response, client, topic, engine)

@@ -80,7 +80,8 @@ def publish_data(magnitude,response, client, topic, engine):
         #********************************************
         if name == "Temperature": #update global temp value
             temperature = value
-            #print(temperature)
+            #logging.debug ("temperature is %s", value)
+            print(temperature)
         #********************************************
         if name == "pH":
             neutralVoltage = getattr(db1_row, idx_sensor_str) 
