@@ -62,14 +62,15 @@ class NodeConfig(UserMixin, db.Model):
     s08 = db.Column(db.Integer, nullable=False, unique=False)
     s09 = db.Column(db.Integer, nullable=False, unique=False)
     s10 = db.Column(db.Integer, nullable=False, unique=False)
+    s11 = db.Column(db.Integer, nullable=False, unique=False)
 
     def set_values(self, a_list):
         """Set values."""
-        self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10 = a_list
+        self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10, self.s11 = a_list
 
     def get_values(self):
         """Get values as a list."""
-        return [self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10]
+        return [self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10, self.s11]
 
 
 class Wifi(UserMixin, db.Model):
@@ -148,14 +149,15 @@ class Calibration_1(UserMixin, db.Model):
     s08 = db.Column(db.Float, nullable=False, unique=False)
     s09 = db.Column(db.Float, nullable=False, unique=False)
     s10 = db.Column(db.Float, nullable=False, unique=False)
+    s11 = db.Column(db.Float, nullable=False, unique=False)
 
     def set_values(self, a_list):
         """Set values."""
-        self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10 = a_list
+        self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10, self.s11 = a_list
 
     def get_values(self):
         """Get values as a list."""
-        return [self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10]
+        return [self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10, self.s11]
 
 class Calibration_2(UserMixin, db.Model):
     """2 point calibration.
@@ -177,14 +179,15 @@ class Calibration_2(UserMixin, db.Model):
     s08 = db.Column(db.Float, nullable=False, unique=False)
     s09 = db.Column(db.Float, nullable=False, unique=False)
     s10 = db.Column(db.Float, nullable=False, unique=False)
+    s11 = db.Column(db.Float, nullable=False, unique=False)
 
     def set_values(self, a_list):
         """Set values."""
-        self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10 = a_list
+        self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10, self.s11 = a_list
 
     def get_values(self):
         """Get values as a list."""
-        return [self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10]
+        return [self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10, self.s11]
 
 
 class Calibration_1_Temp(UserMixin, db.Model):
@@ -207,14 +210,15 @@ class Calibration_1_Temp(UserMixin, db.Model):
     s08 = db.Column(db.Float, nullable=False, unique=False)
     s09 = db.Column(db.Float, nullable=False, unique=False)
     s10 = db.Column(db.Float, nullable=False, unique=False)
+    s11 = db.Column(db.Float, nullable=False, unique=False)
 
     def set_values(self, a_list):
         """Set values."""
-        self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10 = a_list
+        self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10, self.s11 = a_list
 
     def get_values(self):
         """Get values as a list."""
-        return [self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10]
+        return [self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10, self.s11]
 
 class Calibration_2_Temp(UserMixin, db.Model):
     """2 point calibration.
@@ -236,14 +240,15 @@ class Calibration_2_Temp(UserMixin, db.Model):
     s08 = db.Column(db.Float, nullable=False, unique=False)
     s09 = db.Column(db.Float, nullable=False, unique=False)
     s10 = db.Column(db.Float, nullable=False, unique=False)
+    s11 = db.Column(db.Float, nullable=False, unique=False)
 
     def set_values(self, a_list):
         """Set values."""
-        self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10 = a_list
+        self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10, self.s11 = a_list
 
     def get_values(self):
         """Get values as a list."""
-        return [self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10]
+        return [self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10, self.s11]
 
 class Requires_Cal_1(UserMixin, db.Model):
     """True if 1 point calibration is needed.
@@ -265,14 +270,16 @@ class Requires_Cal_1(UserMixin, db.Model):
     s08 = db.Column(db.Boolean, nullable=False, unique=False)
     s09 = db.Column(db.Boolean, nullable=False, unique=False)
     s10 = db.Column(db.Boolean, nullable=False, unique=False)
+    s11 = db.Column(db.Boolean, nullable=False, unique=False)
+
 
     def set_values(self, a_list):
         """Set values."""
-        self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10 = a_list
+        self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10, self.s11 = a_list
 
     def get_values(self):
         """Get values as a list."""
-        return [self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10]
+        return [self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10, self.s11]
 
 class Requires_Cal_2(UserMixin, db.Model):
     """True if 2 point calibration is needed.
@@ -294,14 +301,16 @@ class Requires_Cal_2(UserMixin, db.Model):
     s08 = db.Column(db.Boolean, nullable=False, unique=False)
     s09 = db.Column(db.Boolean, nullable=False, unique=False)
     s10 = db.Column(db.Boolean, nullable=False, unique=False)
+    s11 = db.Column(db.Boolean, nullable=False, unique=False)
+
 
     def set_values(self, a_list):
         """Set values."""
-        self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10 = a_list
+        self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10, self.s11 = a_list
 
     def get_values(self):
         """Get values as a list."""
-        return [self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10]
+        return [self.s01, self.s02, self.s03, self.s04, self.s05, self.s06, self.s07, self.s08, self.s09, self.s10, self.s11]
     # import json
     # with open('HW_code/RPI/tokens.txt') as f:
     #     json_tokens = json.load(f)

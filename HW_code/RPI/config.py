@@ -34,9 +34,9 @@ class ConfigFlaskApp:
 
     # Sensors Config
     DEFAULT_SR = 10
-    MAX_NUM_SENSORS_IN_NODE = 10
-    REQ_CAL_1 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    REQ_CAL_2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0] #db to be used if some cal point needs to be retaken
+    MAX_NUM_SENSORS_IN_NODE = 11
+    REQ_CAL_1 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    REQ_CAL_2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] #db to be used if some cal point needs to be retaken
 
 
 class ConfigRPI:
@@ -56,12 +56,12 @@ class ConfigRPI:
 
     # Arduino
     # Mapping sensor type <-> sensor position in db
-    SENSOR_TYPES = ['onewire', 'i2c', 'analog', 'analog', 'analog', 'analog', 'i2c', 'analog', 'digital', 'analog']
-    SENSOR_PINS = ['0', '11,12', '0', '1', '3', '4', '11,12', '2', '3', '5']
-    SENSOR_PARAMS = [[0], ['0x40', 'H'], [0], [1], [3], [4], ['0x40', 'T'], [2], [1], [5, 'CO2']]
-    SENSOR_MAGNITUDES = ['Temperature', 'Humidity', 'pH', 'Turbidity', 'Conductivity1', 'Conductivity2', 'AtmosphericTemp',
-                         'Oxygen', 'WaterLevel', 'AirCO2']
-    SENSOR_UNITS = ['Cel', '%', 'pH', 'NTU', 'ms/cm', 'mS/cm', 'Cel', 'mg/L', '', 'ppm']
+    SENSOR_TYPES = ['onewire', 'i2c', 'analog', 'analog', 'analog', 'analog', 'i2c', 'analog', 'digital', 'analog', 'onewire']
+    SENSOR_PINS = ['0', '11,12', '0', '1', '3', '4', '11,12', '2', '3', '5', '5']
+    SENSOR_PARAMS = [[0], ['0x40', 'H'], [0], [1], [3], [4], ['0x40', 'T'], [2], [1], [5, 'CO2'], [5]]
+    SENSOR_MAGNITUDES = ['Temperature-S', 'Humidity', 'pH', 'Turbidity', 'Conductivity1', 'Conductivity2', 'AtmosphericTemp',
+                         'Oxygen', 'WaterLevel', 'AirCO2', 'Temperature-D']
+    SENSOR_UNITS = ['Cel', '%', 'pH', 'NTU', 'ms/cm', 'mS/cm', 'Cel', 'mg/L', '', 'ppm', 'Cel']
     # parameters list corresponding to each sensor, to send to A0; should be list os lists (bc createcmd requires list)
     # note: assuming that S1A and S1B are connected to different pins D4 D0 (arqui doc; DS18B20)
     # BUT in A0 code: SplitCommand gets only first parameter of param_list, myArray[i] = obtainArray(fullArray, ',', 0);

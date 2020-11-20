@@ -30,7 +30,7 @@ def create_cmd(cmdtype, sensortype, param_list):
 			str_param_list = str_param_list + ','
 	str_param_list = str_param_list + ']'
 
-	serialcmd = str(CmdType[cmdtype].value) + str(SensorType[sensortype].value) + str(num_param) + str_param_list #+'\n'
+	serialcmd = str(CmdType[cmdtype].value) + str(SensorType[sensortype].value) + str(num_param) + str_param_list +'\n'
 	return serialcmd
 
 
@@ -38,7 +38,7 @@ def parse_cmd(command):
 	cmdtype = int(command[0])
 	sensorType = int(command[1])
 	# extract the parameters of the command : 032 [0,4] -->  0,4
-	remaining_command = command[5:len(command)-1]
+	remaining_command = command[5:len(command)-1-1] #eliminate \n too
 	parameter1 = remaining_command.split(',')[0] #string
 	return cmdtype, sensorType, parameter1
 

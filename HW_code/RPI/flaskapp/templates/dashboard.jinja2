@@ -29,12 +29,19 @@
 
 {#                https://github.com/BaseMax/CustomWebCheckbox#}
                 <label class="checkbox_container" style="text-align: start">
-                    Temperature
+                    Temperature-S
                     <input type="checkbox" name="boxs01" id="s01" onclick="sendEvent('s01')" {{ s01_state }}>
                     <span class="checkbox_mark"></span>
                 </label>
                 <br>
-
+                
+                <label class="checkbox_container" style="text-align: start">
+                    Temperature-D
+                    <input type="checkbox" name="boxs11" id="s11" onclick="sendEvent('s11')" {{ s11_state }}>
+                    <span class="checkbox_mark"></span>
+                </label>
+                <br>
+                
                 <label class="checkbox_container">
                     Humidity
                     <input type="checkbox" name="boxs02" id="s02" onclick="sendEvent('s02')" {{ s02_state }}>

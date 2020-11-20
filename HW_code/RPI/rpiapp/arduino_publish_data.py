@@ -2,6 +2,8 @@
 TODO
 """
 import json
+import os
+from json import JSONDecodeError
 from rpiapp.logging_filter import logger
 import time
 from config import ConfigRPI
@@ -29,23 +31,34 @@ def reset_iscalibrated_flags(idx_sensor):
 def valid_data(response, sensorType, parameter1):
     if len(response) > 2:
         #print(response)
-        data = json.loads(response)  # a SenML list
-        for item in data:  # normally only one item
-            try:
-                if int(item["sensorType"]) == int(sensorType) and int(item["parameter1"]) == int(parameter1):
-                    #logging.debug('sensorType and parameter checks')
-                    return True
-                else:
-                    logging.warning('Received data does not correspond to the last sent command')
-            except ValueError:
-                # it was a string, not int
-                #logging.debug('parameter is a string')
-                if int(item["sensorType"]) == int(sensorType) and str(item["parameter1"]) == str(parameter1):
-                    logging.debug('sensorType and parameter checks')
-                    return True
-                else:
-                    logging.warning('Received data does not correspond to the last sent command')
-
+        try:
+            data = json.loads(response)  # a SenML list
+            for item in data:  # normally only one item
+                try:
+                    if int(item["sensorType"]) == int(sensorType) and int(item["parameter1"]) == int(parameter1):
+                        logging.debug('OK')
+                        return True
+                    else:
+                        logging.warning('Received data does not correspond to the last sent command')
+                        logging.info("param1: %s", str((item["parameter1"])))
+                        logging.info("sensortype: %s ", str(item["sensorType"]))
+                except ValueError:
+                    # it was a string, not int
+                    #logging.debug('parameter is a string')
+                    if int(item["sensorType"]) == int(sensorType) and str(item["parameter1"]) == str(parameter1):
+                        logging.debug('sensorType and parameter checks')
+                        return True
+                    else:
+                        logging.warning('Received data does not correspond to the last sent command: %s', item)
+                except JSONDecodeError as e:
+                    logging.warning("Json decode error: %s", str(e))
+                except Exception as e:
+                    logging.warning("Something else went wrong: %s", str(e))
+        except:
+            logging.error("loading will block our program")
+            #logging.info("*********************** E X I T ********************************************")
+            #os._exit(1)
+        
     else:
         logging.error('Data length is too small')
         return False
@@ -78,7 +91,7 @@ def publish_data(magnitude,response, client, topic, engine):
         #constructing the payload for mainflux
         #for some sensors, special payload construction is needed, to use the calibration values
         #********************************************
-        if name == "Temperature": #update global temp value
+        if name == "Temperature-S": #update global temp value, take into account the surface temp
             temperature = value
             #logging.debug ("temperature is %s", value)
             print(temperature)

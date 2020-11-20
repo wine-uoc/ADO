@@ -45,7 +45,8 @@ def dashboard():
                            s07_state=str_current_config[6],
                            s08_state=str_current_config[7],
                            s09_state=str_current_config[8],
-                           s10_state=str_current_config[9])
+                           s10_state=str_current_config[9],
+                           s11_state=str_current_config[10])
 
 
 @main_bp.route('/wifi', methods=['GET', 'POST'])

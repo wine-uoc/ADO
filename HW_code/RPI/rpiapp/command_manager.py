@@ -10,16 +10,19 @@ from rpiapp import arduino_publish_data, arduino_commands, ini_client
 from rpiapp.db_management import check_table_database, get_table_database, update_calibration_1_table_database, update_calibration_2_table_database
 from rpiapp.periodic_control_sensors import set_sr
 from rpiapp.logging_filter import logger
-from config import ConfigRPI
+from config import ConfigRPI, ConfigFlaskApp
 
 logging = logger
 CmdType = arduino_commands.CmdType
 SensorType = arduino_commands.SensorType
 
+
 MQTT_CONNECTED = False  # global variable for the state
 MQTT_SUBSCRIBED = False
-latest_thread = ['1','2','3','4', '5', '6', '7', '8', '9', '10'] #the name of the latest created thread. position corresponds to sensor index
-old_name_available=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+latest_thread = ['1','2','3','4', '5', '6', '7', '8', '9', '10', '11'] #the name of the latest created thread. position corresponds to sensor index
+old_name_available=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+READ_timeout = 15
+WRITE_timeout = 10 #non blocking mode
 
 def create_threads(ser):
     global latest_thread, client, subtopic_sr
@@ -35,6 +38,7 @@ def create_threads(ser):
         data = [{"bn": "", "n": magnitudes[i], "u": "s", "v": int(periodicity[i]), "t": time.time()}]
         client.publish(subtopic_sr, json.dumps(data))
 
+    for i in range(1, size + 1):
         # timer is given by expressing a delay
         t = threading.Timer(1, TransmitThread, (ser, serialcmd[i], periodicity[i], magnitudes[i]))  # all sensors send data at startup
         position = arduino_publish_data.get_sensor_index(magnitudes[i])
@@ -68,13 +72,16 @@ def TransmitThread(ser, serialcmd, periodicity, magnitude):
 
     if keepalive_thread(magnitude, threadname, periodicity):
         try:
-            ser.write(serialcmd.encode('utf-8')) 
-        
+            logging.debug("attempting to write")
+            logging.debug(serialcmd)
+            ser.write(serialcmd.encode('utf-8'))
+            ser.flush() 
+            logging.debug("rescheduling thread")
             tx = threading.Timer(periodicity, TransmitThread, (ser, serialcmd, periodicity, magnitude))
             threadname =reset_thread_name(threadname, index)
             tx.setName(threadname)
             tx.start()
-        
+            logging.debug("creating rx thread")
             # create the RX thread; use join() to start right now
             r = threading.Timer(1, ReceiveThread, (ser, serialcmd, magnitude))
             r.setName('RX Thread')
@@ -82,40 +89,51 @@ def TransmitThread(ser, serialcmd, periodicity, magnitude):
             r.join()
     
         except OSError as e:
+            logging.warning("error: %s", str(e))
+            #logging.info("*********************** E X I T ********************************************")
+            #ser.reset_output_buffer()
+            #ser.close()
+            #os._exit(1)
+            #we should reset A0 here
+
             try:
                 new_ser = reestablish_serial(ser)
                 #attempt writing again
+                logging.debug(" except attempting to write")
                 new_ser.write(serialcmd.encode('utf-8'))
-
+                new_ser.flush()
+                logging.debug("rescheduling thread")
                 tx = threading.Timer(periodicity, TransmitThread, (new_ser, serialcmd, periodicity, magnitude))
                 threadname =reset_thread_name(threadname, index)
                 tx.setName(threadname)
                 tx.start()
 
                 # create the RX thread; use join() to start right now
+                logging.debug("creating rx thread")
                 r = threading.Timer(1, ReceiveThread, (new_ser, serialcmd, magnitude))
                 r.setName('RX Thread')
                 r.start()
                 r.join()
 
-            except:
-                # reschedule TX and release lock
+            except Exception as e:
+                logging.error("exception after trying to reestablish_serial: %s", str(e))
+                logging.debug("rescheduling thread")
                 tx = threading.Timer(periodicity, TransmitThread, (ser, serialcmd, periodicity, magnitude))
                 threadname =reset_thread_name(threadname, index)
                 tx.setName(threadname)
                 tx.start()
                 tx_lock.release()
-
+        except Exception as e:
+            logging.error ("Something else went wrong %s", str(e))
+            logging.info("*********************** E X I T ********************************************")
+            ser.reset_output_buffer()
+            ser.close()
+            os._exit(1)
     else:
         logging.info("++++ killing thread: %s", threadname) #kill thread and release lock
         if threadname == str(index+1): #first name will be available again
             old_name_available[index] = 1   
         tx_lock.release()
-
-  
-
-
-
 
 
 def ReceiveThread(ser, serialcmd, magnitude):
@@ -124,24 +142,36 @@ def ReceiveThread(ser, serialcmd, magnitude):
     try:
         logging.info('executing thread %s', threading.currentThread().getName())
         cmdtype, sensorType, parameter1 = arduino_commands.parse_cmd(serialcmd)
+        #logging.info("param1: %s", str(parameter1))
+        #logging.info("sensorType: %s", str(sensorType))
+
         # set a timeout for waiting for serial
         # wait until receiving valid answer
-        timeout = time.time() + 15
+        timeout = time.time() + 15#15
         while no_answer_pending == False and time.time() < timeout:
             if ser.inWaiting() > 0:
                 response = ser.readline()
-                response = response.decode('utf-8')
+                try:
+                    response = response.decode('utf-8')
+                    logging.debug("%s", str(response))
+                except:
+                    logging.error("cannot decode message")
                 #logging.debug("%s", response)
                 if arduino_publish_data.valid_data(response, sensorType, parameter1):
                     no_answer_pending = True
                     arduino_publish_data.publish_data(magnitude,response, client, topic, engine)
                 else:
-                    logging.debug("RX data does not correspond to the last command sent, checking again the serial")
+                    logging.debug("RX data does not correspond to the last command sent")#, lost sync, exit")
+                    #os._exit(1)
 
         logging.info("End RX processing %s", time.time())
         tx_lock.release()
-    except:
-        logging.warning("##### BAD PROCESSING in ReceiveThread")
+    except serial.SerialTimeoutException as e:
+        logging.error("serial timeout: %s", str(e))
+        ser.close()
+        os._exit(1)
+    except Exception as e:
+        logging.error("##### BAD PROCESSING in ReceiveThread: %s", str(e))
         tx_lock.release()
 
 
@@ -163,6 +193,7 @@ def CalibrationThread(ser, serialcmd, index, engine, db): #not periodic, index 0
     no_answer_pending = False
     try:
         ser.write(serialcmd.encode('utf-8'))
+        ser.flush()
         # create the RX thread; use join() to start right now
         r = threading.Timer(1, SetCalibrationDBThread, (ser, serialcmd, index, engine, db))
         r.setName('RX CAL Thread')
@@ -173,6 +204,8 @@ def CalibrationThread(ser, serialcmd, index, engine, db): #not periodic, index 0
             ser = reestablish_serial(ser)
             #attempt writing again
             ser.write(serialcmd.encode('utf-8'))
+            ser.flush()
+
             r = threading.Timer(1, SetCalibrationDBThread, (ser, serialcmd, index, engine, db))
             r.setName('RX CAL Thread')
             r.start()
@@ -208,23 +241,31 @@ def SetCalibrationDBThread(ser, serialcmd, index, engine, db):
                     logging.debug("RX data does not correspond to the last command sent, checking again the serial")
 
         logging.info("End CAL RX processing %s", time.time())
-        tx_lock.release()
+        tx_lock.release()        
+
     except:
         logging.warning("##### BAD PROCESSING in SetCalibrationDBThread")
         tx_lock.release()        
 
 
 def reestablish_serial(serial_port):
-    flag = 0 
-    if serial_port.isOpen():
-        serial_port.close()
+    global READ_timeout, WRITE_timeout
+    logging.debug("new serial")
+    flag = 0
+    #try: 
+     #   if serial_port.isOpen():
+      #      serial_port.flush()
+       #     serial_port.close()
+    #except Exception as e:
+     #   logging.error("cannot close port: %s", str(e))
+
     try:    
-        ser = serial.Serial(port='/dev/ttyACM0', baudrate=9600)
+        ser = serial.Serial(port='/dev/ttyACM0', baudrate=9600, timeout = READ_timeout, write_timeout = WRITE_timeout, rtscts =False, dsrdtr= False)
         flag = 1
         logging.warning("connected to ACM0")
     except:
         try:
-            ser = serial.Serial(port='/dev/ttyACM1', baudrate=9600)
+            ser = serial.Serial(port='/dev/ttyACM1', baudrate=9600, timeout = READ_timeout, write_timeout = WRITE_timeout, rtscts =False, dsrdtr= False)
             flag = 1
             logging.warning("connected to ACM1")
         except:
@@ -357,7 +398,7 @@ def on_message_0(client, userdata, msg):
             if old_name_available[index] == 1: #this thread was not created at startup in flaskapp config page
                 new_thread = str(old_thread)
             else:
-                new_thread = str(old_thread+10) #linear translation to make sure we don't duplicate names
+                new_thread = str(old_thread+ConfigFlaskApp.MAX_NUM_SENSORS_IN_NODE) #linear translation to make sure we don't duplicate names
             logging.info("****** new thread name: %s", new_thread)
             #update latest threadname for this sensor    
             latest_thread[index] = new_thread
@@ -391,7 +432,7 @@ def on_message_0(client, userdata, msg):
         logging.warning("Received message is not of known type  ")
 
 def main():
-    global tx_lock, client, topic, engine
+    global tx_lock, client, topic, engine, READ_timeout, WRITE_timeout
 
     #demonstrate the logging levels
     logging.debug('DEBUG')
@@ -419,7 +460,7 @@ def main():
         time.sleep(2)
 
     #initialize serial
-    ser = serial.Serial(port='/dev/ttyACM0', baudrate=9600)
+    ser = serial.Serial(port='/dev/ttyACM0', baudrate=9600, timeout =READ_timeout, write_timeout = WRITE_timeout, rtscts =False, dsrdtr= False)
 
     # Connect to backend and subscribe to rx control topic
     global MQTT_CONNECTED 
