@@ -33,44 +33,61 @@ void ProcessReading(int sensortype, String param_list[5])
 {
   //reading = 0;
   float value; //holds float value returned by sensor libraries
-  value = 0;
+  value = 500;
   int pin = param_list[0].toInt(); //failure returns zero; could be changed to byte
 
-  if ((pin < 9) and (String(param_list[0]) != "0x40")) {  //valid pin nb  
-    if (sensortype == SENSOR_ANALOG) value = analogRead(pin);//reading
+  if ((pin < 9) and (param_list[0] != "0x40")) {  //valid pin nb  
+    if (sensortype == SENSOR_ANALOG){
+      value = analogRead(pin);//reading
+      //value = 191;      
+    } 
     else if (sensortype == SENSOR_DIGITAL)
     {
       //Serial.println("digital read");
-      pinMode(pin, INPUT);
+      //pinMode(pin, INPUT);
       value = digitalRead(pin);//reading
+      //value = 181;
     }
-    else if (sensortype == SENSOR_SPI) value = 10; //TBD
-    else if (sensortype == SENSOR_ONEWIRE) value = OneWireRead(pin);
-    else if (sensortype == SENSOR_SERIAL) value = 10; //TBD
+    else if (sensortype == SENSOR_SPI)
+    {
+      value = 10; //TBD
+    } 
+    else if (sensortype == SENSOR_ONEWIRE)
+    {
+     value = OneWireRead(pin);
+     //value = 111;
+    }
+    else if (sensortype == SENSOR_SERIAL) 
+    {
+    value = 10; //TBD
+    }
+    else
+    {
+      value = 888;
+    }
     
-    HandlePrinting(sensortype, pin, value);
+    HandlePrinting(sensortype, pin, value, "NO"); //no address
   }
-  else if (String(param_list[0]) == "0x40") //SEN0227 Temp&Hum sensor
+  else if (param_list[0] == "0x40") //SEN0227 Temp&Hum sensor
   {  
     if (sensortype == SENSOR_I2C)
     {
         value=500; //test value 
-        if (String(param_list[1]) == "T") //Temp
+        if (param_list[1] == "T") //Temp
         {
           value =  sht20.readTemperature();
+          //value = 151;
         } 
-        else if (String(param_list[1]) == "H") //Hum
+        else if (param_list[1] == "H") //Hum
         {
           value =  sht20.readHumidity();
+          //value = 141;
         }
-         Serial.print(F("[{\"bn\":\"ArduinoMKR1000\",\"sensorType\":\""));
-         Serial.print(sensortype);
-         Serial.print(F("\",\"parameter1\":"));
-         Serial.print(F("\"0x40\""));
-         Serial.print(F(",\"pinValue\":"));
-         Serial.print(value);
-         Serial.print(F("}]\n")); //IMPORTANT! DO NOT PUT PRINTLN, AS THE STRING ALREADY CONTAINS \n
-         Serial.flush();
+        else
+        {
+          value = 999;
+        }
+        HandlePrinting(sensortype, pin, value, "0x40");
     }
   }
   else
@@ -83,11 +100,22 @@ void ProcessReading(int sensortype, String param_list[5])
 
 //this function makes sure that we are not running out of RAM
 //store the constant part of the strings in Flash
-void HandlePrinting(int sensortype, int pin, float value){
+void HandlePrinting(int sensortype, int pin, float value, String addr){
   Serial.print(F("[{\"bn\":\"ArduinoMKR1000\",\"sensorType\":\""));
   Serial.print(sensortype);
   Serial.print(F("\",\"parameter1\":"));
-  Serial.print(pin);
+  if (addr == "0x40")
+  {
+    Serial.print(F("\"0x40\""));
+  }
+  else if (addr == "NO") //no address
+  {
+    Serial.print(pin);
+  }
+  else 
+  {
+    Serial.print(F("\"PinErr\""));
+  }
   Serial.print(F(",\"pinValue\":"));
   Serial.print(value);
   Serial.print(F("}]\n")); //IMPORTANT! DO NOT PUT PRINTLN, AS THE STRING ALREADY CONTAINS \n
@@ -114,7 +142,7 @@ void AverageReading(int sensortype, String param_list[5]){
       }
 
       avg_reading = array_sum/ArrayLength;
-      HandlePrinting(sensortype, pin, avg_reading);
+      HandlePrinting(sensortype, pin, avg_reading, "NO"); //no address
     }
     else{
       Serial.print(F("Compromized command: PIN_NB \n")); //safe in case of junk/compromised command
@@ -163,16 +191,24 @@ void SplitCommand(String command, String fullArray)
 
 
   //*****process READ/CALIBRATE command****
-  if (ctype == CMD_READ) Serial.print("\n"); 
-    //ProcessReading(stype, myArray);
+  if (ctype == CMD_READ)
+  {
+    //Serial.print("\n"); 
+    ProcessReading(stype, myArray);
+  }
   else if (ctype == CMD_CALIBRATE)
   { 
-    if (String(myArray[1]) == "CO2")
+    if (myArray[1] == "CO2")
+    {
       CalibrateCO2(myArray[0]); //myArray[0] holds pin nb, but it is only used for rpi serial confirmation
+    }
     else 
+    {
       AverageReading(stype, myArray);
+    }
   }
-  else{
+  else
+  {
     Serial.print(F("Unrecognized command: CTYPE \n")); //safe in case of junk/compromised command
     Serial.flush();
   }
@@ -264,7 +300,7 @@ void CalibrateCO2(String pinNB){
   delay(1000);
   //PRINT ANYTHING ON THE SERIAL for confirmation
   //extract ASCII for zero
-  HandlePrinting(0, pinNB.charAt(0)- '0', 0);
+  HandlePrinting(0, pinNB.charAt(0)- '0', 0, "NO");
 }
 
 
@@ -285,6 +321,7 @@ void loop()
     while (Serial.available() > 0)
     {
       inString = Serial.readString();
+      Serial.print(F("Waiting serial "));
     }
       //Serial.println(inString);
     if (inString[inString.length()-1] == '\n') //make sure string is correctly terminated
