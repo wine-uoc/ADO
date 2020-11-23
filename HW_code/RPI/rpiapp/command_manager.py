@@ -115,7 +115,7 @@ def TransmitThread(ser, serialcmd, periodicity, magnitude):
                 r.start()
                 r.join()
 
-            except Exception as e:
+            except Exception as e: #or should we just restart instead of reestablishing serial?
                 logging.error("exception after trying to reestablish_serial: %s", str(e))
                 logging.debug("rescheduling thread")
                 tx = threading.Timer(periodicity, TransmitThread, (ser, serialcmd, periodicity, magnitude))
@@ -162,7 +162,7 @@ def ReceiveThread(ser, serialcmd, magnitude):
                     arduino_publish_data.publish_data(magnitude,response, client, topic, engine)
                 else:
                     logging.debug("RX data does not correspond to the last command sent")#, lost sync, exit")
-                    #os._exit(1)
+                    os._exit(1) #tbd: restart arduino too (soft/hard)
 
         logging.info("End RX processing %s", time.time())
         tx_lock.release()

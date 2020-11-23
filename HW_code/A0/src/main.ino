@@ -297,6 +297,7 @@ void CalibrateCO2(String pinNB){
   digitalWrite(CO2_cal_pin, HIGH);
   delay(1000);
   mySerial.print(disable_autocal); //disable autocalibration
+  mySerial.println();
   delay(1000);
   //PRINT ANYTHING ON THE SERIAL for confirmation
   //extract ASCII for zero
@@ -307,13 +308,20 @@ void CalibrateCO2(String pinNB){
 void loop()
 {
   //testing mySerial, Serial1 and Serial
-  /*Serial.println("Starting");
-  CalibrateCO2("A5"); 
-  while (Serial1.available()) {
-    Serial.print(char(Serial1.read()));
+ /* Serial.println("Starting");
+  mySerial.print(disable_autocal);
+  mySerial.println();
+  delay(1000);
+  if (Serial1.available()>0)
+  {
+    while (Serial1.available()>0) 
+    { //mySerial is connected with wires to Serial1 for testing
+      Serial.print(char(Serial1.read()));
+    }
   }
-  Serial.println("");*/
 
+*/
+  
   //original code following:
   //Serial.setTimeout(10000); //defaults to 1000ms
   if (Serial.available() > 0)
@@ -321,12 +329,12 @@ void loop()
     while (Serial.available() > 0)
     {
       inString = Serial.readString();
-      Serial.print(F("Waiting serial "));
+      //Serial.print(F("Waiting serial "));
     }
       //Serial.println(inString);
     if (inString[inString.length()-1] == '\n') //make sure string is correctly terminated
     {
-      Serial.print(inString); //pingpong
+      //Serial.print(inString); //pingpong
     //cmd: abc [p,q,r]
       commandWords[0] = obtainArray(inString, ' ', 0);                //get first word containing CmdType, SensorType, Num_param
       remainingstring = inString.substring(5, inString.length() - 1 -1 ); //index 0 to length-1-1, to exclude termination character
@@ -340,7 +348,6 @@ void loop()
     } 
 
   }
-
   
   delay(100);
 }
