@@ -49,7 +49,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1604057695944,
+  "iteration": 1606145124448,
   "links": [
     {
       "asDropdown": true,
@@ -95,7 +95,6 @@
       "fieldConfig": {
         "defaults": {
           "custom": {},
-          "displayName": "Piscina1",
           "mappings": [],
           "max": 40,
           "min": 0,
@@ -125,7 +124,7 @@
               }
             ]
           },
-          "unit": "celsius"
+          "unit": "none"
         },
         "overrides": []
       },
@@ -151,6 +150,7 @@
       "pluginVersion": "7.1.5",
       "targets": [
         {
+          "alias": "$tag_devname",
           "groupBy": [
             {
               "params": [
@@ -160,7 +160,7 @@
             },
             {
               "params": [
-                "publisher"
+                "devname"
               ],
               "type": "tag"
             },
@@ -202,6 +202,12 @@
       "timeFrom": null,
       "timeShift": null,
       "title": "Average $Sensors for each node",
+      "transformations": [
+        {
+          "id": "filterFieldsByName",
+          "options": {}
+        }
+      ],
       "transparent": true,
       "type": "bargauge"
     },
@@ -259,17 +265,11 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "$Sensors",
+          "alias": "[[tag_devname]]",
           "groupBy": [
             {
               "params": [
-                "10s"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "publisher"
+                "devname"
               ],
               "type": "tag"
             }
@@ -287,10 +287,6 @@
                   "value"
                 ],
                 "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
               }
             ]
           ],
@@ -422,6 +418,28 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "$DB",
+        "definition": "SHOW TAG VALUES FROM messages WITH KEY = \"devname\"",
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": true,
+        "name": "Device",
+        "options": [],
+        "query": "SHOW TAG VALUES FROM messages WITH KEY = \"devname\"",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       }
     ]
   },
@@ -445,5 +463,5 @@
   "timezone": "",
   "title": "Agregat dispositius",
   "uid": "YT20LzWMk",
-  "version": 5
+  "version": 16
 }
