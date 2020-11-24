@@ -48,6 +48,7 @@ def return_thing_id(account_token, thing_name):
 	#print (response.text)
 	response= response.json()
 	things_list = response["things"]
+	#print(things_list)
 	for i in range(len(things_list)):
 		if things_list[i]['name'] == str(thing_name):
 			#print("found it")
@@ -56,6 +57,37 @@ def return_thing_id(account_token, thing_name):
 	
 	print('thing not here')
 	return 0
+
+def delete_thing(account_token, thing_id):
+	url=host+'/things/'+ str(thing_id)
+	headers={"Authorization": str(account_token)}
+	return requests.delete(url,headers=headers, verify=False)
+
+def return_things_list(account_token):
+	url=host+'/things?offset=0&limit=100' #default things limit is 10
+	headers={"Authorization": str(account_token)}
+	response = requests.get(url,headers=headers, verify=False)
+	#print (response.text)
+	response= response.json()
+	things_list = response["things"]
+	print (things_list)
+	return things_list
+
+
+def delete_things_list(account_token):
+	url=host+'/things?offset=0&limit=100' #default things limit is 10
+	headers={"Authorization": str(account_token)}
+	response = requests.get(url,headers=headers, verify=False)
+	#print (response.text)
+	response= response.json()
+	things_list = response["things"]
+	print(things_list)
+	for i in range(len(things_list)):
+		if things_list[i]['name']!= 'piscina4': #real thing
+			delete_thing(account_token, things_list[i]['id'])
+			time.sleep(0.1)
+	
+
 
 def return_thing_key(account_token, thing_name):
 	url=host+'/things?offset=0&limit=100' #default things limit is 10
@@ -174,7 +206,16 @@ def main():
 	dictionary['account_token'] = token
 	dictionary['channel_id'] = channel_id
 
-	nb_nodes = 20
+	###delete user things (e.g when too many junk things were created)
+	#print("*************************** listing things")
+	#return_things_list(token)
+	#print("*************************** removing things")
+	#delete_things_list(token)
+	#print("*************************** listing things after delete")
+	#return_things_list(token)
+	#print("*************************** done")
+
+	nb_nodes = 99 #i have already manually created other things for this user
 	fake_node_list=[]
 	clients = [] #holds the mqtt connections
 
@@ -219,12 +260,10 @@ def main():
 	for client in clients:
 		client.connect_async(host='localhost', port=1883, keepalive=60)
 		client.loop_start()
-		time.sleep(2)
+		time.sleep(0.5)
 	while 1:
 		for obj in fake_node_list:
-			#obj.node_connect()
 			obj.send_data()
-			#obj.disconnect()
 
 
 if __name__ == '__main__':
