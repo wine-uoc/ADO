@@ -42,7 +42,7 @@ def create_thing(account_token, thing_name, thing_type):
 	return requests.post(url, json=data,headers=headers, verify=False)
 
 def return_thing_id(account_token, thing_name):
-	url=host+'/things'
+	url=host+'/things?offset=0&limit=100' #default things limit is 10
 	headers={"Authorization": str(account_token)}
 	response = requests.get(url,headers=headers, verify=False)
 	#print (response.text)
@@ -58,7 +58,7 @@ def return_thing_id(account_token, thing_name):
 	return 0
 
 def return_thing_key(account_token, thing_name):
-	url=host+'/things'
+	url=host+'/things?offset=0&limit=100' #default things limit is 10
 	headers={"Authorization": str(account_token)}
 	response = requests.get(url,headers=headers, verify=False)
 	#print (response.text)
@@ -136,6 +136,19 @@ def get_messages_on_channel(channel_id, thing_key):
 	response = requests.get(url, headers=headers, verify=False)
 	print (response.text)
 
+def on_connect(client, userdata, flags, rc):
+    global subtopic_sr, subtopic_cal
+    """The callback for when the client receives a CONNACK response from the server."""
+    # The value of rc indicates success or not:
+    # 0: Connection successful 1: Connection refused - incorrect protocol version 2: Connection refused - invalid
+    # client identifier 3: Connection refused - server unavailable 4: Connection refused - bad username or password
+    # 5: Connection refused - not authorised 6-255: Currently unused.
+    print("Trying to connect to broker. Result code: %s" , str(rc))
+    if rc == 0:
+        print("Connected.")
+    else:
+    	print("This node couldn't connect")
+
 def main():
 	name = "christmas"
 	organization = "tree"
@@ -161,12 +174,14 @@ def main():
 	dictionary['account_token'] = token
 	dictionary['channel_id'] = channel_id
 
-	nb_nodes = 3
+	nb_nodes = 20
 	fake_node_list=[]
 	clients = [] #holds the mqtt connections
 
 	for count in range(nb_nodes):
 		node_name = "test_" + str(count)
+		name_id = node_name + "_id"
+		name_key = node_name + "_key"
 		# register node to account (create thing), if node name is unique
 		if (return_thing_id(token, node_name)==0):
 			_ = create_thing(token, node_name, "device")
@@ -175,21 +190,24 @@ def main():
 			# connect to the existing channel
 			_ = connect_to_channel(token, channel_id, thing_id)
 				# store credentials
-			name_id = node_name + "_id"
-			name_key = node_name + "_key"
 			dictionary[name_id] = thing_id
 			dictionary[name_key] = thing_key
 
 			client = mqtt.Client(node_name)
 			client.username_pw_set(str(thing_id), str(thing_key))
+			client.on_connect = on_connect
 			clients.append(client) 
 			fake_node_list.append(Fake_node(node_name, thing_id, thing_key, channel_id, client))
 		else:
 			print('Device name already exists for this account.')
 			thing_id = return_thing_id(token, node_name)
 			thing_key = return_thing_key(token, node_name)
+			_ = connect_to_channel(token, channel_id, thing_id)
+			dictionary[name_id] = thing_id
+			dictionary[name_key] = thing_key
 			client = mqtt.Client(node_name)
 			client.username_pw_set(str(thing_id), str(thing_key))
+			client.on_connect = on_connect
 			clients.append(client) 
 			fake_node_list.append(Fake_node(node_name, thing_id, thing_key, channel_id, client))
 
@@ -199,8 +217,9 @@ def main():
 	f.close()
 
 	for client in clients:
-		client.connect(host='localhost', port=1883, keepalive=60)
+		client.connect_async(host='localhost', port=1883, keepalive=60)
 		client.loop_start()
+		time.sleep(2)
 	while 1:
 		for obj in fake_node_list:
 			#obj.node_connect()
