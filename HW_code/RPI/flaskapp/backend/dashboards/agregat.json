@@ -49,7 +49,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1606145124448,
+  "iteration": 1606213612869,
   "links": [
     {
       "asDropdown": true,
@@ -129,15 +129,15 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 5,
-        "w": 8,
+        "h": 7,
+        "w": 24,
         "x": 0,
         "y": 5
       },
       "id": 6,
       "options": {
         "displayMode": "gradient",
-        "orientation": "horizontal",
+        "orientation": "vertical",
         "reduceOptions": {
           "calcs": [
             "mean"
@@ -231,7 +231,7 @@
         "h": 14,
         "w": 24,
         "x": 0,
-        "y": 10
+        "y": 12
       },
       "hiddenSeries": false,
       "id": 2,
@@ -444,7 +444,7 @@
     ]
   },
   "time": {
-    "from": "now-30m",
+    "from": "now-5m",
     "to": "now"
   },
   "timepicker": {
@@ -463,5 +463,5 @@
   "timezone": "",
   "title": "Agregat dispositius",
   "uid": "YT20LzWMk",
-  "version": 16
+  "version": 18
 }
