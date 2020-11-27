@@ -44,12 +44,12 @@ class Fake_node():
         print("disconnecting: ", self.name)
         self.client.disconnect()
 
-    def send_data(self):
+    def send_data(self, min, max):
  
         #try:
         #while 1:
         print("Sending...:", self.name)
-        temperature = r.uniform(15, 22)
+        temperature = r.uniform(min, max)
         ph = r.uniform(1, 14)
         do = r.uniform(100, 200)
         conductivity = r.uniform(10, 20)

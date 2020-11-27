@@ -215,7 +215,7 @@ def main():
 	#return_things_list(token)
 	#print("*************************** done")
 
-	nb_nodes = 99 #i have already manually created other things for this user
+	nb_nodes = 9#99 #i have already manually created other things for this user
 	fake_node_list=[]
 	clients = [] #holds the mqtt connections
 
@@ -263,7 +263,7 @@ def main():
 		time.sleep(0.5)
 	while 1:
 		for obj in fake_node_list:
-			obj.send_data()
+			obj.send_data(0,9)
 
 
 if __name__ == '__main__':
