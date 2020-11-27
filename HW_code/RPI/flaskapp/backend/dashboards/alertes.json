@@ -166,7 +166,7 @@
       "type": "alertlist"
     },
     {
-      "collapsed": false,
+      "collapsed": true,
       "datasource": null,
       "gridPos": {
         "h": 1,
@@ -175,11 +175,8 @@
         "y": 19
       },
       "id": 49,
-      "panels": [],
-      "title": "Temperature-S",
-      "type": "row"
-    },
-    {
+      "panels": [
+        {
       "alert": {
         "alertRuleTags": {},
         "conditions": [
@@ -430,7 +427,12 @@
       "type": "ryantxu-ajax-panel",
       "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors/$__dashboard",
       "withCredentials": false
+    }
+      ],
+      "title": "Temperature-S",
+      "type": "row"
     },
+    
     {
       "collapsed": true,
       "datasource": null,
