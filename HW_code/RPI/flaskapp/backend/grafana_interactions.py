@@ -305,10 +305,12 @@ def _get_dashboard_json(dash_title, org):
         headers = {"Content-Type": 'application/json'}
         response = requests.get(url, headers=headers)
         data = response.json()
-        print("************************************")
-        print(data['dashboard']['panels'])
+        #print("************************************")
+        #print(data['dashboard']['panels'])
+        return data
     else:
         print("get dash json not working")
+        return None
 
 
 def _delete_dashboard(dash_title):
