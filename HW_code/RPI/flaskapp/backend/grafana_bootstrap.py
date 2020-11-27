@@ -50,26 +50,22 @@ def bootstrap(name, organization, email, password, channel_id):
     if gr._organization_check(org) == 0:
         # organization not found in grafana
         gr._create_organization(org)
-        gr._change_current_organization_to(org)     # switch to org
 
-        # Create datasource
-        data_source_id = gr._create_datasource(org_database_name, org_database_name, "admin", "admin")
+    gr._change_current_organization_to(org)     # switch to org
 
-        # Create alert channels
-        gr._create_notification_channels(noti_json)
-
-        # Create dashborads
-        dash_ids = []
-        dash_ids.append(gr._create_dashboard(dash_pr_json))
-        dash_ids.append(gr._create_dashboard(dash_ag_json))
-        dash_ids.append(gr._create_dashboard(dash_es_json))
-        dash_ids.append(gr._create_dashboard(dash_al_json))
-        dash_ids.append(gr._create_dashboard(dash_ca_json))
-
-        # Load preferences
-        gr.update_preferences_org(dash_ids[0])
-    else:
-        gr._change_current_organization_to(org)     # switch to org
+    # Create datasource
+    data_source_id = gr._create_datasource(org_database_name, org_database_name, "admin", "admin")
+    # Create alert channels
+    gr._create_notification_channels(noti_json)
+    # Create dashborads
+    dash_ids = []
+    dash_ids.append(gr._create_dashboard(dash_pr_json))
+    dash_ids.append(gr._create_dashboard(dash_ag_json))
+    dash_ids.append(gr._create_dashboard(dash_es_json))
+    dash_ids.append(gr._create_dashboard(dash_al_json))
+    dash_ids.append(gr._create_dashboard(dash_ca_json))
+    # Load preferences
+    gr.update_preferences_org(dash_ids[0])
 
     # Create new user
     if gr._user_check(org, user["login"]) == 0:
