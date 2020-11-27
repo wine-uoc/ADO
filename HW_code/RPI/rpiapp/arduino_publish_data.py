@@ -181,6 +181,7 @@ def publish_data(magnitude,response, client, topic, engine):
                 logging.error("some CO2 error")
         
         payload = [{"bn": "", "n": name, "u": unit, "v": value, "t": timestamp}]
+        #payload = {"bn": "", "n": name, "u": unit, "v": 10, "t": timestamp}
         #print(payload)
         client.publish(topic, json.dumps(payload))
 
