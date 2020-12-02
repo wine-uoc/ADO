@@ -131,7 +131,7 @@ def get_post_js_data_setsensor():
 @login_required
 def dashboard_upgrade():
   # TODO load all files from server or github for updated versions
-    #noti_json = load_json('flaskapp/backend/alert_channels/slack.json')
+    #noti_json = load_json('flaskapp/backend/alert_channels/slack.json')   
     try:
       num_dashs = 4
       dash_pr_json = load_json('flaskapp/backend/dashboards/principal.json')

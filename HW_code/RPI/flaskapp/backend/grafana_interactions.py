@@ -245,8 +245,14 @@ def _create_dashboard(dash_json):
     data["overwrite"] = True
     response = requests.post(url, json=data, headers=headers)
     print(response.text)
-    return response.json()["id"]
+    return response.json()["id"] #old: "id"
 
+def _update_existing_dashboard(dash_json):
+    url = host + '/api/dashboards/db'
+    headers = {"Content-Type": 'application/json'}
+    response = requests.post(url, json=dash_json, headers=headers)
+    print(response.text)
+    return response.json()['status'], response.json()["uid"]
 
 def _create_dashboard_old(name):
     url = host + '/api/dashboards/db'
