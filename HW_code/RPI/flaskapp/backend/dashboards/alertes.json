@@ -57,7 +57,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1606474430857,
+  "iteration": 1606928041444,
   "links": [
     {
       "asDropdown": true,
@@ -70,7 +70,7 @@
   "panels": [
     {
       "content": "----\n## Aqüicultura Digital Oberta\n----\nEs mostren les alertes de temperatura del dispositiu.\n\n",
-      "datasource": null,
+      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -100,7 +100,7 @@
     {
       "dashboardFilter": "",
       "dashboardTags": [],
-      "datasource": null,
+      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -110,17 +110,17 @@
       },
       "folderId": null,
       "gridPos": {
-        "h": 15,
+        "h": 16,
         "w": 23,
         "x": 0,
         "y": 4
       },
       "id": 4,
-      "limit": 10,
+      "limit": "11",
       "nameFilter": "",
       "onlyAlertsOnDashboard": true,
       "show": "current",
-      "sortOrder": 1,
+      "sortOrder": 3,
       "stateFilter": [],
       "targets": [
         {
@@ -167,280 +167,279 @@
     },
     {
       "collapsed": true,
-      "datasource": null,
+      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
       "gridPos": {
         "h": 1,
-        "w": 24,
-        "x": 0,
-        "y": 19
-      },
-      "id": 49,
-      "panels": [
-        {
-      "alert": {
-        "alertRuleTags": {},
-        "conditions": [
-          {
-            "evaluator": {
-              "params": [
-                10,
-                30
-              ],
-              "type": "outside_range"
-            },
-            "operator": {
-              "type": "and"
-            },
-            "query": {
-              "params": [
-                "A",
-                "1m",
-                "now"
-              ]
-            },
-            "reducer": {
-              "params": [],
-              "type": "max"
-            },
-            "type": "query"
-          }
-        ],
-        "executionErrorState": "alerting",
-        "for": "1m",
-        "frequency": "10s",
-        "handler": 1,
-        "name": "Temperature-S alert",
-        "noDataState": "no_data",
-        "notifications": []
-      },
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "description": "",
-      "fieldConfig": {
-        "defaults": {
-          "custom": {},
-          "links": []
-        },
-        "overrides": []
-      },
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 14,
         "w": 24,
         "x": 0,
         "y": 20
       },
-      "hiddenSeries": false,
-      "id": 2,
-      "legend": {
-        "alignAsTable": true,
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "rightSide": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "percentage": false,
-      "pluginVersion": "7.1.5",
-      "pointradius": 2,
-      "points": true,
-      "renderer": "flot",
-      "repeat": "Sensors",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
+      "id": 49,
+      "panels": [
         {
-          "alias": "[[tag_devname]]",
-          "groupBy": [
-            {
-              "params": [
-                "devname"
-              ],
-              "type": "tag"
-            }
-          ],
-          "measurement": "messages",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "SELECT mean(\"value\") FROM \"messages\" WHERE (\"name\" = 'Temperature') AND $timeFilter GROUP BY time($__interval) fill(null)",
-          "rawQuery": false,
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
+          "alert": {
+            "alertRuleTags": {},
+            "conditions": [
               {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
+                "evaluator": {
+                  "params": [
+                    10,
+                    25
+                  ],
+                  "type": "outside_range"
+                },
+                "operator": {
+                  "type": "and"
+                },
+                "query": {
+                  "params": [
+                    "A",
+                    "1m",
+                    "now"
+                  ]
+                },
+                "reducer": {
+                  "params": [],
+                  "type": "max"
+                },
+                "type": "query"
               }
-            ]
-          ],
-          "tags": [
+            ],
+            "executionErrorState": "alerting",
+            "for": "1m",
+            "frequency": "10s",
+            "handler": 1,
+            "name": "Temperature-S alert",
+            "noDataState": "no_data",
+            "notifications": []
+          },
+          "aliasColors": {},
+          "bars": false,
+          "dashLength": 10,
+          "dashes": false,
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "description": "",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {},
+              "links": []
+            },
+            "overrides": []
+          },
+          "fill": 1,
+          "fillGradient": 0,
+          "gridPos": {
+            "h": 14,
+            "w": 24,
+            "x": 0,
+            "y": 20
+          },
+          "hiddenSeries": false,
+          "id": 2,
+          "legend": {
+            "alignAsTable": true,
+            "avg": false,
+            "current": false,
+            "max": false,
+            "min": false,
+            "rightSide": false,
+            "show": true,
+            "total": false,
+            "values": false
+          },
+          "lines": true,
+          "linewidth": 1,
+          "nullPointMode": "null",
+          "percentage": false,
+          "pluginVersion": "7.1.5",
+          "pointradius": 2,
+          "points": true,
+          "renderer": "flot",
+          "repeat": "Sensors",
+          "seriesOverrides": [],
+          "spaceLength": 10,
+          "stack": false,
+          "steppedLine": false,
+          "targets": [
             {
-              "key": "name",
-              "operator": "=",
-              "value": "Temperature-S"
-            }
-          ]
-        }
-      ],
-      "thresholds": [
-        {
-          "colorMode": "critical",
-          "fill": true,
-          "line": true,
-          "op": "lt",
-          "value": 10
-        },
-        {
-          "colorMode": "critical",
-          "fill": true,
-          "line": true,
-          "op": "gt",
-          "value": 30
-        }
-      ],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Temperature-S [Cel] ",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "transformations": [],
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "decimals": null,
-          "format": "short",
-          "label": "Celsius",
-          "logBase": 1,
-          "max": "40",
-          "min": "0",
-          "show": true
-        },
-        {
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "datasource": null,
-      "fieldConfig": {
-        "defaults": {
-          "custom": {}
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 5,
-        "w": 12,
-        "x": 0,
-        "y": 34
-      },
-      "header_js": "{}",
-      "id": 53,
-      "method": "iframe",
-      "mode": "html",
-      "params_js": "{\n from:ctrl.range.from.format('x'),  // x is unix ms timestamp\n to:ctrl.range.to.format('x'), \n height:ctrl.height,\n now:Date.now(),\n interval: ctrl.template('$__interval'),\n sample: 'Not escaped: $__interval',\n since:ctrl.lastRequestTime\n}",
-      "pluginVersion": "7.1.5",
-      "request": "http",
-      "responseType": "text",
-      "showErrors": true,
-      "showTime": false,
-      "showTimeFormat": "LTS",
-      "showTimePrefix": null,
-      "showTimeValue": "request",
-      "skipSameURL": true,
-      "targets": [
-        {
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
+              "alias": "[[tag_devname]]",
+              "groupBy": [
+                {
+                  "params": [
+                    "devname"
+                  ],
+                  "type": "tag"
+                }
               ],
-              "type": "time"
+              "measurement": "messages",
+              "orderByTime": "ASC",
+              "policy": "default",
+              "query": "SELECT mean(\"value\") FROM \"messages\" WHERE (\"name\" = 'Temperature') AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "rawQuery": false,
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  }
+                ]
+              ],
+              "tags": [
+                {
+                  "key": "name",
+                  "operator": "=",
+                  "value": "Temperature-S"
+                }
+              ]
+            }
+          ],
+          "thresholds": [
+            {
+              "colorMode": "critical",
+              "fill": true,
+              "line": true,
+              "op": "lt",
+              "value": 10
             },
             {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
+              "colorMode": "critical",
+              "fill": true,
+              "line": true,
+              "op": "gt",
+              "value": 25
             }
           ],
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "value"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
+          "timeFrom": null,
+          "timeRegions": [],
+          "timeShift": null,
+          "title": "Temperature-S [Cel] ",
+          "tooltip": {
+            "shared": true,
+            "sort": 0,
+            "value_type": "individual"
+          },
+          "transformations": [],
+          "type": "graph",
+          "xaxis": {
+            "buckets": null,
+            "mode": "time",
+            "name": null,
+            "show": true,
+            "values": []
+          },
+          "yaxes": [
+            {
+              "decimals": null,
+              "format": "short",
+              "label": "Celsius",
+              "logBase": 1,
+              "max": "40",
+              "min": "0",
+              "show": true
+            },
+            {
+              "format": "short",
+              "label": null,
+              "logBase": 1,
+              "max": null,
+              "min": null,
+              "show": true
+            }
           ],
-          "tags": []
+          "yaxis": {
+            "align": false,
+            "alignLevel": null
+          }
+        },
+        {
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "fieldConfig": {
+            "defaults": {
+              "custom": {}
+            },
+            "overrides": []
+          },
+          "gridPos": {
+            "h": 9,
+            "w": 24,
+            "x": 0,
+            "y": 34
+          },
+          "header_js": "{}",
+          "id": 53,
+          "method": "iframe",
+          "mode": "html",
+          "params_js": "{\n from:ctrl.range.from.format('x'),  // x is unix ms timestamp\n to:ctrl.range.to.format('x'), \n height:ctrl.height,\n now:Date.now(),\n interval: ctrl.template('$__interval'),\n sample: 'Not escaped: $__interval',\n since:ctrl.lastRequestTime\n}",
+          "pluginVersion": "7.1.5",
+          "request": "http",
+          "responseType": "text",
+          "showErrors": true,
+          "showTime": false,
+          "showTimeFormat": "LTS",
+          "showTimePrefix": null,
+          "showTimeValue": "request",
+          "skipSameURL": true,
+          "targets": [
+            {
+              "groupBy": [
+                {
+                  "params": [
+                    "$__interval"
+                  ],
+                  "type": "time"
+                },
+                {
+                  "params": [
+                    "null"
+                  ],
+                  "type": "fill"
+                }
+              ],
+              "orderByTime": "ASC",
+              "policy": "default",
+              "refId": "A",
+              "resultFormat": "time_series",
+              "select": [
+                [
+                  {
+                    "params": [
+                      "value"
+                    ],
+                    "type": "field"
+                  },
+                  {
+                    "params": [],
+                    "type": "mean"
+                  }
+                ]
+              ],
+              "tags": []
+            }
+          ],
+          "templateResponse": true,
+          "timeFrom": null,
+          "timeShift": null,
+          "title": "Set Alarm Limits",
+          "type": "ryantxu-ajax-panel",
+          "url": "http://127.0.0.1/control/SetAlarm/$Topic/sensors/Temperature-S/${__org.name}/$__dashboard/${__user.login} ",
+          "withCredentials": false
         }
-      ],
-      "templateResponse": true,
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Set Alarm Limits",
-      "type": "ryantxu-ajax-panel",
-      "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors/$__dashboard",
-      "withCredentials": false
-    }
       ],
       "title": "Temperature-S",
       "type": "row"
     },
-    
     {
       "collapsed": true,
-      "datasource": null,
+      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 39
+        "y": 21
       },
       "id": 47,
       "panels": [
@@ -451,8 +450,8 @@
               {
                 "evaluator": {
                   "params": [
-                    0,
-                    1500
+                    5,
+                    35
                   ],
                   "type": "outside_range"
                 },
@@ -485,7 +484,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": null,
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -500,7 +499,7 @@
             "h": 14,
             "w": 24,
             "x": 0,
-            "y": 48
+            "y": 22
           },
           "hiddenSeries": false,
           "id": 25,
@@ -578,14 +577,14 @@
               "fill": true,
               "line": true,
               "op": "lt",
-              "value": 0
+              "value": 5
             },
             {
               "colorMode": "critical",
               "fill": true,
               "line": true,
               "op": "gt",
-              "value": 1500
+              "value": 35
             }
           ],
           "timeFrom": null,
@@ -631,7 +630,7 @@
           }
         },
         {
-          "datasource": null,
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -639,10 +638,10 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 3,
-            "w": 9,
+            "h": 9,
+            "w": 24,
             "x": 0,
-            "y": 62
+            "y": 36
           },
           "header_js": "{}",
           "id": 55,
@@ -700,7 +699,7 @@
           "timeShift": null,
           "title": "Set Alarm Limits",
           "type": "ryantxu-ajax-panel",
-          "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors",
+          "url": "http://127.0.0.1/control/SetAlarm/$Topic/sensors/AirCO2/${__org.name}/$__dashboard/${__user.login} ",
           "withCredentials": false
         }
       ],
@@ -709,12 +708,12 @@
     },
     {
       "collapsed": true,
-      "datasource": null,
+      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 22
       },
       "id": 45,
       "panels": [
@@ -759,7 +758,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": null,
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -774,7 +773,7 @@
             "h": 14,
             "w": 24,
             "x": 0,
-            "y": 46
+            "y": 22
           },
           "hiddenSeries": false,
           "id": 23,
@@ -905,7 +904,7 @@
           }
         },
         {
-          "datasource": null,
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -913,10 +912,10 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 3,
-            "w": 9,
+            "h": 9,
+            "w": 24,
             "x": 0,
-            "y": 60
+            "y": 36
           },
           "header_js": "{}",
           "id": 57,
@@ -974,7 +973,7 @@
           "timeShift": null,
           "title": "Set Alarm Limits",
           "type": "ryantxu-ajax-panel",
-          "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors",
+          "url": "http://127.0.0.1/control/SetAlarm/$Topic/sensors/WaterLevel/${__org.name}/$__dashboard/${__user.login} ",
           "withCredentials": false
         }
       ],
@@ -983,12 +982,12 @@
     },
     {
       "collapsed": true,
-      "datasource": null,
+      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 41
+        "y": 23
       },
       "id": 43,
       "panels": [
@@ -999,8 +998,8 @@
               {
                 "evaluator": {
                   "params": [
-                    10,
-                    30
+                    5,
+                    25
                   ],
                   "type": "outside_range"
                 },
@@ -1033,7 +1032,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": null,
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1048,7 +1047,7 @@
             "h": 14,
             "w": 24,
             "x": 0,
-            "y": 44
+            "y": 23
           },
           "hiddenSeries": false,
           "id": 21,
@@ -1179,7 +1178,7 @@
           }
         },
         {
-          "datasource": null,
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1187,10 +1186,10 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 3,
-            "w": 9,
+            "h": 9,
+            "w": 24,
             "x": 0,
-            "y": 58
+            "y": 37
           },
           "header_js": "{}",
           "id": 59,
@@ -1248,7 +1247,7 @@
           "timeShift": null,
           "title": "Set Alarm Limits",
           "type": "ryantxu-ajax-panel",
-          "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors",
+          "url": "http://127.0.0.1/control/SetAlarm/$Topic/sensors/Oxygen/${__org.name}/$__dashboard/${__user.login} ",
           "withCredentials": false
         }
       ],
@@ -1257,12 +1256,12 @@
     },
     {
       "collapsed": true,
-      "datasource": null,
+      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 42
+        "y": 24
       },
       "id": 41,
       "panels": [
@@ -1307,7 +1306,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": null,
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1322,7 +1321,7 @@
             "h": 14,
             "w": 24,
             "x": 0,
-            "y": 42
+            "y": 24
           },
           "hiddenSeries": false,
           "id": 19,
@@ -1453,7 +1452,7 @@
           }
         },
         {
-          "datasource": null,
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1461,10 +1460,10 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 3,
-            "w": 9,
+            "h": 9,
+            "w": 24,
             "x": 0,
-            "y": 56
+            "y": 38
           },
           "header_js": "{}",
           "id": 61,
@@ -1522,7 +1521,7 @@
           "timeShift": null,
           "title": "Set Alarm Limits",
           "type": "ryantxu-ajax-panel",
-          "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors",
+          "url": "http://127.0.0.1/control/SetAlarm/$Topic/sensors/AtmosphericTemp/${__org.name}/$__dashboard/${__user.login} ",
           "withCredentials": false
         }
       ],
@@ -1531,12 +1530,12 @@
     },
     {
       "collapsed": true,
-      "datasource": null,
+      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 43
+        "y": 25
       },
       "id": 39,
       "panels": [
@@ -1581,7 +1580,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": null,
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1596,7 +1595,7 @@
             "h": 14,
             "w": 24,
             "x": 0,
-            "y": 40
+            "y": 25
           },
           "hiddenSeries": false,
           "id": 17,
@@ -1727,7 +1726,7 @@
           }
         },
         {
-          "datasource": null,
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1735,10 +1734,10 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 3,
-            "w": 9,
+            "h": 9,
+            "w": 24,
             "x": 0,
-            "y": 54
+            "y": 39
           },
           "header_js": "{}",
           "id": 63,
@@ -1796,7 +1795,7 @@
           "timeShift": null,
           "title": "Set Alarm Limits",
           "type": "ryantxu-ajax-panel",
-          "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors",
+          "url": "http://127.0.0.1/control/SetAlarm/$Topic/sensors/Conductivity2/${__org.name}/$__dashboard/${__user.login} ",
           "withCredentials": false
         }
       ],
@@ -1805,12 +1804,12 @@
     },
     {
       "collapsed": true,
-      "datasource": null,
+      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 44
+        "y": 26
       },
       "id": 37,
       "panels": [
@@ -1821,8 +1820,8 @@
               {
                 "evaluator": {
                   "params": [
-                    10,
-                    30
+                    15,
+                    45
                   ],
                   "type": "outside_range"
                 },
@@ -1855,7 +1854,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": null,
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1870,7 +1869,7 @@
             "h": 14,
             "w": 24,
             "x": 0,
-            "y": 38
+            "y": 26
           },
           "hiddenSeries": false,
           "id": 15,
@@ -2001,7 +2000,7 @@
           }
         },
         {
-          "datasource": null,
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2009,10 +2008,10 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 3,
-            "w": 9,
+            "h": 9,
+            "w": 24,
             "x": 0,
-            "y": 52
+            "y": 40
           },
           "header_js": "{}",
           "id": 65,
@@ -2070,7 +2069,7 @@
           "timeShift": null,
           "title": "Set Alarm Limits",
           "type": "ryantxu-ajax-panel",
-          "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors",
+          "url": "http://127.0.0.1/control/SetAlarm/$Topic/sensors/Conductivity1/${__org.name}/$__dashboard/${__user.login} ",
           "withCredentials": false
         }
       ],
@@ -2079,12 +2078,12 @@
     },
     {
       "collapsed": true,
-      "datasource":null,
+      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 45
+        "y": 27
       },
       "id": 35,
       "panels": [
@@ -2129,7 +2128,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": null,
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -2144,7 +2143,7 @@
             "h": 14,
             "w": 24,
             "x": 0,
-            "y": 36
+            "y": 27
           },
           "hiddenSeries": false,
           "id": 13,
@@ -2275,7 +2274,7 @@
           }
         },
         {
-          "datasource": null,
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2283,10 +2282,10 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 3,
-            "w": 9,
+            "h": 9,
+            "w": 24,
             "x": 0,
-            "y": 50
+            "y": 41
           },
           "header_js": "{}",
           "id": 67,
@@ -2344,7 +2343,7 @@
           "timeShift": null,
           "title": "Set Alarm Limits",
           "type": "ryantxu-ajax-panel",
-          "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors",
+          "url": "http://127.0.0.1/control/SetAlarm/$Topic/sensors/Turbidity/${__org.name}/$__dashboard/${__user.login} ",
           "withCredentials": false
         }
       ],
@@ -2353,12 +2352,12 @@
     },
     {
       "collapsed": true,
-      "datasource": null,
+      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 46
+        "y": 28
       },
       "id": 33,
       "panels": [
@@ -2403,7 +2402,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": null,
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -2418,7 +2417,7 @@
             "h": 14,
             "w": 24,
             "x": 0,
-            "y": 34
+            "y": 28
           },
           "hiddenSeries": false,
           "id": 11,
@@ -2549,7 +2548,7 @@
           }
         },
         {
-          "datasource": null,
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2557,10 +2556,10 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 3,
-            "w": 9,
+            "h": 10,
+            "w": 24,
             "x": 0,
-            "y": 48
+            "y": 42
           },
           "header_js": "{}",
           "id": 69,
@@ -2618,7 +2617,7 @@
           "timeShift": null,
           "title": "Set Alarm Limits",
           "type": "ryantxu-ajax-panel",
-          "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors",
+          "url": "http://127.0.0.1/control/SetAlarm/$Topic/sensors/pH/${__org.name}/$__dashboard/${__user.login} ",
           "withCredentials": false
         }
       ],
@@ -2627,12 +2626,12 @@
     },
     {
       "collapsed": true,
-      "datasource": null,
+      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 47
+        "y": 29
       },
       "id": 31,
       "panels": [
@@ -2677,7 +2676,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": null,
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -2692,7 +2691,7 @@
             "h": 14,
             "w": 24,
             "x": 0,
-            "y": 32
+            "y": 29
           },
           "hiddenSeries": false,
           "id": 9,
@@ -2823,7 +2822,7 @@
           }
         },
         {
-          "datasource": null,
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2831,10 +2830,10 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 3,
-            "w": 9,
+            "h": 9,
+            "w": 24,
             "x": 0,
-            "y": 46
+            "y": 43
           },
           "header_js": "{}",
           "id": 71,
@@ -2892,7 +2891,7 @@
           "timeShift": null,
           "title": "Set Alarm Limits",
           "type": "ryantxu-ajax-panel",
-          "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors",
+          "url": "http://127.0.0.1/control/SetAlarm/$Topic/sensors/Humidity/${__org.name}/$__dashboard/${__user.login} ",
           "withCredentials": false
         }
       ],
@@ -2901,12 +2900,12 @@
     },
     {
       "collapsed": true,
-      "datasource": null,
+      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 48
+        "y": 30
       },
       "id": 29,
       "panels": [
@@ -2951,7 +2950,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": null,
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -3097,7 +3096,7 @@
           }
         },
         {
-          "datasource": null,
+          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -3105,8 +3104,8 @@
             "overrides": []
           },
           "gridPos": {
-            "h": 3,
-            "w": 9,
+            "h": 9,
+            "w": 24,
             "x": 0,
             "y": 44
           },
@@ -3166,7 +3165,7 @@
           "timeShift": null,
           "title": "Set Alarm Limits",
           "type": "ryantxu-ajax-panel",
-          "url": "http://127.0.0.1/control/SetSR/$Publisher/$Topic/sensors/$Sensors",
+          "url": "http://127.0.0.1/control/SetAlarm/$Topic/sensors/Temperature-D/${__org.name}/$__dashboard/${__user.login} ",
           "withCredentials": false
         }
       ],
@@ -3174,7 +3173,7 @@
       "type": "row"
     }
   ],
-  "refresh": "5s",
+  "refresh": "30s",
   "schemaVersion": 26,
   "style": "dark",
   "tags": [],
@@ -3183,8 +3182,8 @@
       {
         "current": {
           "selected": false,
-          "text": "22e073e5-f4f5-4b81-9074-84e529c564c9",
-          "value": "22e073e5-f4f5-4b81-9074-84e529c564c9"
+          "text": "bbf3d0d9-3051-4bef-8eeb-4209e6c62a43",
+          "value": "bbf3d0d9-3051-4bef-8eeb-4209e6c62a43"
         },
         "hide": 2,
         "includeAll": false,
@@ -3197,11 +3196,33 @@
         "regex": "",
         "skipUrlSync": false,
         "type": "datasource"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "$DB",
+        "definition": "SHOW TAG VALUES WITH KEY=\"channel\"",
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "Topic",
+        "options": [],
+        "query": "SHOW TAG VALUES WITH KEY=\"channel\"",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       }
     ]
   },
   "time": {
-    "from": "now-6h",
+    "from": "now-30m",
     "to": "now"
   },
   "timepicker": {
@@ -3220,5 +3241,5 @@
   "timezone": "",
   "title": "Alertes",
   "uid": "_QuLzfWGk",
-  "version": 48
+  "version": 36
 }

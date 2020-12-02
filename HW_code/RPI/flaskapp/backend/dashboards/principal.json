@@ -49,7 +49,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1604053704626,
+  "iteration": 1606926422322,
   "links": [],
   "panels": [
     {
@@ -124,17 +124,17 @@
       },
       "folderId": null,
       "gridPos": {
-        "h": 10,
+        "h": 19,
         "w": 13,
         "x": 6,
         "y": 10
       },
       "id": 6,
-      "limit": 10,
+      "limit": "11",
       "nameFilter": "",
       "onlyAlertsOnDashboard": false,
-      "show": "changes",
-      "sortOrder": 1,
+      "show": "current",
+      "sortOrder": 3,
       "stateFilter": [],
       "targets": [
         {
@@ -188,8 +188,8 @@
       {
         "current": {
           "selected": false,
-          "text": "22e073e5-f4f5-4b81-9074-84e529c564c9",
-          "value": "22e073e5-f4f5-4b81-9074-84e529c564c9"
+          "text": "bbf3d0d9-3051-4bef-8eeb-4209e6c62a43",
+          "value": "bbf3d0d9-3051-4bef-8eeb-4209e6c62a43"
         },
         "hide": 2,
         "includeAll": false,
@@ -226,5 +226,5 @@
   "timezone": "",
   "title": "Principal",
   "uid": "0Q1rv4WGk",
-  "version": 4
+  "version": 3
 }
