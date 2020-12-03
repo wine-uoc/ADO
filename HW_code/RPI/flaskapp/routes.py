@@ -4,11 +4,12 @@ from flask import current_app as app
 from flask_login import login_required, logout_user
 
 from .assets import compile_main_assets
-from .control import get_node_id, get_config_obj, delete_tables_entries, update_config_values, get_wifi_obj, \
+from .control import get_node_id, get_thing_id, get_account_token, get_config_obj, delete_tables_entries, update_config_values, get_wifi_obj, \
     update_wifi_data, get_user_org, get_tokens_obj, get_calib_1_obj, get_calib_2_obj, get_req_calib_1_obj, get_req_calib_2_obj
 from .forms import WifiForm
 import flaskapp.backend.grafana_interactions as gr
 from flaskapp.backend.grafana_bootstrap import load_json
+from flaskapp.backend.mainflux_provisioning import delete_thing
 from config import ConfigFlaskApp, ConfigRPI
 
 
@@ -91,11 +92,20 @@ def logout():
 @main_bp.route("/delete")
 @login_required
 def delete():
-    """Factory reset. Delete entries one by one for each table (or delete database file?)"""
-    # TODO: disconnect thing of channel (backend)
-    delete_tables_entries()
-    logout_user()
+    """Factory reset. Delete thing from mainflux. Leave account alive. Delete entries one by one from each table"""
+    token = get_account_token()
+    thingid= get_thing_id() #not name!!! mainflux thing id. get_node_id returns name
+    response = delete_thing(token, thingid)
+    print("token:", token)
+    print("node:", thingid)
+    print(response)
+    if response.ok:
+      delete_tables_entries()
+      logout_user()
+    else:
+      flash("Error when trying to factory reset")
     return redirect(url_for('main_bp.dashboard'))
+
 
 
 @main_bp.route('/activatewifi', methods=['POST'])

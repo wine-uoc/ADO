@@ -1,9 +1,14 @@
 """Database control functions."""
+import json
 from flask import current_app as app
 from flask_login import current_user
+import requests
+import urllib3
+from config import ConfigRPI
 
 from .models import db, User, NodeConfig, Wifi, Tokens, Calibration_1, Calibration_2, Calibration_1_Temp, Calibration_2_Temp, Requires_Cal_1, Requires_Cal_2
 from .utils import create_node_name, delete_entries
+
 
 
 def delete_tables_entries():
@@ -57,6 +62,9 @@ def get_config_obj():
     """Query to db to get current node config. object."""
     return NodeConfig.query.filter_by(id=current_user.email).first()
 
+def get_user_obj():
+    """Query to db to get current node config. object."""
+    return User.query.filter_by(id=current_user.email).first()
 
 def get_wifi_obj():
     """Query to db to get current wifi status."""
@@ -71,6 +79,14 @@ def get_tokens_obj():
 def get_node_id():
     """Query to db to get the unique node id."""
     return Tokens.query.filter_by(id=current_user.email).first().node_id
+
+def get_account_token():
+    """Query to db to get the unique node id."""
+    return Tokens.query.filter_by(id=current_user.email).first().account_token
+
+def get_thing_id():
+    """Query to db to get the unique node id."""
+    return Tokens.query.filter_by(id=current_user.email).first().thing_id
 
 def get_calib_1_obj():
     """Query to db to get current node config. object."""
@@ -98,9 +114,27 @@ def get_user_org():
 
 
 def validate_user(email, password):
-    """Validate user pass against db."""
+    """Validate user pass against db and use login to renew user account token which expires every 24h."""
     user = User.query.filter_by(email=email).first()
     if user and user.check_password(password=password, hash_it=app.config['HASH_USER_PASSWORD']):
+        print("checking credentials")
+        #new implementation of mainflux_provisioning get_accout_token to avoid circular includes 
+        host = ConfigRPI.SERVER_URL
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        url = host + '/tokens'
+        data = {
+            "email": str(email),
+            "password": str(password)
+        }
+        headers = {"Content-Type": 'application/json'}
+        response = requests.post(url, json=data, headers=headers, verify=False)
+        new_account_token = response.json()['token']
+
+        print("updating account token to:", new_account_token)
+        #renew account token in database
+        tokens = Tokens.query.filter_by(id=email).first()
+        tokens.account_token = new_account_token
+        db.session.commit()
         return user
     else:
         return None

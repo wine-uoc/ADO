@@ -58,6 +58,10 @@ def create_thing(account_token, thing_name, thing_type):
     headers = {"Content-Type": 'application/json', "Authorization": str(account_token)}
     return requests.post(url, json=data, headers=headers, verify=False)
 
+def delete_thing(account_token, thing_id):
+    url=host+'/things/'+ str(thing_id)
+    headers={"Authorization": str(account_token)}
+    return requests.delete(url,headers=headers, verify=False)
 
 # TODO: code repeats in the next three methods
 def return_thing_id(account_token, thing_name):
