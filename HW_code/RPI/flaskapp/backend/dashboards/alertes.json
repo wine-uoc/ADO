@@ -70,7 +70,7 @@
   "panels": [
     {
       "content": "----\n## Aqüicultura Digital Oberta\n----\nEs mostren les alertes de temperatura del dispositiu.\n\n",
-      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+      "datasource": "",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -100,7 +100,7 @@
     {
       "dashboardFilter": "",
       "dashboardTags": [],
-      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+      "datasource": "",
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -167,7 +167,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+      "datasource": "",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -217,7 +217,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -274,7 +274,7 @@
               "measurement": "messages",
               "orderByTime": "ASC",
               "policy": "default",
-              "query": "SELECT mean(\"value\") FROM \"messages\" WHERE (\"name\" = 'Temperature') AND $timeFilter GROUP BY time($__interval) fill(null)",
+              "query": "SELECT mean(\"value\") FROM \"messages\" WHERE (\"name\" = 'Temperature-S') AND $timeFilter GROUP BY time($__interval) fill(null)",
               "rawQuery": false,
               "refId": "A",
               "resultFormat": "time_series",
@@ -356,7 +356,7 @@
           }
         },
         {
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -434,7 +434,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+      "datasource": "",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -484,7 +484,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -630,7 +630,7 @@
           }
         },
         {
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -708,7 +708,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+      "datasource": "",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -758,7 +758,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -904,7 +904,7 @@
           }
         },
         {
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -982,7 +982,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+      "datasource": "",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1032,7 +1032,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1178,7 +1178,7 @@
           }
         },
         {
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1256,7 +1256,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+      "datasource": "",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1306,7 +1306,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1452,7 +1452,7 @@
           }
         },
         {
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1530,7 +1530,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+      "datasource": "",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1580,7 +1580,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -1726,7 +1726,7 @@
           }
         },
         {
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -1804,7 +1804,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+      "datasource": "",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1854,7 +1854,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -2000,7 +2000,7 @@
           }
         },
         {
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2078,7 +2078,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+      "datasource": "",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2128,7 +2128,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -2274,7 +2274,7 @@
           }
         },
         {
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2352,7 +2352,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+      "datasource": "",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2402,7 +2402,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -2548,7 +2548,7 @@
           }
         },
         {
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2626,7 +2626,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+      "datasource": "",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2676,7 +2676,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -2822,7 +2822,7 @@
           }
         },
         {
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "fieldConfig": {
             "defaults": {
               "custom": {}
@@ -2900,7 +2900,7 @@
     },
     {
       "collapsed": true,
-      "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+      "datasource": "",
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2950,7 +2950,7 @@
           "bars": false,
           "dashLength": 10,
           "dashes": false,
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "description": "",
           "fieldConfig": {
             "defaults": {
@@ -3096,7 +3096,7 @@
           }
         },
         {
-          "datasource": "${DS_BBF3D0D9-3051-4BEF-8EEB-4209E6C62A43}",
+          "datasource": "",
           "fieldConfig": {
             "defaults": {
               "custom": {}
