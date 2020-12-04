@@ -57,7 +57,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1606928041444,
+  "iteration": 1607087252606,
   "links": [
     {
       "asDropdown": true,
@@ -110,16 +110,16 @@
       },
       "folderId": null,
       "gridPos": {
-        "h": 16,
-        "w": 23,
+        "h": 10,
+        "w": 24,
         "x": 0,
         "y": 4
       },
       "id": 4,
-      "limit": "11",
+      "limit": "100",
       "nameFilter": "",
       "onlyAlertsOnDashboard": true,
-      "show": "current",
+      "show": "changes",
       "sortOrder": 3,
       "stateFilter": [],
       "targets": [
@@ -172,7 +172,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 20
+        "y": 14
       },
       "id": 49,
       "panels": [
@@ -439,7 +439,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 15
       },
       "id": 47,
       "panels": [
@@ -476,7 +476,7 @@
             "for": "1m",
             "frequency": "10s",
             "handler": 1,
-            "name": "AircCO2 alert",
+            "name": "AirCO2 alert",
             "noDataState": "no_data",
             "notifications": []
           },
@@ -499,7 +499,7 @@
             "h": 14,
             "w": 24,
             "x": 0,
-            "y": 22
+            "y": 25
           },
           "hiddenSeries": false,
           "id": 25,
@@ -577,14 +577,16 @@
               "fill": true,
               "line": true,
               "op": "lt",
-              "value": 5
+              "value": 5,
+              "yaxis": "left"
             },
             {
               "colorMode": "critical",
               "fill": true,
               "line": true,
               "op": "gt",
-              "value": 35
+              "value": 35,
+              "yaxis": "left"
             }
           ],
           "timeFrom": null,
@@ -641,7 +643,7 @@
             "h": 9,
             "w": 24,
             "x": 0,
-            "y": 36
+            "y": 39
           },
           "header_js": "{}",
           "id": 55,
@@ -713,7 +715,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 22
+        "y": 16
       },
       "id": 45,
       "panels": [
@@ -987,7 +989,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 23
+        "y": 17
       },
       "id": 43,
       "panels": [
@@ -1261,7 +1263,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 24
+        "y": 18
       },
       "id": 41,
       "panels": [
@@ -1535,7 +1537,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 25
+        "y": 19
       },
       "id": 39,
       "panels": [
@@ -1809,7 +1811,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 26
+        "y": 20
       },
       "id": 37,
       "panels": [
@@ -2083,7 +2085,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 27
+        "y": 21
       },
       "id": 35,
       "panels": [
@@ -2357,7 +2359,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 28
+        "y": 22
       },
       "id": 33,
       "panels": [
@@ -2631,7 +2633,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 23
       },
       "id": 31,
       "panels": [
@@ -2905,7 +2907,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 24
       },
       "id": 29,
       "panels": [
@@ -3182,8 +3184,8 @@
       {
         "current": {
           "selected": false,
-          "text": "bbf3d0d9-3051-4bef-8eeb-4209e6c62a43",
-          "value": "bbf3d0d9-3051-4bef-8eeb-4209e6c62a43"
+          "text": "11d6a7c0-2011-4afc-b71a-638a4b1f1cce",
+          "value": "11d6a7c0-2011-4afc-b71a-638a4b1f1cce"
         },
         "hide": 2,
         "includeAll": false,
@@ -3241,5 +3243,5 @@
   "timezone": "",
   "title": "Alertes",
   "uid": "_QuLzfWGk",
-  "version": 36
+  "version": 7
 }

@@ -49,7 +49,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1606213612869,
+  "iteration": 1607087118733,
   "links": [
     {
       "asDropdown": true,
@@ -201,7 +201,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Average $Sensors for each node",
+      "title": "Average $Sensors [$Unit] for each node",
       "transformations": [
         {
           "id": "filterFieldsByName",
@@ -272,6 +272,12 @@
                 "devname"
               ],
               "type": "tag"
+            },
+            {
+              "params": [
+                "unit"
+              ],
+              "type": "tag"
             }
           ],
           "hide": false,
@@ -312,7 +318,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "$Sensors",
+      "title": "$Sensors [$Unit]",
       "tooltip": {
         "shared": true,
         "sort": 2,
@@ -360,8 +366,8 @@
       {
         "current": {
           "selected": false,
-          "text": "22e073e5-f4f5-4b81-9074-84e529c564c9",
-          "value": "22e073e5-f4f5-4b81-9074-84e529c564c9"
+          "text": "11d6a7c0-2011-4afc-b71a-638a4b1f1cce",
+          "value": "11d6a7c0-2011-4afc-b71a-638a4b1f1cce"
         },
         "hide": 2,
         "includeAll": false,
@@ -440,6 +446,28 @@
         "tagsQuery": "",
         "type": "query",
         "useTags": false
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "$DB",
+        "definition": "SHOW TAG VALUES FROM messages WITH KEY=\"unit\" WHERE \"name\"=~ /^$Sensors$/",
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "Unit",
+        "options": [],
+        "query": "SHOW TAG VALUES FROM messages WITH KEY=\"unit\" WHERE \"name\"=~ /^$Sensors$/",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": "",
+        "tags": [],
+        "tagsQuery": "",
+        "type": "query",
+        "useTags": false
       }
     ]
   },
@@ -463,5 +491,5 @@
   "timezone": "",
   "title": "Agregat dispositius",
   "uid": "YT20LzWMk",
-  "version": 18
+  "version": 3
 }

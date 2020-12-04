@@ -49,7 +49,7 @@
   "gnetId": null,
   "graphTooltip": 0,
   "id": null,
-  "iteration": 1604057248697,
+  "iteration": 1607087428011,
   "links": [],
   "panels": [
     {
@@ -188,8 +188,21 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "$Device",
-          "groupBy": [],
+          "alias": "$Device, [[tag_name]] [ [[tag_unit]] ]",
+          "groupBy": [
+            {
+              "params": [
+                "unit"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "name"
+              ],
+              "type": "tag"
+            }
+          ],
           "measurement": "messages",
           "orderByTime": "ASC",
           "policy": "default",
@@ -232,7 +245,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Air CO2",
+      "title": "AirCO2",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -404,8 +417,21 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "$Device",
-          "groupBy": [],
+          "alias": "$Device, [[tag_name]] [ [[tag_unit]] ]",
+          "groupBy": [
+            {
+              "params": [
+                "unit"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "name"
+              ],
+              "type": "tag"
+            }
+          ],
           "measurement": "messages",
           "orderByTime": "ASC",
           "policy": "default",
@@ -525,8 +551,21 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "$Device",
-          "groupBy": [],
+          "alias": "$Device, [[tag_name]] [ [[tag_unit]] ]",
+          "groupBy": [
+            {
+              "params": [
+                "unit"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "name"
+              ],
+              "type": "tag"
+            }
+          ],
           "measurement": "messages",
           "orderByTime": "ASC",
           "policy": "default",
@@ -552,7 +591,7 @@
               "condition": "AND",
               "key": "name",
               "operator": "=",
-              "value": "Temperature"
+              "value": "Temperature-S"
             }
           ]
         }
@@ -561,7 +600,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Temperature",
+      "title": "Temperature-S",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -955,8 +994,21 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "$Device",
-          "groupBy": [],
+          "alias": "$Device, [[tag_name]] [ [[tag_unit]] ]",
+          "groupBy": [
+            {
+              "params": [
+                "unit"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "name"
+              ],
+              "type": "tag"
+            }
+          ],
           "measurement": "messages",
           "orderByTime": "ASC",
           "policy": "default",
@@ -1270,8 +1322,21 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "$Device",
-          "groupBy": [],
+          "alias": "$Device, [[tag_name]] [ [[tag_unit]] ]",
+          "groupBy": [
+            {
+              "params": [
+                "unit"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "name"
+              ],
+              "type": "tag"
+            }
+          ],
           "measurement": "messages",
           "orderByTime": "ASC",
           "policy": "default",
@@ -1692,8 +1757,21 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "$Device",
-          "groupBy": [],
+          "alias": "$Device, [[tag_name]] [ [[tag_unit]] ]",
+          "groupBy": [
+            {
+              "params": [
+                "unit"
+              ],
+              "type": "tag"
+            },
+            {
+              "params": [
+                "name"
+              ],
+              "type": "tag"
+            }
+          ],
           "measurement": "messages",
           "orderByTime": "ASC",
           "policy": "default",
@@ -1993,8 +2071,8 @@
       {
         "current": {
           "selected": false,
-          "text": "22e073e5-f4f5-4b81-9074-84e529c564c9",
-          "value": "22e073e5-f4f5-4b81-9074-84e529c564c9"
+          "text": "11d6a7c0-2011-4afc-b71a-638a4b1f1cce",
+          "value": "11d6a7c0-2011-4afc-b71a-638a4b1f1cce"
         },
         "hide": 2,
         "includeAll": false,
@@ -2035,9 +2113,9 @@
         "current": {},
         "datasource": "$DB",
         "definition": "SHOW TAG VALUES FROM messages WITH KEY=\"publisher\" WHERE \"devname\" =~ /^$Device$/",
-        "hide": 2,
+        "hide": 0,
         "includeAll": false,
-        "label": null,
+        "label": "ID",
         "multi": false,
         "name": "Publisher",
         "options": [],
@@ -2097,5 +2175,5 @@
   "timezone": "",
   "title": "Calibration",
   "uid": "lTtlUdpMk",
-  "version": 7
+  "version": 4
 }
