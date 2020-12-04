@@ -56,9 +56,9 @@ class Fake_node():
         lux = r.uniform(100, 400)
         flow = r.uniform(1, 40)
         timestamp = time.time()
-        payload1 = [{"bn":"","n":"pH", "u":"C","v":ph, "t":timestamp}]
-        payload2 = [{"bn":"","n":"Oxygen", "u":"C","v":do, "t":timestamp}]
-        payload3 = [{"bn":"","n":"Temperature-S", "u":"C","v":temperature, "t":timestamp}]
+        payload1 = [{"bn":"","n":"pH", "u":"","v":ph, "t":timestamp}]
+        payload2 = [{"bn":"","n":"Oxygen", "u":"mg/L","v":do, "t":timestamp}]
+        payload3 = [{"bn":"","n":"Temperature-S", "u":"Cel","v":temperature, "t":timestamp}]
         self.client.publish(self.mqtt_topic,json.dumps(payload1)) 
         self.client.publish(self.mqtt_topic,json.dumps(payload2)) 
         self.client.publish(self.mqtt_topic,json.dumps(payload3)) 
