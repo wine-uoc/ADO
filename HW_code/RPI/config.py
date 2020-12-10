@@ -29,6 +29,13 @@ class ConfigFlaskApp:
     ASSETS_DEBUG = True
     ASSETS_AUTO_BUILD = True
 
+    # Email Config
+    MAIL_SERVER = 'smtp.gmail.com'
+    MAIL_PORT = 465
+    MAIL_USE_SSL = True
+    MAIL_USERNAME = ""
+    MAIL_PASSWORD = ""
+
     # Password storage
     HASH_USER_PASSWORD = True
 
