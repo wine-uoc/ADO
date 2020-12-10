@@ -139,6 +139,13 @@ def validate_user(email, password):
     else:
         return None
 
+def validate_email(email):
+    """Validate user email against db"""
+    user = User.query.filter_by(email=email).first()
+    if user:
+        return user
+    else:
+        return None
 
 def sign_up_database(name, org, email, password, device_name):
     """

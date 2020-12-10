@@ -20,6 +20,7 @@ def compile_auth_assets(app):
     assets.register('js_all', js_bundle)
     # Build assets in development mode
     if app.config['FLASK_ENV'] == 'development':
+        print("*******************************************DEVELOPMENT***********************************************************")
         less_bundle.build()
         js_bundle.build()
 

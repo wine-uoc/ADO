@@ -6,8 +6,8 @@ from flask_login import current_user, login_user, logout_user
 from . import login_manager
 from .assets import compile_auth_assets
 from .backend.mainflux_provisioning import register_node_backend
-from .control import sign_up_database, validate_user, delete_tables_entries
-from .forms import LoginForm, SignupForm
+from .control import sign_up_database, validate_user, delete_tables_entries, validate_email
+from .forms import LoginForm, SignupForm, ResetForm
 from .models import User
 
 # Blueprint Configuration
@@ -94,6 +94,29 @@ def login():
                            title='Log in - ADO',
                            template='login-page')
 
+@auth_bp.route('/forgotpassword', methods=['GET', 'POST'])
+def forgotpassword():
+    """
+    User reset password.
+
+    GET: Serve password reset page.
+    POST: If form is valid and email checks, send user a password reset url.
+    """
+    pass_reset_form = ResetForm()
+    if request.method == 'POST' and pass_reset_form.validate_on_submit():
+        # Validate user
+        user = validate_email(login_form.email.data)
+        if user:
+            login_user(user)
+            next_page = request.args.get('next')
+            return redirect(next_page or url_for('main_bp.dashboard'))
+        flash('This node is registered to a different email address')
+        return redirect(url_for('auth_bp.login'))
+
+    return render_template('forgot.jinja2',
+                           form=pass_reset_form,
+                           title='Password Reset - ADO',
+                           template='login-page')
 
 @login_manager.user_loader
 def load_user(user_id):

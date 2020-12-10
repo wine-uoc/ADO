@@ -5,7 +5,11 @@
 {% endblock %}
 
 {% block content %}
+
     <div class="formwrapper">
+        <h1> Reset password <h1>
+        <p> Enter your information to obtain a password reset link</p>
+        
         <form method="POST">
             {{ form.csrf_token() }}
 
@@ -26,24 +30,12 @@
                 {% endif %}
             </fieldset>
 
-            <fieldset class="password">
-                {{ form.password.label }}
-                {{ form.password }}
-                {% if form.password.errors %}
-                    <ul class="errors">
-                        {% for error in form.password.errors %}<li>{{ error }}</li>{% endfor %}
-                    </ul>
-                {% endif %}
-            </fieldset>
-
             <div class="submitbutton">
-                <input id="submit" type="submit" value="Log In">
+                <input id="submit" type="submit" value="Send Reset Email">
             </div>
 
             <div class="loginsignup">
-                <span style="text-align:right; float:right;"><a href="{{ url_for('auth_bp.forgotpassword') }}">Forgot your password?</a></span>
-                <br></br><br></br>
-                <span>Haven't registered this node yet? <a href="{{ url_for('auth_bp.signup') }}">Register.</a></span>
+                <span><a href="{{ url_for('auth_bp.login') }}">Back to Login.</a></span>
             </div>
         </form>
     </div>

@@ -50,6 +50,13 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Log In')
 
 
+class ResetForm(FlaskForm):
+    """User Login Form."""
+    email = StringField('Email', validators=[DataRequired(),
+                                             Email(message='Enter a valid email.')])
+    submit = SubmitField('Send Reset Email')
+
+
 class WifiForm(FlaskForm):
     """Set-Wifi Form."""
     ssid = StringField('SSID',

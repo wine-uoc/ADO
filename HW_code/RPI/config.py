@@ -26,14 +26,14 @@ class ConfigFlaskApp:
 
     # Assets Config
     LESS_BIN = '/usr/bin/lessc'
-    ASSETS_DEBUG = False
+    ASSETS_DEBUG = True
     ASSETS_AUTO_BUILD = True
 
     # Password storage
     HASH_USER_PASSWORD = True
 
     # Sensors Config
-    DEFAULT_SR = 10
+    DEFAULT_SR = 30
     MAX_NUM_SENSORS_IN_NODE = 11
     REQ_CAL_1 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     REQ_CAL_2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] #db to be used if some cal point needs to be retaken

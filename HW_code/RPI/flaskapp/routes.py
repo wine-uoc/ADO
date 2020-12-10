@@ -96,9 +96,6 @@ def delete():
     token = get_account_token()
     thingid= get_thing_id() #not name!!! mainflux thing id. get_node_id returns name
     response = delete_thing(token, thingid)
-    print("token:", token)
-    print("node:", thingid)
-    print(response)
     if response.ok:
       delete_tables_entries()
       logout_user()
