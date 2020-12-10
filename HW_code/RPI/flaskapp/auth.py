@@ -2,8 +2,9 @@
 from flask import current_app as app
 from flask import redirect, render_template, flash, Blueprint, request, url_for
 from flask_login import current_user, login_user, logout_user
+from flask_mail import Message
 
-from . import login_manager
+from . import login_manager, mail
 from .assets import compile_auth_assets
 from .backend.mainflux_provisioning import register_node_backend
 from .control import sign_up_database, validate_user, delete_tables_entries, validate_email
@@ -105,13 +106,27 @@ def forgotpassword():
     pass_reset_form = ResetForm()
     if request.method == 'POST' and pass_reset_form.validate_on_submit():
         # Validate user
-        user = validate_email(login_form.email.data)
+        user = validate_email(pass_reset_form.email.data)
         if user:
-            login_user(user)
-            next_page = request.args.get('next')
-            return redirect(next_page or url_for('main_bp.dashboard'))
+        
+            msg = Message()
+            msg.subject = "Email Subject"
+            msg.recipients = [pass_reset_form.email.data] #converts to list
+            msg.body = "Email body"
+
+            mail.send(msg)
+
+            flash("An email with the reset link has been sent to this email address. You should receive it shortly")
+            return redirect(url_for('auth_bp.login'))
+            
+            flash("A problem occured while trying to send a password reset email")
+            return redirect(url_for('auth_bp.forgotpassword'))
+
+            #next_page = request.args.get('next')
+            #return redirect(next_page or url_for('main_bp.dashboard'))
         flash('This node is registered to a different email address')
-        return redirect(url_for('auth_bp.login'))
+        #return redirect(url_for('auth_bp.login'))
+        return redirect(url_for('auth_bp.forgotpassword'))
 
     return render_template('forgot.jinja2',
                            form=pass_reset_form,

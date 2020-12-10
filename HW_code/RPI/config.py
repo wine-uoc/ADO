@@ -35,6 +35,7 @@ class ConfigFlaskApp:
     MAIL_USE_SSL = True
     MAIL_USERNAME = ""
     MAIL_PASSWORD = ""
+    MAIL_DEFAULT_SENDER = ""
 
     # Password storage
     HASH_USER_PASSWORD = True
