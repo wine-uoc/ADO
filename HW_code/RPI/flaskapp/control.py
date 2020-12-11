@@ -1,10 +1,13 @@
 """Database control functions."""
 import json
 from flask import current_app as app
+from flask import render_template
 from flask_login import current_user
 import requests
 import urllib3
 from config import ConfigRPI
+from flask_mail import Message
+from . import mail
 
 from .models import db, User, NodeConfig, Wifi, Tokens, Calibration_1, Calibration_2, Calibration_1_Temp, Calibration_2_Temp, Requires_Cal_1, Requires_Cal_2
 from .utils import create_node_name, delete_entries
@@ -146,6 +149,18 @@ def validate_email(email):
         return user
     else:
         return None
+
+def send_email(user):
+
+    token = user.get_reset_token()
+
+    msg = Message()
+    msg.subject = "Reset your ADO-node password"
+    msg.recipients = [user.email] #converts to list
+    print (msg.recipients)
+    msg.html = render_template('reset_email.jinja2', name=user.name, token=token, template='login-page')
+
+    mail.send(msg)
 
 def sign_up_database(name, org, email, password, device_name):
     """

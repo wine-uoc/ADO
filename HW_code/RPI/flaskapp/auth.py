@@ -2,14 +2,13 @@
 from flask import current_app as app
 from flask import redirect, render_template, flash, Blueprint, request, url_for
 from flask_login import current_user, login_user, logout_user
-from flask_mail import Message
 
-from . import login_manager, mail
+from . import login_manager
 from .assets import compile_auth_assets
 from .backend.mainflux_provisioning import register_node_backend
-from .control import sign_up_database, validate_user, delete_tables_entries, validate_email
-from .forms import LoginForm, SignupForm, ResetForm
-from .models import User
+from .control import sign_up_database, validate_user, delete_tables_entries, validate_email, send_email
+from .forms import LoginForm, SignupForm, ResetForm, PasswordResetForm
+from .models import db, User
 
 # Blueprint Configuration
 auth_bp = Blueprint('auth_bp', __name__,
@@ -100,7 +99,7 @@ def forgotpassword():
     """
     User reset password.
 
-    GET: Serve password reset page.
+    GET: Serve password reset page where user submits their email.
     POST: If form is valid and email checks, send user a password reset url.
     """
     pass_reset_form = ResetForm()
@@ -108,22 +107,15 @@ def forgotpassword():
         # Validate user
         user = validate_email(pass_reset_form.email.data)
         if user:
-        
-            msg = Message()
-            msg.subject = "Email Subject"
-            msg.recipients = [pass_reset_form.email.data] #converts to list
-            msg.body = "Email body"
+            try:
+                send_email(user)
 
-            mail.send(msg)
+                flash("An email with the reset link has been sent to this email address. You should receive it shortly")
+                return redirect(url_for('auth_bp.login'))
+            except:
+                flash("A problem occured while trying to send a password reset email")
+                return redirect(url_for('auth_bp.forgotpassword'))
 
-            flash("An email with the reset link has been sent to this email address. You should receive it shortly")
-            return redirect(url_for('auth_bp.login'))
-            
-            flash("A problem occured while trying to send a password reset email")
-            return redirect(url_for('auth_bp.forgotpassword'))
-
-            #next_page = request.args.get('next')
-            #return redirect(next_page or url_for('main_bp.dashboard'))
         flash('This node is registered to a different email address')
         #return redirect(url_for('auth_bp.login'))
         return redirect(url_for('auth_bp.forgotpassword'))
@@ -132,6 +124,36 @@ def forgotpassword():
                            form=pass_reset_form,
                            title='Password Reset - ADO',
                            template='login-page')
+
+@auth_bp.route('/password_reset_code/<token>', methods=['GET', 'POST'])
+def pass_reset_code(token):
+    """
+    User reset password.
+
+    GET: Serve password reset page.
+    POST: If form is valid and new password checks, store the new password and redirect to login.
+    """
+    user = User.verify_reset_token(token)
+    if not user:
+        print('no user found')
+        flash('User not found or token has expired')
+        return redirect(url_for('auth_bp.login'))
+
+    pass_reset_form = PasswordResetForm()
+    if request.method == 'POST' and pass_reset_form.validate_on_submit():
+        #TODO
+        # request post to user-control to modify password in database
+        # verify if change was made by requesting a new token with this new password. if success ok, o/w change was not made
+        if success:
+            user.set_password(pass_reset_form.password.data, hash_it=app.config['HASH_USER_PASSWORD'])
+            db.session.commit()
+            flash('Password successfully updated')
+            return redirect(url_for('auth_bp.login'))
+        else:
+            flash('Password was not updated, please try again later')
+            return redirect(url_for('auth_bp.login'))
+    return render_template('reset_verified.jinja2', form= pass_reset_form, title= "Reset Password - ADO", template='login-page')
+
 
 @login_manager.user_loader
 def load_user(user_id):

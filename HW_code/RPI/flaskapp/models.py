@@ -1,6 +1,9 @@
 """Database models."""
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash, safe_str_cmp
+from config import ConfigFlaskApp
+import jwt
+from time import time
 
 from . import db
 
@@ -37,6 +40,20 @@ class User(UserMixin, db.Model):
             return check_password_hash(self.password, password)
         else:
             return safe_str_cmp(self.password, password)
+
+    def get_reset_token(self, expires=3600): #1hour
+        return jwt.encode({'reset_password': self.name,
+                           'exp':    time() + expires},
+                           key=ConfigFlaskApp.SECRET_KEY)
+    @staticmethod
+    def verify_reset_token(token):
+        try:
+            name = jwt.decode(token, key=ConfigFlaskApp.SECRET_KEY)['reset_password']
+            print(name)
+        except Exception as e:
+            print(e)
+            return
+        return User.query.filter_by(name=name).first()
 
     def __repr__(self):
         return '<User {}>'.format(self.name)

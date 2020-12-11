@@ -57,6 +57,17 @@ class ResetForm(FlaskForm):
     submit = SubmitField('Send Reset Email')
 
 
+class PasswordResetForm(FlaskForm):
+    """User Login Form."""
+    password = PasswordField('Password',
+                             validators=[DataRequired(),
+                                         Length(min=4, message='Select a stronger password.')])
+    confirm = PasswordField('Confirm Your Password',
+                            validators=[DataRequired(),
+                                        EqualTo('password', message='Passwords must match.')])
+    submit = SubmitField('Set New Password')
+
+
 class WifiForm(FlaskForm):
     """Set-Wifi Form."""
     ssid = StringField('SSID',
