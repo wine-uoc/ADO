@@ -11,6 +11,8 @@ from . import mail
 
 from .models import db, User, NodeConfig, Wifi, Tokens, Calibration_1, Calibration_2, Calibration_1_Temp, Calibration_2_Temp, Requires_Cal_1, Requires_Cal_2
 from .utils import create_node_name, delete_entries
+import jwt
+from time import time
 
 
 
@@ -131,8 +133,10 @@ def validate_user(email, password):
         }
         headers = {"Content-Type": 'application/json'}
         response = requests.post(url, json=data, headers=headers, verify=False)
-        new_account_token = response.json()['token']
-
+        try:
+            new_account_token = response.json()['token']
+        except:
+            return None
         print("updating account token to:", new_account_token)
         #renew account token in database
         tokens = Tokens.query.filter_by(id=email).first()
@@ -161,6 +165,17 @@ def send_email(user):
     msg.html = render_template('reset_email.jinja2', name=user.name, token=token, template='login-page')
 
     mail.send(msg)
+
+def get_mainflux_token(user):
+    #verified user, encode new token with channel id
+    tokens=Tokens.query.filter_by(id=user.email).first()
+    channel_id= tokens.channel_id
+    identifier= str(channel_id[0:4]) #for mainflux to find the corresponding key faster
+    token=jwt.encode({'reset_password': user.email,
+                        'exp':    time() + 120}, #2 minutes
+                        key=channel_id).decode('utf-8')
+    return token, identifier
+
 
 def sign_up_database(name, org, email, password, device_name):
     """

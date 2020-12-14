@@ -100,7 +100,7 @@ def delete():
       delete_tables_entries()
       logout_user()
     else:
-      flash("Error when trying to factory reset")
+      flash("Error when trying to factory reset. Please try again after loging in.")
     return redirect(url_for('main_bp.dashboard'))
 
 

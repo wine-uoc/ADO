@@ -6,9 +6,13 @@ from flask_login import current_user, login_user, logout_user
 from . import login_manager
 from .assets import compile_auth_assets
 from .backend.mainflux_provisioning import register_node_backend
-from .control import sign_up_database, validate_user, delete_tables_entries, validate_email, send_email
+from .control import sign_up_database, validate_user, delete_tables_entries, validate_email, send_email, get_mainflux_token
 from .forms import LoginForm, SignupForm, ResetForm, PasswordResetForm
 from .models import db, User
+from config import ConfigRPI 
+import urllib3
+import requests
+import bcrypt
 
 # Blueprint Configuration
 auth_bp = Blueprint('auth_bp', __name__,
@@ -141,10 +145,24 @@ def pass_reset_code(token):
 
     pass_reset_form = PasswordResetForm()
     if request.method == 'POST' and pass_reset_form.validate_on_submit():
-        #TODO
-        # request post to user-control to modify password in database
-        # verify if change was made by requesting a new token with this new password. if success ok, o/w change was not made
-        if success:
+        #sending the new (hashed) password to user-control, together with a new, short-lived, token:
+        new_token, identifier= get_mainflux_token(user)
+        new_password= pass_reset_form.password.data.encode('utf-8')
+        host = ConfigRPI.SERVER_URL
+        urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+        #request post to user-control to modify password in database
+        url = host + '/control/RenewAccountPassword/'+str(new_token)+"/"+ str(identifier)
+        data = {
+            "change": bcrypt.hashpw(new_password, bcrypt.gensalt(10)) #new password for the encoded email
+        }
+        headers = {"Content-Type": 'application/json'}
+        response = requests.post(url, json=data, headers=headers, verify=False)
+        print("*********response**********",response)
+        status = response.json()['status']
+        print(status)
+
+        # verify if change was made with success
+        if status == "success":
             user.set_password(pass_reset_form.password.data, hash_it=app.config['HASH_USER_PASSWORD'])
             db.session.commit()
             flash('Password successfully updated')
