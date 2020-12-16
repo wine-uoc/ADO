@@ -10,8 +10,8 @@ class SignupForm(FlaskForm):
     """User Signup Form."""
     name = StringField('Name',
                        validators=[DataRequired()])
-    org = StringField('Organization Name',
-                      validators=[DataRequired()])
+    #org = StringField('Organization Name',
+    #                  validators=[DataRequired()])
     email = StringField('Email',
                         validators=[Length(min=6),
                                     Email(message='Enter a valid email.'),

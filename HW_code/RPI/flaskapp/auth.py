@@ -39,16 +39,14 @@ def signup():
     signup_form = SignupForm()
     if request.method == 'POST' and signup_form.validate_on_submit():
         # Initialize user and all associated tables in db in RPI
-        error_msg, user, node_id = sign_up_database(signup_form.name.data,
-                                                    signup_form.org.data,
+        error_msg, user, node_id = sign_up_database(signup_form.name.data, #deleted organization from form; org=email
                                                     signup_form.email.data,
                                                     signup_form.password.data,
                                                     signup_form.device.data)
         if not error_msg:
             login_user(user)  # Log in as newly created user (first, to allow queries using current_user)
             # User data provisioning to backend
-            error_msg = register_node_backend(signup_form.name.data,
-                                              signup_form.org.data,
+            error_msg = register_node_backend(signup_form.name.data, #deleted organization from form; org=email
                                               signup_form.email.data,
                                               signup_form.password.data,
                                               node_id)

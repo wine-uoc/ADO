@@ -177,7 +177,7 @@ def get_mainflux_token(user):
     return token, identifier
 
 
-def sign_up_database(name, org, email, password, device_name):
+def sign_up_database(name, email, password, device_name):
     """
     Given user input in sign up form, initializes all tables of the database
     NOTE: WiFi password is currently stored in plain text (needed for Raspbian)
@@ -191,6 +191,7 @@ def sign_up_database(name, org, email, password, device_name):
     """
     # Check if user does not exists and the node has not been registered yet to another account
     # existing_user = User.query.filter_by(email=email).first()
+    org= str(email) #this way organization is unique and user cannot temper it
     existing_user = User.query.first()
     if existing_user is None:
         user = User(name=name, org=org, email=email)    # userdata table

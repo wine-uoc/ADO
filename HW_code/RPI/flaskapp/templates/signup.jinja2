@@ -26,16 +26,6 @@
                 {% endif %}
             </fieldset>
 
-            <fieldset class="org">
-                {{ form.org.label }}
-                {{ form.org(placeholder='Your organization') }}
-                {% if form.org.errors %}
-                    <ul class="errors">
-                        {% for error in form.org.errors %}<li>{{ error }}</li>{% endfor %}
-                    </ul>
-                {% endif %}
-            </fieldset>
-
             <fieldset class="email">
                 {{ form.email.label }}
                 {{ form.email(placeholder='youremail@example.com') }}

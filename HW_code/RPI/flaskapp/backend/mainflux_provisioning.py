@@ -165,7 +165,7 @@ def get_messages_on_channel(channel_id, thing_key):
     print(response.text)
 
 
-def register_node_backend(name, organization, email, password, node_id):
+def register_node_backend(name, email, password, node_id):
     """
     Node registration to backend and user account creation.
     Assumption: node is not registered to the email provided
@@ -195,7 +195,7 @@ def register_node_backend(name, organization, email, password, node_id):
     error_msg = False
     node_name = str(node_id) #+ '_device'
     channel_name = 'comm_channel'  # unique for each organization
-
+    organization = str(email) #this way we make sure that each organization is unique and user cannot temper it
     # Triple check: account exists, email and pw OK
     response_c1 = create_account(email, password)
     response_c2 = get_account_token(email, password)
