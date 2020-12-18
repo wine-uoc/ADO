@@ -220,6 +220,8 @@ def register_node_backend(name, email, password, node_id):
 
             # store backend credentials to rpi database
             update_tokens_values(token, thing_id, thing_key, channel_id)
+            # boostrap grafana again, just for development
+            grafana_status=grafana.bootstrap(name, organization, email, password, channel_id)
 
         else:
             error_msg = 'Device name already exists for this account. Please choose a different name.'
@@ -243,7 +245,11 @@ def register_node_backend(name, email, password, node_id):
         _ = connect_to_channel(token, channel_id, thing_id)
 
         # boostrap grafana
-        grafana.bootstrap(name, organization, email, password, channel_id)
+        grafana_status=grafana.bootstrap(name, organization, email, password, channel_id)
+        print(grafana_status)
+        if grafana_status.json()['status'] != 'success':
+            #we should also delete mainflux account with its things and channels
+            error_msg = str(grafana_status.json()['status'])
 
         # store backend credentials to rpi database
         update_tokens_values(token, thing_id, thing_key,channel_id)

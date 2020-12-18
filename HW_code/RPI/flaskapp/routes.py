@@ -7,11 +7,11 @@ from .assets import compile_main_assets
 from .control import get_node_id, get_thing_id, get_account_token, get_config_obj, delete_tables_entries, update_config_values, get_wifi_obj, \
     update_wifi_data, get_user_org, get_tokens_obj, get_calib_1_obj, get_calib_2_obj, get_req_calib_1_obj, get_req_calib_2_obj
 from .forms import WifiForm
-import flaskapp.backend.grafana_interactions as gr
 from flaskapp.backend.grafana_bootstrap import load_json
 from flaskapp.backend.mainflux_provisioning import delete_thing
 from config import ConfigFlaskApp, ConfigRPI
-
+import requests
+host = ConfigRPI.SERVER_URL 
 
 
 # Blueprint Configuration
@@ -137,29 +137,21 @@ def get_post_js_data_setsensor():
 @main_bp.route('/upgrade', methods=['GET','POST'])
 @login_required
 def dashboard_upgrade():
-  # TODO load all files from server or github for updated versions
-    #noti_json = load_json('flaskapp/backend/alert_channels/slack.json')   
-    try:
-      num_dashs = 4
-      dash_pr_json = load_json('flaskapp/backend/dashboards/principal.json')
-      dash_ag_json = load_json('flaskapp/backend/dashboards/agregat.json')
-      dash_es_json = load_json('flaskapp/backend/dashboards/estat.json')
-      dash_al_json = load_json('flaskapp/backend/dashboards/alertes.json')
 
-      organization = get_user_org()
-      gr._change_current_organization_to(organization)
-
-      # Create dashborads, rewrite flag is true --> existing dashs are updated
-      dash_ids = []
-      dash_ids.append(gr._create_dashboard(dash_pr_json))
-      dash_ids.append(gr._create_dashboard(dash_ag_json))
-      dash_ids.append(gr._create_dashboard(dash_es_json))
-      dash_ids.append(gr._create_dashboard(dash_al_json))
-
-      # Load preferences
-      gr.update_preferences_org(dash_ids[0])
+  try:
+    organization = get_user_org() 
+    url = host + '/control/grafana/dash_update'
+    data = {
+      "organization": str(organization)
+    }
+    headers = {"Content-Type": 'application/json'}
+    status= requests.post(url, json=data, headers=headers, verify=False)
+    print("*****received answer is:", status.json())
+    if status.json()['status'] == 'success':
       flash('Dashboard has been upgraded to the last version')
-    except:
+    else:
+      flash(str(status.json()['status']))
+  except:
       flash('Something went wrong, Try again later')
-    return redirect(url_for('auth_bp.login'))
+  return redirect(url_for('auth_bp.login'))
     
