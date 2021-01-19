@@ -4,6 +4,7 @@ from flask import current_app as app
 from flask import render_template
 from flask_login import current_user
 import requests
+import certifi
 import urllib3
 from config import ConfigRPI
 from flask_mail import Message
@@ -13,6 +14,8 @@ from .models import db, User, NodeConfig, Wifi, Tokens, Calibration_1, Calibrati
 from .utils import create_node_name, delete_entries
 import jwt
 from time import time
+
+ssl_flag = ConfigRPI.SSL_FLAG #true or false in config 
 
 
 
@@ -132,7 +135,11 @@ def validate_user(email, password):
             "password": str(password)
         }
         headers = {"Content-Type": 'application/json'}
-        response = requests.post(url, json=data, headers=headers, verify=False)
+        try:
+            response = requests.post(url, json=data, headers=headers, verify=ssl_flag)
+        except requests.exceptions.SSLError as err: 
+            print ("SSL certificate error.")
+            return None
         try:
             new_account_token = response.json()['token']
         except:

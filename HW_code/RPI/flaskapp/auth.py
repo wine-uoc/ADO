@@ -14,6 +14,8 @@ import urllib3
 import requests
 import bcrypt
 
+ssl_flag = ConfigRPI.SSL_FLAG #true or false in config 
+
 # Blueprint Configuration
 auth_bp = Blueprint('auth_bp', __name__,
                     template_folder='templates',
@@ -154,7 +156,7 @@ def pass_reset_code(token):
             "change": bcrypt.hashpw(new_password, bcrypt.gensalt(10)) #new password for the encoded email
         }
         headers = {"Content-Type": 'application/json'}
-        response = requests.post(url, json=data, headers=headers, verify=False)
+        response = requests.post(url, json=data, headers=headers, verify= ssl_flag) #verify= false disables ssl check
         print("*********response**********",response)
         status = response.json()['status']
         print(status)

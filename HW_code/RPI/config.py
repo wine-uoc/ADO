@@ -33,9 +33,9 @@ class ConfigFlaskApp:
     MAIL_SERVER = 'smtp.gmail.com'
     MAIL_PORT = 465
     MAIL_USE_SSL = True
-    MAIL_USERNAME = ""
+    MAIL_USERNAME = "@gmail.com"
     MAIL_PASSWORD = ""
-    MAIL_DEFAULT_SENDER = ("ADO-RECOVERY", "_@gmail.com")
+    MAIL_DEFAULT_SENDER = ("ADO-RECOVERY", "@gmail.com")
 
     # Password storage
     HASH_USER_PASSWORD = True
@@ -52,7 +52,8 @@ class ConfigRPI:
     Set RPI configuration vars.
     """
     # Backend server Mainflux
-    SERVER_URL = 'http://localhost'     # 'https://54.171.128.181'
+    SERVER_URL = 'https://localhost'     # 'https://54.171.128.181'
+    SSL_FLAG = 'flaskapp/ssl/certs/ca.crt' # True/False/Trusted CA path #when we want to use TLS over HTTP
     SHORT_SERVER_URL = 'localhost'
     SERVER_PORT_MQTT = 1883
     print(' Currently configured to connect to localhost MainFlux !!! ')

@@ -7,6 +7,7 @@ from config import ConfigRPI
 from ..control import update_tokens_values
 
 host = ConfigRPI.SERVER_URL
+ssl_flag = ConfigRPI.SSL_FLAG #true or false in config 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
@@ -33,7 +34,7 @@ def create_account(email, password):
         "password": str(password)
     }
     headers = {"Content-Type": 'application/json'}
-    return requests.post(url, json=data, headers=headers, verify=False)
+    return requests.post(url, json=data, headers=headers, verify=ssl_flag) #verify false disables ssl check
 
 
 def get_account_token(email, password):
@@ -46,7 +47,7 @@ def get_account_token(email, password):
     headers = {"Content-Type": 'application/json'}
     # response = requests.post(url, json=data, headers=headers, verify=False)
     # token = response.json()['token']
-    return requests.post(url, json=data, headers=headers, verify=False)
+    return requests.post(url, json=data, headers=headers, verify=ssl_flag)
 
 
 def create_thing(account_token, thing_name, thing_type):
@@ -56,18 +57,18 @@ def create_thing(account_token, thing_name, thing_type):
         "type": str(thing_type)
     }
     headers = {"Content-Type": 'application/json', "Authorization": str(account_token)}
-    return requests.post(url, json=data, headers=headers, verify=False)
+    return requests.post(url, json=data, headers=headers, verify=ssl_flag)
 
 def delete_thing(account_token, thing_id):
     url=host+'/things/'+ str(thing_id)
     headers={"Authorization": str(account_token)}
-    return requests.delete(url,headers=headers, verify=False)
+    return requests.delete(url,headers=headers, verify=ssl_flag)
 
 # TODO: code repeats in the next three methods
 def return_thing_id(account_token, thing_name):
     url = host + '/things'
     headers = {"Authorization": str(account_token)}
-    response = requests.get(url, headers=headers, verify=False)
+    response = requests.get(url, headers=headers, verify=ssl_flag)
     # print (response.text)
     response = response.json()
     things_list = response["things"]
@@ -84,7 +85,7 @@ def return_thing_id(account_token, thing_name):
 def return_thing_key(account_token, thing_name):
     url = host + '/things'
     headers = {"Authorization": str(account_token)}
-    response = requests.get(url, headers=headers, verify=False)
+    response = requests.get(url, headers=headers, verify=ssl_flag)
     # print (response.text)
     response = response.json()
     things_list = response["things"]
@@ -101,7 +102,7 @@ def return_thing_key(account_token, thing_name):
 def return_channel_id(account_token, channel_name):
     url = host + '/channels'
     headers = {"Authorization": str(account_token)}
-    response = requests.get(url, headers=headers, verify=False)
+    response = requests.get(url, headers=headers, verify=ssl_flag)
     # print (response.text)
     response = response.json()
     channels_list = response["channels"]
@@ -121,13 +122,13 @@ def create_channel(account_token, channel_name):
         "name": str(channel_name)
     }
     headers = {"Content-Type": 'application/json', "Authorization": str(account_token)}
-    return requests.post(url, json=data, headers=headers, verify=False)
+    return requests.post(url, json=data, headers=headers, verify=ssl_flag)
 
 
 def connect_to_channel(account_token, channel_id, thing_id):
     url = host + '/channels/' + str(channel_id) + '/things/' + str(thing_id)
     headers = {"Authorization": str(account_token)}
-    return requests.put(url, headers=headers, verify=False)
+    return requests.put(url, headers=headers, verify=ssl_flag)
 
 
 def attempt_sending_message(channel_id, thing_key):
@@ -154,14 +155,13 @@ def attempt_sending_message(channel_id, thing_key):
             "v": 1.3
         }
     ]
-    response = requests.post(url, json=data, headers=headers, verify=False)
-    print(response.text)
+    response = requests.post(url, json=data, headers=headers, verify=ssl_flag)
 
 
 def get_messages_on_channel(channel_id, thing_key):
     url = host + ':8905/channels/' + str(channel_id) + '/messages'
     headers = {"Authorization": str(thing_key)}
-    response = requests.get(url, headers=headers, verify=False)
+    response = requests.get(url, headers=headers, verify=ssl_flag)
     print(response.text)
 
 

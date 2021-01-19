@@ -3,6 +3,7 @@ import json
 from config import ConfigRPI
 import requests
 host = ConfigRPI.SERVER_URL 
+ssl_flag = ConfigRPI.SSL_FLAG #true or false in config 
 
 def load_json(path):
     with open(path) as f:
@@ -33,4 +34,4 @@ def bootstrap(name, organization, email, password, channel_id):
         "channel_id": str(channel_id)
     }
     headers = {"Content-Type": 'application/json'}
-    return requests.post(url, json=data, headers=headers, verify=False)
+    return requests.post(url, json=data, headers=headers, verify=ssl_flag)

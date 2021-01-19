@@ -12,6 +12,7 @@ from flaskapp.backend.mainflux_provisioning import delete_thing
 from config import ConfigFlaskApp, ConfigRPI
 import requests
 host = ConfigRPI.SERVER_URL 
+ssl_flag = ConfigRPI.SSL_FLAG #true or false in config 
 
 
 # Blueprint Configuration
@@ -145,7 +146,7 @@ def dashboard_upgrade():
       "organization": str(organization)
     }
     headers = {"Content-Type": 'application/json'}
-    status= requests.post(url, json=data, headers=headers, verify=False)
+    status= requests.post(url, json=data, headers=headers, verify=ssl_flag)
     print("*****received answer is:", status.json())
     if status.json()['status'] == 'success':
       flash('Dashboard has been upgraded to the last version')
