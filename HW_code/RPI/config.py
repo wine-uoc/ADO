@@ -54,8 +54,9 @@ class ConfigRPI:
     # Backend server Mainflux
     SERVER_URL = 'https://localhost'     # 'https://54.171.128.181'
     SSL_FLAG = 'flaskapp/ssl/certs/ca.crt' # True/False/Trusted CA path #when we want to use TLS over HTTP
+    SSL_CA_LOCATION = 'flaskapp/ssl/certs/ca.crt' #for rpiapp to enable tls over mqtt
     SHORT_SERVER_URL = 'localhost'
-    SERVER_PORT_MQTT = 1883
+    SERVER_PORT_MQTT = 8883 #8883 is the port for enabling TLS over MQTT; 1883 is for unencrypted traffic
     print(' Currently configured to connect to localhost MainFlux !!! ')
     # SERVER_URL = 'https://54.171.128.181'
     # SHORT_SERVER_URL = SERVER_URL[8:]

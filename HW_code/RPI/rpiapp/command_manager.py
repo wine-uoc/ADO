@@ -11,6 +11,7 @@ from rpiapp.db_management import check_table_database, get_table_database, updat
 from rpiapp.periodic_control_sensors import set_sr
 from rpiapp.logging_filter import logger
 from config import ConfigRPI, ConfigFlaskApp
+import ssl
 
 logging = logger
 CmdType = arduino_commands.CmdType
@@ -24,6 +25,7 @@ old_name_available=[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
 READ_timeout = 15
 WRITE_timeout = 10 #non blocking mode
 
+ssl_CA= ConfigRPI.SSL_CA_LOCATION
 def create_threads(ser):
     global latest_thread, client, subtopic_sr
     serialcmd, periodicity, magnitudes = arduino_commands.get_config()
@@ -314,7 +316,7 @@ def mqtt_connection_0(tokens, engine, serial):
     subtopic_cal = mqtt_topic + '/control/CAL/' + str(tokens.thing_id) #cal is specific for this node
     subtopic_sr = mqtt_topic + '/control/SR/' + str(tokens.thing_id) #SR command is now specific to this device
 
-
+    client.tls_set(ssl_CA)
     client.connect_async(host=ConfigRPI.SHORT_SERVER_URL, port=ConfigRPI.SERVER_PORT_MQTT, keepalive=60)
     client.loop_start()
     client.reconnect_delay_set(min_delay=1, max_delay=10)
