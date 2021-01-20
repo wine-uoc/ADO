@@ -11,7 +11,6 @@ from rpiapp.db_management import check_table_database, get_table_database, updat
 from rpiapp.periodic_control_sensors import set_sr
 from rpiapp.logging_filter import logger
 from config import ConfigRPI, ConfigFlaskApp
-import ssl
 
 logging = logger
 CmdType = arduino_commands.CmdType
