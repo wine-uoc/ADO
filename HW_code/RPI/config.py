@@ -18,6 +18,10 @@ class ConfigFlaskApp:
 
     # ENV Config
     FLASK_ENV = 'development'    #'production'    # development (to compile new CSS and JS)
+    HTTPS_ENABLED = True #set to False it may not work when  mainflux is on HTTPS only
+    SSL_SERVER_URL = 'https://localhost'     # 'https://54.171.128.181'
+    SSL_CA_LOCATION = 'flaskapp/ssl/certs/ca.crt' 
+    SERVER_URL = 'http://localhost'     # 'https://54.171.128.181'
 
     # DB Config
     SQLALCHEMY_DATABASE_URI = 'sqlite:///database/db.sqlite'
@@ -52,11 +56,14 @@ class ConfigRPI:
     Set RPI configuration vars.
     """
     # Backend server Mainflux
-    SERVER_URL = 'https://localhost'     # 'https://54.171.128.181'
-    SSL_FLAG = 'flaskapp/ssl/certs/ca.crt' # True/False/Trusted CA path #when we want to use TLS over HTTP
+    SHORT_SERVER_URL = 'localhost' #for mqtt broker
+    SERVER_PORT_MQTT = 1883 #unencrypted traffic
+
+    #TLS over HTTP, for mqtt broker
+    HTTPS_ENABLED = True
     SSL_CA_LOCATION = 'flaskapp/ssl/certs/ca.crt' #for rpiapp to enable tls over mqtt
-    SHORT_SERVER_URL = 'localhost'
-    SERVER_PORT_MQTT = 8883 #8883 is the port for enabling TLS over MQTT; 1883 is for unencrypted traffic
+    SSL_SERVER_PORT_MQTT = 8883 #encrypted traffic
+
     print(' Currently configured to connect to localhost MainFlux !!! ')
     # SERVER_URL = 'https://54.171.128.181'
     # SHORT_SERVER_URL = SERVER_URL[8:]

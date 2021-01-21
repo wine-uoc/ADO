@@ -1,9 +1,8 @@
 """Grafana bootstrap."""
 import json
-from config import ConfigRPI
+from config import ConfigFlaskApp
 import requests
-host = ConfigRPI.SERVER_URL 
-ssl_flag = ConfigRPI.SSL_FLAG #true or false in config 
+
 
 def load_json(path):
     with open(path) as f:
@@ -25,6 +24,12 @@ def bootstrap(name, organization, email, password, channel_id):
     # RESPONSE TO POST:
     # response.json()['status']= success/ Error when...
 
+    if ConfigFlaskApp.HTTPS_ENABLED:
+        host = ConfigFlaskApp.SSL_SERVER_URL
+        ssl_flag = ConfigFlaskApp.SSL_CA_LOCATION 
+    else:
+        host = ConfigFlaskApp.SERVER_URL
+        ssl_flag = False 
     url = host + '/control/grafana'
     data = {
         "email": str(email),

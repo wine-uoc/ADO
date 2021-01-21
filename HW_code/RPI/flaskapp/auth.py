@@ -9,13 +9,17 @@ from .backend.mainflux_provisioning import register_node_backend
 from .control import sign_up_database, validate_user, delete_tables_entries, validate_email, send_email, get_mainflux_token
 from .forms import LoginForm, SignupForm, ResetForm, PasswordResetForm
 from .models import db, User
-from config import ConfigRPI 
+from config import ConfigFlaskApp 
 import urllib3
 import requests
 import bcrypt
 
-ssl_flag = ConfigRPI.SSL_FLAG #true or false in config 
-
+if app.config['HTTPS_ENABLED']:
+    host = ConfigFlaskApp.SSL_SERVER_URL
+    ssl_flag = ConfigFlaskApp.SSL_CA_LOCATION 
+else:
+    host = ConfigFlaskApp.SERVER_URL
+    ssl_flag = False 
 # Blueprint Configuration
 auth_bp = Blueprint('auth_bp', __name__,
                     template_folder='templates',
@@ -148,7 +152,6 @@ def pass_reset_code(token):
         #sending the new (hashed) password to user-control, together with a new, short-lived, token:
         new_token, identifier= get_mainflux_token(user)
         new_password= pass_reset_form.password.data.encode('utf-8')
-        host = ConfigRPI.SERVER_URL
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         #request post to user-control to modify password in database
         url = host + '/control/RenewAccountPassword/'+str(new_token)+"/"+ str(identifier)

@@ -9,10 +9,14 @@ from .control import get_node_id, get_thing_id, get_account_token, get_config_ob
 from .forms import WifiForm
 from flaskapp.backend.grafana_bootstrap import load_json
 from flaskapp.backend.mainflux_provisioning import delete_thing
-from config import ConfigFlaskApp, ConfigRPI
+from config import ConfigFlaskApp
 import requests
-host = ConfigRPI.SERVER_URL 
-ssl_flag = ConfigRPI.SSL_FLAG #true or false in config 
+if app.config['HTTPS_ENABLED']:
+    host = ConfigFlaskApp.SSL_SERVER_URL
+    ssl_flag = ConfigFlaskApp.SSL_CA_LOCATION 
+else:
+    host = ConfigFlaskApp.SERVER_URL
+    ssl_flag = False
 
 
 # Blueprint Configuration

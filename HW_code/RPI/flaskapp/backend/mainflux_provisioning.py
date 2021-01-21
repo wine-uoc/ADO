@@ -3,15 +3,25 @@ import requests
 import urllib3
 
 import flaskapp.backend.grafana_bootstrap as grafana
-from config import ConfigRPI
+from config import ConfigFlaskApp
 from ..control import update_tokens_values
 
-host = ConfigRPI.SERVER_URL
-ssl_flag = ConfigRPI.SSL_FLAG #true or false in config 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
+def get_config():
+    if ConfigFlaskApp.HTTPS_ENABLED:
+        host = ConfigFlaskApp.SSL_SERVER_URL
+        ssl_flag = ConfigFlaskApp.SSL_CA_LOCATION 
+    else:
+        host = ConfigFlaskApp.SERVER_URL
+        ssl_flag = False 
+    return host, ssl_flag
+
+host, ssl_flag = get_config()
+
 def create_account(email, password):
+    global host, ssl_flag
     """ POST to /users to register user"""
     # RESPONSE TO POST:
     # print(response.reason)
@@ -38,6 +48,7 @@ def create_account(email, password):
 
 
 def get_account_token(email, password):
+    global host, ssl_flag
     """ POST to /tokens to get token or create token of user"""
     url = host + '/tokens'
     data = {
@@ -51,6 +62,7 @@ def get_account_token(email, password):
 
 
 def create_thing(account_token, thing_name, thing_type):
+    global host, ssl_flag
     url = host + '/things'
     data = {
         "name": str(thing_name),
@@ -60,19 +72,22 @@ def create_thing(account_token, thing_name, thing_type):
     return requests.post(url, json=data, headers=headers, verify=ssl_flag)
 
 def delete_thing(account_token, thing_id):
+    global host, ssl_flag
     url=host+'/things/'+ str(thing_id)
     headers={"Authorization": str(account_token)}
     return requests.delete(url,headers=headers, verify=ssl_flag)
 
 # TODO: code repeats in the next three methods
 def return_thing_id(account_token, thing_name):
+    global host, ssl_flag
     url = host + '/things'
     headers = {"Authorization": str(account_token)}
     response = requests.get(url, headers=headers, verify=ssl_flag)
-    # print (response.text)
     response = response.json()
+    #print("*************", response)
     things_list = response["things"]
     for i in range(len(things_list)):
+        #print (things_list[i]['name'])
         if things_list[i]['name'] == str(thing_name):
             # print("found it")
             thing_id = things_list[i]['id']
@@ -83,6 +98,7 @@ def return_thing_id(account_token, thing_name):
 
 
 def return_thing_key(account_token, thing_name):
+    global host, ssl_flag
     url = host + '/things'
     headers = {"Authorization": str(account_token)}
     response = requests.get(url, headers=headers, verify=ssl_flag)
@@ -100,6 +116,7 @@ def return_thing_key(account_token, thing_name):
 
 
 def return_channel_id(account_token, channel_name):
+    global host, ssl_flag
     url = host + '/channels'
     headers = {"Authorization": str(account_token)}
     response = requests.get(url, headers=headers, verify=ssl_flag)
@@ -117,6 +134,7 @@ def return_channel_id(account_token, channel_name):
 
 
 def create_channel(account_token, channel_name):
+    global host, ssl_flag
     url = host + '/channels'
     data = {
         "name": str(channel_name)
@@ -126,12 +144,14 @@ def create_channel(account_token, channel_name):
 
 
 def connect_to_channel(account_token, channel_id, thing_id):
+    global host, ssl_flag
     url = host + '/channels/' + str(channel_id) + '/things/' + str(thing_id)
     headers = {"Authorization": str(account_token)}
     return requests.put(url, headers=headers, verify=ssl_flag)
 
 
 def attempt_sending_message(channel_id, thing_key):
+    global host, ssl_flag
     url = host + '/http/channels/' + str(channel_id) + '/messages'
     headers = {"Content-Type": 'application/senml+json', "Authorization": str(thing_key)}
     data = [
@@ -159,6 +179,7 @@ def attempt_sending_message(channel_id, thing_key):
 
 
 def get_messages_on_channel(channel_id, thing_key):
+    global host, ssl_flag
     url = host + ':8905/channels/' + str(channel_id) + '/messages'
     headers = {"Authorization": str(thing_key)}
     response = requests.get(url, headers=headers, verify=ssl_flag)
@@ -166,6 +187,7 @@ def get_messages_on_channel(channel_id, thing_key):
 
 
 def register_node_backend(name, email, password, node_id):
+    global host, ssl_flag
     """
     Node registration to backend and user account creation.
     Assumption: node is not registered to the email provided

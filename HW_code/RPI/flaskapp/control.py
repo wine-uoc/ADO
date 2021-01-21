@@ -6,7 +6,7 @@ from flask_login import current_user
 import requests
 import certifi
 import urllib3
-from config import ConfigRPI
+from config import ConfigFlaskApp
 from flask_mail import Message
 from . import mail
 
@@ -15,7 +15,12 @@ from .utils import create_node_name, delete_entries
 import jwt
 from time import time
 
-ssl_flag = ConfigRPI.SSL_FLAG #true or false in config 
+if app.config['HTTPS_ENABLED']:
+    host = ConfigFlaskApp.SSL_SERVER_URL
+    ssl_flag = ConfigFlaskApp.SSL_CA_LOCATION 
+else:
+    host = ConfigFlaskApp.SERVER_URL
+    ssl_flag = False # may not work if mainflux is HTTPS only 
 
 
 
@@ -127,7 +132,7 @@ def validate_user(email, password):
     if user and user.check_password(password=password, hash_it=app.config['HASH_USER_PASSWORD']):
         print("checking credentials")
         #new implementation of mainflux_provisioning get_accout_token to avoid circular includes 
-        host = ConfigRPI.SERVER_URL
+
         urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
         url = host + '/tokens'
         data = {

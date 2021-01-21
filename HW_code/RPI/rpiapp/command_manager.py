@@ -314,9 +314,13 @@ def mqtt_connection_0(tokens, engine, serial):
     client.on_log = on_log
     subtopic_cal = mqtt_topic + '/control/CAL/' + str(tokens.thing_id) #cal is specific for this node
     subtopic_sr = mqtt_topic + '/control/SR/' + str(tokens.thing_id) #SR command is now specific to this device
-
-    client.tls_set(ssl_CA)
-    client.connect_async(host=ConfigRPI.SHORT_SERVER_URL, port=ConfigRPI.SERVER_PORT_MQTT, keepalive=60)
+    if ConfigRPI.HTTPS_ENABLED:
+        print ("Connecting via TLS")
+        client.tls_set(ssl_CA)
+        client.connect_async(host=ConfigRPI.SHORT_SERVER_URL, port=ConfigRPI.SSL_SERVER_PORT_MQTT, keepalive=60)
+    else:
+        print ("unencrypted connection")
+        client.connect_async(host=ConfigRPI.SHORT_SERVER_URL, port=ConfigRPI.SERVER_PORT_MQTT, keepalive=60)
     client.loop_start()
     client.reconnect_delay_set(min_delay=1, max_delay=10)
 
