@@ -33,14 +33,6 @@ class ConfigFlaskApp:
     ASSETS_DEBUG = True
     ASSETS_AUTO_BUILD = True
 
-    # Email Config
-    MAIL_SERVER = 'smtp.gmail.com'
-    MAIL_PORT = 465
-    MAIL_USE_SSL = True
-    MAIL_USERNAME = "@gmail.com"
-    MAIL_PASSWORD = ""
-    MAIL_DEFAULT_SENDER = ("ADO-RECOVERY", "@gmail.com")
-
     # Password storage
     HASH_USER_PASSWORD = True
 

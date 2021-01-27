@@ -44,7 +44,7 @@ class User(UserMixin, db.Model):
     def get_reset_token(self, expires=3600): #1hour
         return jwt.encode({'reset_password': self.name,
                            'exp':    time() + expires},
-                           key=ConfigFlaskApp.SECRET_KEY)
+                           key=ConfigFlaskApp.SECRET_KEY).decode('UTF-8')
     @staticmethod
     def verify_reset_token(token):
         try:

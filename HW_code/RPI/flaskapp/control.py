@@ -7,8 +7,6 @@ import requests
 import certifi
 import urllib3
 from config import ConfigFlaskApp
-from flask_mail import Message
-from . import mail
 
 from .models import db, User, NodeConfig, Wifi, Tokens, Calibration_1, Calibration_2, Calibration_1_Temp, Calibration_2_Temp, Requires_Cal_1, Requires_Cal_2
 from .utils import create_node_name, delete_entries
@@ -167,16 +165,26 @@ def validate_email(email):
         return None
 
 def send_email(user):
-
-    token = user.get_reset_token()
-
-    msg = Message()
-    msg.subject = "Reset your ADO-node password"
-    msg.recipients = [user.email] #converts to list
-    print (msg.recipients)
-    msg.html = render_template('reset_email.jinja2', name=user.name, token=token, template='login-page')
-
-    mail.send(msg)
+    token = str(user.get_reset_token())
+    url = host + '/control/resetpassword/sendmail'
+    data = {
+            "email": str(user.email),
+            "token": str(token),
+            "name": str(user.name)
+    }
+    headers = {"Content-Type": 'application/json'}
+    try:
+        response = requests.post(url, json=data, headers=headers, verify=ssl_flag)
+    except requests.exceptions.SSLError as err: 
+        print ("SSL certificate error.")
+        return None
+    except:
+        print("Some error occurred when attempting to send reset email")
+    try:
+        status = response.json()['status']
+        return status
+    except:
+        return None
 
 def get_mainflux_token(user):
     #verified user, encode new token with channel id

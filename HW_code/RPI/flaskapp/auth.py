@@ -115,13 +115,12 @@ def forgotpassword():
         # Validate user
         user = validate_email(pass_reset_form.email.data)
         if user:
-            try:
-                send_email(user)
-
+            status= send_email(user)
+            if status == 'success':
                 flash("An email with the reset link has been sent to this email address. You should receive it shortly")
                 return redirect(url_for('auth_bp.login'))
-            except:
-                flash("A problem occured while trying to send a password reset email")
+            else:
+                flash("A problem occured while trying to send a password reset email.")
                 return redirect(url_for('auth_bp.forgotpassword'))
 
         flash('This node is registered to a different email address')
